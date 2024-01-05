@@ -2,7 +2,7 @@
 
 import pint
 
-ureg = pint.UnitRegistry()  # pylint: disable=invalid-name
+ureg = pint.UnitRegistry()
 ureg.define("USD = [money] = $")
 pint.set_application_registry(ureg)
 Quantity = ureg.Quantity

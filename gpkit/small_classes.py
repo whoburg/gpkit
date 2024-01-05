@@ -40,7 +40,6 @@ def matrix_converter(name):
 
     def to_(self):  # used in tocoo, tocsc, etc below
         "Converts to another type of matrix."
-        # pylint: disable=unused-variable
         return getattr(self.tocsr(), "to" + name)()
 
     return to_

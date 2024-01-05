@@ -36,6 +36,7 @@ def parse_subs(varkeys, substitutions, clean=False):
 
 
 def append_sub(sub, keys, constants, sweep, linkedsweep):
+    # pylint: disable=too-many-branches
     "Appends sub to constants, sweep, or linkedsweep."
     sweepsub, sweepval = splitsweep(sub)
     if sweepsub:  # if the whole key is swept
@@ -62,23 +63,16 @@ def append_sub(sub, keys, constants, sweep, linkedsweep):
                     np.broadcast(sub, np.empty(key.shape))
                 except ValueError:
                     raise ValueError(
-                        "cannot sweep variable %s of shape %s"
-                        " with array of shape %s; array shape"
-                        " must either be %s or %s"
-                        % (
-                            key.veckey,
-                            key.shape,
-                            sub.shape,
-                            key.shape,
-                            ("N",) + key.shape,
-                        )
+                        f"cannot sweep variable {key.veckey} of shape {key.shape}"
+                        f" with array of shape {sub.shape}; array shape"
+                        f" must either be {key.shape} or {('N',) + key.shape}"
                     )
                 idx = (slice(None),) + key.descr["idx"]
                 value = sub[idx]
             else:
                 raise ValueError(
-                    "cannot substitute array of shape %s for"
-                    " variable %s of shape %s." % (sub.shape, key.veckey, key.shape)
+                    f"cannot substitute array of shape {sub.shape} for"
+                    f" variable {key.veckey} of shape {key.shape}."
                 )
         if hasattr(value, "__call__") and not hasattr(value, "key"):
             linkedsweep[key] = value

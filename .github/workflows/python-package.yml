@@ -42,6 +42,5 @@ jobs:
     - name: Run tests
       run: |
         # pytest
-        chmod +x runtests.sh
-        ./runtests.sh
+        python -c "import gpkit.tests; gpkit.tests.run()"
 

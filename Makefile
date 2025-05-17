@@ -3,6 +3,7 @@
 # Development environment setup
 install-dev:
 	pip install -r requirements-dev.txt
+	pip install -e .
 
 # Code quality
 lint:

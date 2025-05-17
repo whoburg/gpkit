@@ -85,6 +85,7 @@ class TestExamples(unittest.TestCase):
         sol_ac = bst2.sample_at(A_ac)
         assert_logtol(sol_ac("A"), (A_ac/3)**2, tol2)
         assert_logtol(sol_ac["cost"], (A_ac/3)**4, tol2)
+        os.remove("autosweep.pkl")
 
     def test_treemap(self, example):
         pass
@@ -92,6 +93,7 @@ class TestExamples(unittest.TestCase):
     def test_checking_result_changes(self, example):
         sol = example.sol
         self.assertAlmostEqual(sol["cost"], 0.48, 2)
+        os.remove("last_verified.sol")
 
     def test_evaluated_fixed_variables(self, example):
         sol = example.sol
@@ -188,6 +190,7 @@ class TestExamples(unittest.TestCase):
         sol.table()
         sol_loaded = pickle.load(open("solution.pkl", "rb"))
         sol_loaded.table()
+        os.remove("solution.pkl")
 
         sweepsol = m.sweep({example.AC.fuse.W: (50, 100, 150)}, verbosity=0)
         sweepsol.table()
@@ -195,12 +198,14 @@ class TestExamples(unittest.TestCase):
         sweepsol.table()
         sol_loaded = pickle.load(open("sweepsolution.pkl", "rb"))
         sol_loaded.table()
+        os.remove("sweepsolution.pkl")
 
         # testing savejson
         sol.savejson("solution.json")
         json_dict = {}
         with open("solution.json", "r") as rf:
             json_dict = json.load(rf)
+        os.remove("solution.json")
         for var in sol["variables"]:
             self.assertTrue(np.all(json_dict[str(var.key)]['v']
                                    == sol["variables"][var.key]))
@@ -314,6 +319,10 @@ class TestExamples(unittest.TestCase):
             for key in senscheck:
                 sol_rat = sol["sensitivities"]["variables"][key]/senscheck[key]
                 self.assertTrue(abs(1-sol_rat) < 1e-2)
+        os.remove("solution.pkl")
+        os.remove("solution.pgz")
+        os.remove("referencesplot.json")
+        os.remove("referencesplot.html")
 
     def test_relaxation(self, example):
         pass

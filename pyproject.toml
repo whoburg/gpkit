@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+dynamic = ["version", "readme"]
+name = "gpkit"
+description = "Package for defining and manipulating geometric programming models."
+authors = [
+    { name = "Warren Hoburg", email = "whoburg@alum.mit.edu" }
+]
+license = { file = "LICENSE" }
+requires-python = ">=3.5.2"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy >= 1.16.4",
+    "pint >= 0.8.1",
+    "plotly",
+    "scipy",
+    "adce",
+    "cvxopt >= 1.1.8",
+    "matplotlib"
+]
+
+[project.urls]
+Homepage = "https://www.github.com/whoburg/gpkit"
+
+[tool.setuptools]
+packages = ["gpkit", "gpkit.tools", "gpkit.interactive", "gpkit.constraints", "gpkit.nomials", "gpkit.tests", "gpkit.solvers"]
+package-data = { "gpkit" = ["env/settings"] }
+
+[tool.setuptools.dynamic]
+version = { attr = "gpkit.__version__" } 
+readme = { file = ["README.md"], content-type = "text/markdown"}

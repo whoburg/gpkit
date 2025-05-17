@@ -43,4 +43,12 @@ jobs:
       run: |
         # pytest
         python -c "import gpkit.tests; gpkit.tests.run()"
-
+    - name: Check for file changes
+      run: |
+        if [[ -n "$(git status --porcelain)" ]]; then
+          echo "❌ Tests caused uncommitted changes:"
+          git status --porcelain
+          exit 1
+        else
+          echo "✅ No uncommitted changed detected."
+        fi

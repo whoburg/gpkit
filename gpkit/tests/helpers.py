@@ -110,9 +110,11 @@ def run_tests(tests, xmloutput=None, verbosity=2):
         suite.addTests(loader.loadTestsFromTestCase(t))
     if xmloutput:
         import xmlrunner  # pylint: disable=import-error
-        xmlrunner.XMLTestRunner(output=xmloutput).run(suite)
+        result = xmlrunner.XMLTestRunner(output=xmloutput).run(suite)
     else:  # pragma: no cover
-        unittest.TextTestRunner(verbosity=verbosity).run(suite)
+        result = unittest.TextTestRunner(verbosity=verbosity).run(suite)
+    if not result.wasSuccessful():
+        sys.exit(1)
 
 
 class NullFile:

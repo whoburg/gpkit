@@ -7,8 +7,14 @@ import numpy.testing as npt
 from adce import ADV, adnumber
 
 import gpkit
-from gpkit import (Model, NamedVariables, Signomial, SignomialsEnabled,
-                   Variable, VectorVariable)
+from gpkit import (
+    Model,
+    NamedVariables,
+    Signomial,
+    SignomialsEnabled,
+    Variable,
+    VectorVariable,
+)
 from gpkit.exceptions import UnboundedGP
 from gpkit.small_scripts import mag
 from gpkit.tests.helpers import run_tests

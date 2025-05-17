@@ -5,8 +5,13 @@ from time import time
 
 import numpy as np
 
-from ..exceptions import (Infeasible, InvalidGPConstraint, InvalidPosynomial,
-                          InvalidSGPConstraint, UnnecessarySGP)
+from ..exceptions import (
+    Infeasible,
+    InvalidGPConstraint,
+    InvalidPosynomial,
+    InvalidSGPConstraint,
+    UnnecessarySGP,
+)
 from ..globals import NamedVariables
 from ..keydict import KeyDict
 from ..nomials import Posynomial, PosynomialInequality, Variable

@@ -3,8 +3,12 @@
 import mosek
 import numpy as np
 
-from ..exceptions import (DualInfeasible, InvalidLicense, PrimalInfeasible,
-                          UnknownInfeasible)
+from ..exceptions import (
+    DualInfeasible,
+    InvalidLicense,
+    PrimalInfeasible,
+    UnknownInfeasible,
+)
 
 
 def optimize(*, c, A, k, p_idxs, **kwargs):

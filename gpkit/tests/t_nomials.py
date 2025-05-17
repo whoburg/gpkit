@@ -5,8 +5,15 @@ import unittest
 import numpy as np
 
 import gpkit
-from gpkit import (Monomial, NomialArray, Posynomial, Signomial,
-                   SignomialsEnabled, Variable, VectorVariable)
+from gpkit import (
+    Monomial,
+    NomialArray,
+    Posynomial,
+    Signomial,
+    SignomialsEnabled,
+    Variable,
+    VectorVariable,
+)
 from gpkit.exceptions import InvalidPosynomial
 from gpkit.nomials import NomialMap
 

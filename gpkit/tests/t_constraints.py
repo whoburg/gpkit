@@ -4,18 +4,26 @@ import unittest
 import numpy as np
 
 import gpkit
-from gpkit import (ConstraintSet, Model, Posynomial, SignomialsEnabled,
-                   Variable, VectorVariable)
+from gpkit import (
+    ConstraintSet,
+    Model,
+    Posynomial,
+    SignomialsEnabled,
+    Variable,
+    VectorVariable,
+)
 from gpkit.constraints.bounded import Bounded
 from gpkit.constraints.costed import CostedConstraintSet
 from gpkit.constraints.loose import Loose
-from gpkit.constraints.relax import (ConstantsRelaxed, ConstraintsRelaxed,
-                                     ConstraintsRelaxedEqually)
+from gpkit.constraints.relax import (
+    ConstantsRelaxed,
+    ConstraintsRelaxed,
+    ConstraintsRelaxedEqually,
+)
 from gpkit.constraints.tight import Tight
 from gpkit.exceptions import InvalidGPConstraint, PrimalInfeasible
 from gpkit.globals import NamedVariables
-from gpkit.nomials import (MonomialEquality, PosynomialInequality,
-                           SignomialInequality)
+from gpkit.nomials import MonomialEquality, PosynomialInequality, SignomialInequality
 from gpkit.tests.helpers import run_tests
 from gpkit.units import DimensionalityError
 

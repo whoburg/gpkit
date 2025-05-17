@@ -10,7 +10,7 @@ lint:
 
 # Import sorting
 sort:
-	isort gpkit
+	isort --profile black gpkit
 
 # Testing
 test:

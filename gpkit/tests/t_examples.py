@@ -8,8 +8,12 @@ import numpy as np
 
 from gpkit import Model, Variable, settings
 from gpkit.constraints.loose import Loose
-from gpkit.exceptions import (DualInfeasible, PrimalInfeasible, UnboundedGP,
-                              UnknownInfeasible)
+from gpkit.exceptions import (
+    DualInfeasible,
+    PrimalInfeasible,
+    UnboundedGP,
+    UnknownInfeasible,
+)
 from gpkit.small_classes import Quantity
 from gpkit.small_scripts import mag
 from gpkit.tests.helpers import generate_example_tests

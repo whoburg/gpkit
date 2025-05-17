@@ -5,8 +5,15 @@ import unittest
 import numpy as np
 
 import gpkit
-from gpkit import (ArrayVariable, Monomial, NomialArray, Variable, VarKey,
-                   Vectorize, VectorVariable)
+from gpkit import (
+    ArrayVariable,
+    Monomial,
+    NomialArray,
+    Variable,
+    VarKey,
+    Vectorize,
+    VectorVariable,
+)
 from gpkit.nomials import Variable as PlainVariable
 
 

@@ -5,9 +5,13 @@ import numpy as np
 
 from .. import units
 from ..constraints import SingleEquationConstraint
-from ..exceptions import (InvalidGPConstraint, InvalidPosynomial,
-                          InvalidSGPConstraint, MathematicallyInvalid,
-                          PrimalInfeasible)
+from ..exceptions import (
+    InvalidGPConstraint,
+    InvalidPosynomial,
+    InvalidSGPConstraint,
+    MathematicallyInvalid,
+    PrimalInfeasible,
+)
 from ..globals import SignomialsEnabled
 from ..small_classes import EMPTY_HV, HashVector, Numbers
 from ..small_scripts import mag

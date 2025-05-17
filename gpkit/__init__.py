@@ -11,9 +11,9 @@ from .constraints.set import ConstraintSet
 from .constraints.sgp import SequentialGeometricProgram
 from .constraints.sigeq import SignomialEquality
 from .globals import NamedVariables, SignomialsEnabled, Vectorize, settings
+
 # NOTE above: the Variable the user sees is not the Variable used internally
-from .nomials import (ArrayVariable, Monomial, NomialArray, Posynomial,
-                      Signomial)
+from .nomials import ArrayVariable, Monomial, NomialArray, Posynomial, Signomial
 from .nomials import VectorizableVariable as Variable
 from .nomials import VectorVariable
 from .solution_array import SolutionArray

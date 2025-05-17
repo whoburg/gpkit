@@ -6,9 +6,15 @@ from time import time
 
 import numpy as np
 
-from ..exceptions import (DualInfeasible, Infeasible, InvalidLicense,
-                          InvalidPosynomial, PrimalInfeasible, UnboundedGP,
-                          UnknownInfeasible)
+from ..exceptions import (
+    DualInfeasible,
+    Infeasible,
+    InvalidLicense,
+    InvalidPosynomial,
+    PrimalInfeasible,
+    UnboundedGP,
+    UnknownInfeasible,
+)
 from ..keydict import KeyDict
 from ..nomials.map import NomialMap
 from ..repr_conventions import lineagestr

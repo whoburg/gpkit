@@ -4,15 +4,33 @@ import unittest
 
 import numpy as np
 
-from gpkit import (ArrayVariable, Model, NamedVariables, SignomialEquality,
-                   SignomialsEnabled, Variable, VectorVariable,
-                   parse_variables, settings, units)
+from gpkit import (
+    ArrayVariable,
+    Model,
+    NamedVariables,
+    SignomialEquality,
+    SignomialsEnabled,
+    Variable,
+    VectorVariable,
+    parse_variables,
+    settings,
+    units,
+)
 from gpkit.constraints.bounded import Bounded
-from gpkit.constraints.relax import (ConstantsRelaxed, ConstraintsRelaxed,
-                                     ConstraintsRelaxedEqually)
-from gpkit.exceptions import (DualInfeasible, InvalidGPConstraint,
-                              InvalidPosynomial, PrimalInfeasible, UnboundedGP,
-                              UnknownInfeasible, UnnecessarySGP)
+from gpkit.constraints.relax import (
+    ConstantsRelaxed,
+    ConstraintsRelaxed,
+    ConstraintsRelaxedEqually,
+)
+from gpkit.exceptions import (
+    DualInfeasible,
+    InvalidGPConstraint,
+    InvalidPosynomial,
+    PrimalInfeasible,
+    UnboundedGP,
+    UnknownInfeasible,
+    UnnecessarySGP,
+)
 from gpkit.small_classes import CootMatrix
 
 NDIGS = {"cvxopt": 5, "mosek_cli": 5, "mosek_conif": 3}

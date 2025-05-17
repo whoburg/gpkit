@@ -1,8 +1,10 @@
 "Implements KeyDict and KeySet classes"
 from collections import defaultdict
 from collections.abc import Hashable
+
 import numpy as np
-from .small_classes import Numbers, Quantity, FixedScalar
+
+from .small_classes import FixedScalar, Numbers, Quantity
 from .small_scripts import is_sweepvar, isnan, veclinkedfn
 
 DIMLESS_QUANTITY = Quantity(1, "dimensionless")

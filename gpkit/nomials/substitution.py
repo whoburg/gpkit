@@ -1,8 +1,10 @@
 "Scripts to parse and collate substitutions"
 import warnings as pywarnings
+
 import numpy as np
-from ..small_scripts import splitsweep
+
 from ..keydict import KeySet
+from ..small_scripts import splitsweep
 
 
 def parse_subs(varkeys, substitutions, clean=False):

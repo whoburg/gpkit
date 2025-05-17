@@ -1,9 +1,11 @@
 "Implements Bounded"
 from collections import defaultdict
+
 import numpy as np
+
 from .. import Variable
-from .set import ConstraintSet
 from ..small_scripts import appendsolwarning, initsolwarning
+from .set import ConstraintSet
 
 
 def varkey_bounds(varkeys, lower, upper):

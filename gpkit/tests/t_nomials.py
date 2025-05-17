@@ -1,12 +1,14 @@
 """Tests for Monomial, Posynomial, and Signomial classes"""
 import sys
 import unittest
+
 import numpy as np
-from gpkit import Variable, Monomial, Posynomial, Signomial, SignomialsEnabled
-from gpkit import VectorVariable, NomialArray
-from gpkit.nomials import NomialMap
-from gpkit.exceptions import InvalidPosynomial
+
 import gpkit
+from gpkit import (Monomial, NomialArray, Posynomial, Signomial,
+                   SignomialsEnabled, Variable, VectorVariable)
+from gpkit.exceptions import InvalidPosynomial
+from gpkit.nomials import NomialMap
 
 
 class TestMonomial(unittest.TestCase):

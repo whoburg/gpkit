@@ -1,5 +1,4 @@
 "GPkit-specific Exception classes"
-from . import DimensionalityError  # pylint: disable=unused-import
 
 class MathematicallyInvalid(TypeError):
     "Raised whenever something violates a mathematical definition."

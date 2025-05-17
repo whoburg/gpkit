@@ -1,17 +1,20 @@
 """Signomial, Posynomial, Monomial, Constraint, & MonoEQCOnstraint classes"""
 from collections import defaultdict
+
 import numpy as np
-from .core import Nomial
-from .array import NomialArray
+
 from .. import units
 from ..constraints import SingleEquationConstraint
-from ..globals import SignomialsEnabled
-from ..small_classes import Numbers
-from ..small_classes import HashVector, EMPTY_HV
-from ..varkey import VarKey
-from ..small_scripts import mag
 from ..exceptions import (InvalidGPConstraint, InvalidPosynomial,
-                          PrimalInfeasible, DimensionalityError)
+                          InvalidSGPConstraint, MathematicallyInvalid,
+                          PrimalInfeasible)
+from ..globals import SignomialsEnabled
+from ..small_classes import EMPTY_HV, HashVector, Numbers
+from ..small_scripts import mag
+from ..units import DimensionalityError
+from ..varkey import VarKey
+from .array import NomialArray
+from .core import Nomial
 from .map import NomialMap
 from .substitution import parse_subs
 

@@ -6,14 +6,17 @@
     >>> px = gpkit.NomialArray([1, x, x**2])
 
 """
-from operator import eq, le, ge, xor
 from functools import reduce  # pylint: disable=redefined-builtin
+from operator import eq, ge, le, xor
+
 import numpy as np
-from .map import NomialMap
-from ..small_classes import HashVector, EMPTY_HV
-from ..small_scripts import try_str_without
+
 from ..constraints import ArrayConstraint
 from ..repr_conventions import ReprMixin
+from ..small_classes import EMPTY_HV, HashVector
+from ..small_scripts import try_str_without
+from .map import NomialMap
+
 
 @np.vectorize
 def vec_recurse(element, function, *args, **kwargs):

@@ -1,20 +1,21 @@
 """Implement the GeometricProgram class"""
 import sys
 import warnings as pywarnings
-from time import time
 from collections import defaultdict
+from time import time
+
 import numpy as np
+
+from ..exceptions import (DualInfeasible, Infeasible, InvalidLicense,
+                          InvalidPosynomial, PrimalInfeasible, UnboundedGP,
+                          UnknownInfeasible)
+from ..keydict import KeyDict
 from ..nomials.map import NomialMap
 from ..repr_conventions import lineagestr
-from ..small_classes import CootMatrix, SolverLog, Numbers, FixedScalar
+from ..small_classes import CootMatrix, FixedScalar, Numbers, SolverLog
 from ..small_scripts import appendsolwarning, initsolwarning
-from ..keydict import KeyDict
 from ..solution_array import SolutionArray
 from .set import ConstraintSet
-from ..exceptions import (InvalidPosynomial, Infeasible, UnknownInfeasible,
-                          PrimalInfeasible, DualInfeasible, UnboundedGP,
-                          InvalidLicense)
-
 
 DEFAULT_SOLVER_KWARGS = {"cvxopt": {"kktsolver": "ldl"}}
 SOLUTION_TOL = {"cvxopt": 1e-3, "mosek_cli": 1e-4, "mosek_conif": 1e-3}

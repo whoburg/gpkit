@@ -1,19 +1,19 @@
 """Tests for GP and SP classes"""
-import unittest
 import sys
-import numpy as np
-from gpkit import (Model, settings, VectorVariable, Variable,
-                   SignomialsEnabled, ArrayVariable, SignomialEquality)
-from gpkit.constraints.bounded import Bounded
-from gpkit.small_classes import CootMatrix
-from gpkit import NamedVariables, units, parse_variables
-from gpkit.constraints.relax import ConstraintsRelaxed
-from gpkit.constraints.relax import ConstraintsRelaxedEqually
-from gpkit.constraints.relax import ConstantsRelaxed
-from gpkit.exceptions import (UnknownInfeasible, InvalidPosynomial,
-                              InvalidGPConstraint, UnnecessarySGP,
-                              PrimalInfeasible, DualInfeasible, UnboundedGP)
+import unittest
 
+import numpy as np
+
+from gpkit import (ArrayVariable, Model, NamedVariables, SignomialEquality,
+                   SignomialsEnabled, Variable, VectorVariable,
+                   parse_variables, settings, units)
+from gpkit.constraints.bounded import Bounded
+from gpkit.constraints.relax import (ConstantsRelaxed, ConstraintsRelaxed,
+                                     ConstraintsRelaxedEqually)
+from gpkit.exceptions import (DualInfeasible, InvalidGPConstraint,
+                              InvalidPosynomial, PrimalInfeasible, UnboundedGP,
+                              UnknownInfeasible, UnnecessarySGP)
+from gpkit.small_classes import CootMatrix
 
 NDIGS = {"cvxopt": 5, "mosek_cli": 5, "mosek_conif": 3}
 # name: decimal places of accuracy achieved in these tests

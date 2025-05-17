@@ -1,10 +1,12 @@
 """Plotting methods"""
 from collections import Counter
-import plotly.graph_objects as go
+
 import matplotlib.pyplot as plt
 import numpy as np
-from .plot_sweep import assign_axes
+import plotly.graph_objects as go
+
 from .. import GPCOLORS
+from .plot_sweep import assign_axes
 
 
 def compare(models, sweeps, posys, tol=0.001):

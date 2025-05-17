@@ -1,9 +1,11 @@
 "Implements the NomialMap class"
 from collections import defaultdict
+
 import numpy as np
+
 from .. import units
-from ..exceptions import DimensionalityError
-from ..small_classes import HashVector, Strings, qty, EMPTY_HV
+from ..small_classes import EMPTY_HV, HashVector, Strings, qty
+from ..units import DimensionalityError
 from .substitution import parse_subs
 
 DIMLESS_QUANTITY = qty("dimensionless")

@@ -1,17 +1,17 @@
 """Implement the SequentialGeometricProgram class"""
 import warnings as pywarnings
-from time import time
 from collections import defaultdict
-import numpy as np
-from ..exceptions import (InvalidGPConstraint, Infeasible, UnnecessarySGP,
-                          InvalidPosynomial, InvalidSGPConstraint)
-from ..keydict import KeyDict
-from ..nomials import Variable
-from .gp import GeometricProgram
-from ..nomials import PosynomialInequality, Posynomial
-from .. import NamedVariables
-from ..small_scripts import appendsolwarning, initsolwarning
+from time import time
 
+import numpy as np
+
+from ..exceptions import (Infeasible, InvalidGPConstraint, InvalidPosynomial,
+                          InvalidSGPConstraint, UnnecessarySGP)
+from ..globals import NamedVariables
+from ..keydict import KeyDict
+from ..nomials import Posynomial, PosynomialInequality, Variable
+from ..small_scripts import appendsolwarning, initsolwarning
+from .gp import GeometricProgram
 
 EPS = 1e-6  # 1 +/- this is used in a few relative differences
 

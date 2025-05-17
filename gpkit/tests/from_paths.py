@@ -1,7 +1,8 @@
 "Runs each file listed in pwd/TESTS as a test"
-import unittest
 import os
 import re
+import unittest
+
 from gpkit import settings
 from gpkit.tests.helpers import generate_example_tests, new_test
 

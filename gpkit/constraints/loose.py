@@ -1,6 +1,6 @@
 "Implements Loose"
-from .set import ConstraintSet
 from ..small_scripts import appendsolwarning, initsolwarning
+from .set import ConstraintSet
 
 
 class Loose(ConstraintSet):

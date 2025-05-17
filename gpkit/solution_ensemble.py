@@ -1,8 +1,11 @@
 "implements SolutionEnsemble class"
 import pickle
+
 import numpy as np
+
 from gpkit.keydict import KeyDict
 from gpkit.varkey import VarKey
+
 
 def varsort(diff):
     "Sort function for variables"

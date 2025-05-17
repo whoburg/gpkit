@@ -1,15 +1,18 @@
 """Test substitution capability across gpkit"""
 import pickle
 import unittest
+
 import numpy as np
 import numpy.testing as npt
-from adce import adnumber, ADV
+from adce import ADV, adnumber
+
 import gpkit
-from gpkit import SignomialsEnabled, NamedVariables
-from gpkit import Variable, VectorVariable, Model, Signomial
+from gpkit import (Model, NamedVariables, Signomial, SignomialsEnabled,
+                   Variable, VectorVariable)
+from gpkit.exceptions import UnboundedGP
 from gpkit.small_scripts import mag
 from gpkit.tests.helpers import run_tests
-from gpkit.exceptions import UnboundedGP, DimensionalityError
+from gpkit.units import DimensionalityError
 
 # pylint: disable=invalid-name,attribute-defined-outside-init,unused-variable
 

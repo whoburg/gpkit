@@ -1,8 +1,10 @@
 "Repository for representation standards"
-import sys
 import re
+import sys
+
 import numpy as np
-from .small_classes import Quantity, Numbers
+
+from .small_classes import Numbers, Quantity
 from .small_scripts import try_str_without
 
 INSIDE_PARENS = re.compile(r"\(.*\)")

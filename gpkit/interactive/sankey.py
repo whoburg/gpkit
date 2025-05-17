@@ -3,13 +3,14 @@ import os
 import re
 from collections import defaultdict
 from collections.abc import Iterable
-import numpy as np
-from ipywidgets import Layout
-from ipysankeywidget import SankeyWidget
-from ..repr_conventions import lineagestr, unitstr
-from .. import Model, GPCOLORS
-from ..constraints.array import ArrayConstraint
 
+import numpy as np
+from ipysankeywidget import SankeyWidget
+from ipywidgets import Layout
+
+from .. import GPCOLORS, Model
+from ..constraints.array import ArrayConstraint
+from ..repr_conventions import lineagestr, unitstr
 
 INSENSITIVE = 1e-2
 EPS = 1e-10

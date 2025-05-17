@@ -1,21 +1,22 @@
 """Defines SolutionArray class"""
-import sys
-import re
-import json
 import difflib
-from operator import sub
-import warnings as pywarnings
-import pickle
 import gzip
+import json
+import pickle
 import pickletools
+import re
+import sys
+import warnings as pywarnings
 from collections import defaultdict
-import numpy as np
-from .nomials import NomialArray
-from .small_classes import DictOfLists, Strings, SolverLog
-from .small_scripts import mag, try_str_without
-from .repr_conventions import unitstr, lineagestr, UNICODE_EXPONENTS
-from .breakdowns import Breakdowns
+from operator import sub
 
+import numpy as np
+
+from .breakdowns import Breakdowns
+from .nomials import NomialArray
+from .repr_conventions import UNICODE_EXPONENTS, lineagestr, unitstr
+from .small_classes import DictOfLists, SolverLog, Strings
+from .small_scripts import mag, try_str_without
 
 CONSTRSPLITPATTERN = re.compile(r"([^*]\*[^*])|( \+ )|( >= )|( <= )|( = )")
 
@@ -819,8 +820,9 @@ class SolutionArray(DictOfLists):
         if not hasattr(posys, "__len__"):
             posys = [posys]
         import matplotlib.pyplot as plt
-        from .interactive.plot_sweep import assign_axes
+
         from . import GPBLU
+        from .interactive.plot_sweep import assign_axes
         (swept, x), = self["sweepvariables"].items()
         posys, axes = assign_axes(swept, posys, axes)
         for posy, ax in zip(posys, axes):

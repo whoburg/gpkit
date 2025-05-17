@@ -1,11 +1,13 @@
 "Implements ConstraintSet"
 import sys
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict, defaultdict
 from itertools import chain
+
 import numpy as np
-from ..keydict import KeySet, KeyDict
-from ..small_scripts import try_str_without
+
+from ..keydict import KeyDict, KeySet
 from ..repr_conventions import ReprMixin
+from ..small_scripts import try_str_without
 from .single_equation import SingleEquationConstraint
 
 

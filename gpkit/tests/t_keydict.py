@@ -1,8 +1,10 @@
 """Test KeyDict class"""
 import unittest
+
 import numpy as np
-from gpkit import Variable, VectorVariable
+
 import gpkit
+from gpkit import Variable, VectorVariable
 from gpkit.keydict import KeyDict
 from gpkit.tests.helpers import run_tests
 

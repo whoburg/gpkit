@@ -1,11 +1,13 @@
 """Tests for NomialArray class"""
 import unittest
 import warnings as pywarnings
+
 import numpy as np
-from gpkit import Variable, Posynomial, NomialArray, VectorVariable, Monomial
-from gpkit.constraints.set import ConstraintSet
-from gpkit.exceptions import DimensionalityError
+
 import gpkit
+from gpkit import Monomial, NomialArray, Posynomial, Variable, VectorVariable
+from gpkit.constraints.set import ConstraintSet
+from gpkit.units import DimensionalityError
 
 
 class TestNomialArray(unittest.TestCase):

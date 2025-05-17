@@ -1,5 +1,6 @@
 "Implements plot_sweep1d function"
 import matplotlib.pyplot as plt
+
 from ..exceptions import InvalidGPConstraint
 
 

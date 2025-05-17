@@ -1,17 +1,18 @@
 """Unit testing of tests in docs/source/examples"""
-import unittest
+import json
 import os
 import pickle
-import json
+import unittest
+
 import numpy as np
 
-from gpkit import settings, Model, Variable
-from gpkit.tests.helpers import generate_example_tests
-from gpkit.small_scripts import mag
-from gpkit.small_classes import Quantity
+from gpkit import Model, Variable, settings
 from gpkit.constraints.loose import Loose
-from gpkit.exceptions import (UnknownInfeasible,
-                              PrimalInfeasible, DualInfeasible, UnboundedGP)
+from gpkit.exceptions import (DualInfeasible, PrimalInfeasible, UnboundedGP,
+                              UnknownInfeasible)
+from gpkit.small_classes import Quantity
+from gpkit.small_scripts import mag
+from gpkit.tests.helpers import generate_example_tests
 
 
 def assert_logtol(first, second, logtol=1e-6):

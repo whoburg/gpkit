@@ -45,7 +45,7 @@ def append_sub(sub, keys, constants, sweep, linkedsweep):
                 pywarnings.filterwarnings("error")
                 try:
                     sub = np.array(sub) if not hasattr(sub, "shape") else sub
-                except Warning:  # pragma: no cover  #TODO: coverage this
+                except ValueError:  # pragma: no cover  #TODO: coverage this
                     # ragged nested sequences, eg [[2]], [3, 4]], in py3.7+
                     sub = np.array(sub, dtype=object)
             if key.shape == sub.shape:

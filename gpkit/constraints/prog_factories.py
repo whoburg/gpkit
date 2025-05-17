@@ -1,4 +1,5 @@
 "Scripts for generating, solving and sweeping programs"
+
 import warnings as pywarnings
 from time import time
 
@@ -16,8 +17,7 @@ from ..solution_array import SolutionArray
 
 def evaluate_linked(constants, linked):
     "Evaluates the values and gradients of linked variables."
-    kdc = KeyDict({k: adnumber(maybe_flatten(v), k)
-                   for k, v in constants.items()})
+    kdc = KeyDict({k: adnumber(maybe_flatten(v), k) for k, v in constants.items()})
     kdc_plain = None
     array_calulated = {}
     for key in constants:  # remove gradients from constants
@@ -43,32 +43,40 @@ def evaluate_linked(constants, linked):
                 pywarnings.warn(
                     "Linked function for %s did not return a united value."
                     " Modifying it to do so (e.g. by using `()` instead of `[]`"
-                    " to access variables) will reduce errors." % v)
+                    " to access variables) will reduce errors." % v
+                )
             out = maybe_flatten(out)
             if not hasattr(out, "x"):
                 constants[v] = out
                 continue  # a new fixed variable, not a calculated one
             constants[v] = out.x
-            v.descr["gradients"] = {adn.tag: grad
-                                    for adn, grad in out.d().items()
-                                    if adn.tag}
+            v.descr["gradients"] = {
+                adn.tag: grad for adn, grad in out.d().items() if adn.tag
+            }
         except Exception as exception:  # pylint: disable=broad-except
             from .. import settings
+
             if settings.get("ad_errors_raise", None):
                 raise
             if kdc_plain is None:
                 kdc_plain = KeyDict(constants)
             constants[v] = f(kdc_plain)
             v.descr.pop("gradients", None)
-            print("Warning: skipped auto-differentiation of linked variable"
-                  " %s because %s was raised. Set `gpkit.settings"
-                  "[\"ad_errors_raise\"] = True` to raise such Exceptions"
-                  " directly.\n" % (v, repr(exception)))
-            if ("Automatic differentiation not yet supported for <class "
-                    "'gpkit.nomials.math.Monomial'> objects") in str(exception):
-                print("This particular warning may have come from using"
-                      " gpkit.units.* in the function for %s; try using"
-                      " gpkit.ureg.* or gpkit.units.*.units instead." % v)
+            print(
+                "Warning: skipped auto-differentiation of linked variable"
+                " %s because %s was raised. Set `gpkit.settings"
+                '["ad_errors_raise"] = True` to raise such Exceptions'
+                " directly.\n" % (v, repr(exception))
+            )
+            if (
+                "Automatic differentiation not yet supported for <class "
+                "'gpkit.nomials.math.Monomial'> objects"
+            ) in str(exception):
+                print(
+                    "This particular warning may have come from using"
+                    " gpkit.units.* in the function for %s; try using"
+                    " gpkit.ureg.* or gpkit.units.*.units instead." % v
+                )
 
 
 def progify(program, return_attr=None):
@@ -81,6 +89,7 @@ def progify(program, return_attr=None):
     return_attr: string
         attribute to return in addition to the program
     """
+
     def programfn(self, constants=None, **initargs):
         "Return program version of self"
         if not constants:
@@ -92,44 +101,55 @@ def progify(program, return_attr=None):
         if return_attr:
             return prog, getattr(prog, return_attr)
         return prog
+
     return programfn
 
 
 def solvify(genfunction):
     "Returns function for making/solving/sweeping a program."
-    def solvefn(self, solver=None, *, verbosity=1, skipsweepfailures=False,
-                **kwargs):
+
+    def solvefn(self, solver=None, *, verbosity=1, skipsweepfailures=False, **kwargs):
         """Forms a mathematical program and attempts to solve it.
 
-         Arguments
-         ---------
-         solver : string or function (default None)
-             If None, uses the default solver found in installation.
-         verbosity : int (default 1)
-             If greater than 0 prints runtime messages.
-             Is decremented by one and then passed to programs.
-         skipsweepfailures : bool (default False)
-             If True, when a solve errors during a sweep, skip it.
-         **kwargs : Passed to solve and program init calls
+        Arguments
+        ---------
+        solver : string or function (default None)
+            If None, uses the default solver found in installation.
+        verbosity : int (default 1)
+            If greater than 0 prints runtime messages.
+            Is decremented by one and then passed to programs.
+        skipsweepfailures : bool (default False)
+            If True, when a solve errors during a sweep, skip it.
+        **kwargs : Passed to solve and program init calls
 
-         Returns
-         -------
-         sol : SolutionArray
-             See the SolutionArray documentation for details.
+        Returns
+        -------
+        sol : SolutionArray
+            See the SolutionArray documentation for details.
 
-         Raises
-         ------
-         ValueError if the program is invalid.
-         RuntimeWarning if an error occurs in solving or parsing the solution.
-         """
+        Raises
+        ------
+        ValueError if the program is invalid.
+        RuntimeWarning if an error occurs in solving or parsing the solution.
+        """
         constants, sweep, linked = parse_subs(self.varkeys, self.substitutions)
         solution = SolutionArray()
         solution.modelstr = str(self)
 
         # NOTE SIDE EFFECTS: self.program and self.solution set below
         if sweep:
-            run_sweep(genfunction, self, solution, skipsweepfailures,
-                      constants, sweep, linked, solver, verbosity, **kwargs)
+            run_sweep(
+                genfunction,
+                self,
+                solution,
+                skipsweepfailures,
+                constants,
+                sweep,
+                linked,
+                solver,
+                verbosity,
+                **kwargs,
+            )
         else:
             self.program, progsolve = genfunction(self, **kwargs)
             result = progsolve(solver, verbosity=verbosity, **kwargs)
@@ -139,24 +159,37 @@ def solvify(genfunction):
         solution.to_arrays()
         self.solution = solution
         return solution
+
     return solvefn
 
 
 # pylint: disable=too-many-locals,too-many-arguments,too-many-branches,too-many-statements
-def run_sweep(genfunction, self, solution, skipsweepfailures,
-              constants, sweep, linked, solver, verbosity, **kwargs):
+def run_sweep(
+    genfunction,
+    self,
+    solution,
+    skipsweepfailures,
+    constants,
+    sweep,
+    linked,
+    solver,
+    verbosity,
+    **kwargs
+):
     "Runs through a sweep."
     # sort sweeps by the eqstr of their varkey
-    sweepvars, sweepvals = zip(*sorted(list(sweep.items()),
-                                       key=lambda vkval: vkval[0].eqstr))
+    sweepvars, sweepvals = zip(
+        *sorted(list(sweep.items()), key=lambda vkval: vkval[0].eqstr)
+    )
     if len(sweep) == 1:
         sweep_grids = np.array(list(sweepvals))
     else:
         sweep_grids = np.meshgrid(*list(sweepvals))
 
     N_passes = sweep_grids[0].size
-    sweep_vects = {var: grid.reshape(N_passes)
-                   for (var, grid) in zip(sweepvars, sweep_grids)}
+    sweep_vects = {
+        var: grid.reshape(N_passes) for (var, grid) in zip(sweepvars, sweep_grids)
+    }
 
     if verbosity > 0:
         tic = time()
@@ -164,8 +197,9 @@ def run_sweep(genfunction, self, solution, skipsweepfailures,
     self.program = []
     last_error = None
     for i in range(N_passes):
-        constants.update({var: sweep_vect[i]
-                          for (var, sweep_vect) in sweep_vects.items()})
+        constants.update(
+            {var: sweep_vect[i] for (var, sweep_vect) in sweep_vects.items()}
+        )
         if linked:
             evaluate_linked(constants, linked)
         program, solvefn = genfunction(self, constants, **kwargs)
@@ -173,14 +207,18 @@ def run_sweep(genfunction, self, solution, skipsweepfailures,
         self.program.append(program)  # NOTE: SIDE EFFECTS
         if i == 0 and verbosity > 0:  # wait for successful program gen
             # TODO: use full string when minimum lineage is set automatically
-            sweepvarsstr = ", ".join([str(var)
-                                      for var, val in zip(sweepvars, sweepvals)
-                                      if not np.isnan(val).all()])
+            sweepvarsstr = ", ".join(
+                [
+                    str(var)
+                    for var, val in zip(sweepvars, sweepvals)
+                    if not np.isnan(val).all()
+                ]
+            )
             print("Sweeping %s with %i solves:" % (sweepvarsstr, N_passes))
         try:
             if verbosity > 1:
                 print("\nSolve %i:" % i)
-            result = solvefn(solver, verbosity=verbosity-1, **kwargs)
+            result = solvefn(solver, verbosity=verbosity - 1, **kwargs)
             if kwargs.get("process_result", True):
                 self.process_result(result)
             solution.append(result)
@@ -192,7 +230,8 @@ def run_sweep(genfunction, self, solution, skipsweepfailures,
                 raise RuntimeWarning(
                     "Solve %i was infeasible; progress saved to m.program."
                     " To continue sweeping after failures, solve with"
-                    " skipsweepfailures=True." % i) from e
+                    " skipsweepfailures=True." % i
+                ) from e
             if verbosity > 1:
                 print("Solve %i was %s." % (i, e.__class__.__name__))
             if verbosity == 1:

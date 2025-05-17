@@ -1,5 +1,6 @@
 """Implements the GPkit interface to MOSEK (version >= 9)
-   through python-based Optimizer API"""
+through python-based Optimizer API"""
+
 import mosek
 import numpy as np
 
@@ -64,9 +65,9 @@ def optimize(*, c, A, k, p_idxs, **kwargs):
     lin_posys = []
     for i, val in enumerate(k[1:]):
         if val > 1:
-            lse_posys.append(i+1)
+            lse_posys.append(i + 1)
         else:
-            lin_posys.append(i+1)
+            lin_posys.append(i + 1)
     if lin_posys:
         A = A.tocsr()
         lin_posys_set = frozenset(lin_posys)
@@ -79,7 +80,7 @@ def optimize(*, c, A, k, p_idxs, **kwargs):
         log_c_lin = log_c[lin_idxs]
     else:
         log_c_lin = None  # A_lin won't be referenced later,
-        A_lse = A         # so no need to define it.
+        A_lse = A  # so no need to define it.
         log_c_lse = log_c
     k_lse = [k[i] for i in lse_posys]
     n_lse = sum(k_lse)
@@ -115,19 +116,27 @@ def optimize(*, c, A, k, p_idxs, **kwargs):
     msk_nvars = m + 3 * n_lse + p_lse
     task.appendvars(msk_nvars)
     # "x" is free
-    task.putvarboundlist(np.arange(m), [mosek.boundkey.fr] * m,
-                         np.zeros(m), np.zeros(m))
+    task.putvarboundlist(
+        np.arange(m), [mosek.boundkey.fr] * m, np.zeros(m), np.zeros(m)
+    )
     # t[3 * i + i] == 1, other components are free.
     bound_types = [mosek.boundkey.fr, mosek.boundkey.fx, mosek.boundkey.fr]
-    task.putvarboundlist(np.arange(m, m + 3*n_lse), bound_types * n_lse,
-                         np.ones(3*n_lse), np.ones(3*n_lse))
+    task.putvarboundlist(
+        np.arange(m, m + 3 * n_lse),
+        bound_types * n_lse,
+        np.ones(3 * n_lse),
+        np.ones(3 * n_lse),
+    )
     # z[0] is free; z[1:] <= 0.
     bound_types = [mosek.boundkey.fr] + [mosek.boundkey.up] * (p_lse - 1)
-    task.putvarboundlist(np.arange(m + 3*n_lse, msk_nvars), bound_types,
-                         np.zeros(p_lse), np.zeros(p_lse))
+    task.putvarboundlist(
+        np.arange(m + 3 * n_lse, msk_nvars),
+        bound_types,
+        np.zeros(p_lse),
+        np.zeros(p_lse),
+    )
     # t[3*i], t[3*i + 1], t[3*i + 2] belongs to the exponential cone
-    task.appendconesseq([mosek.conetype.pexp] * n_lse, [0.0] * n_lse,
-                        [3] * n_lse, m)
+    task.appendconesseq([mosek.conetype.pexp] * n_lse, [0.0] * n_lse, [3] * n_lse, m)
     #
     #   Exponential cone affine constraints (other than t[3*i + 1] == 1).
     #
@@ -150,11 +159,11 @@ def optimize(*, c, A, k, p_idxs, **kwargs):
     vals = list(A_lse.data)
     #   add coefficients on "t"
     rows += list(range(n_lse))
-    cols += (m + 3*np.arange(n_lse) + 2).tolist()
+    cols += (m + 3 * np.arange(n_lse) + 2).tolist()
     vals += [-1.0] * n_lse
     #   add coefficients on "z"
     rows += list(range(n_lse))
-    cols += [m + 3*n_lse + lse_p_idx[i] for i in range(n_lse)]
+    cols += [m + 3 * n_lse + lse_p_idx[i] for i in range(n_lse)]
     vals += [-1.0] * n_lse
     task.putaijlist(rows, cols, vals)
     cur_con_idx = n_lse
@@ -182,7 +191,7 @@ def optimize(*, c, A, k, p_idxs, **kwargs):
         task.putaijlist(rows, A_lin.col, A_lin.data)
         type_constraint = [mosek.boundkey.up] * log_c_lin.size
         con_indices = np.arange(cur_con_idx, cur_con_idx + log_c_lin.size)
-        h = -log_c_lin  #pylint: disable=invalid-unary-operand-type
+        h = -log_c_lin  # pylint: disable=invalid-unary-operand-type
         task.putconboundlist(con_indices, type_constraint, h, h)
         cur_con_idx += log_c_lin.size
     #
@@ -194,36 +203,42 @@ def optimize(*, c, A, k, p_idxs, **kwargs):
         for var, idx in choicevaridxs.items():
             choices = sorted(var.choices)
             m_choices = len(choices) - 1  # the first option is the default
-            choiceidxs = np.arange(msk_nvars + n_choicevars,
-                                   msk_nvars + n_choicevars + m_choices)
+            choiceidxs = np.arange(
+                msk_nvars + n_choicevars, msk_nvars + n_choicevars + m_choices
+            )
             n_choicevars += m_choices
             task.appendvars(m_choices)
-            task.putvartypelist(choiceidxs,
-                                [mosek.variabletype.type_int]*m_choices)
-            task.putvarboundlist(choiceidxs, [mosek.boundkey.ra]*m_choices,
-                                 np.zeros(m_choices), np.ones(m_choices))
+            task.putvartypelist(choiceidxs, [mosek.variabletype.type_int] * m_choices)
+            task.putvarboundlist(
+                choiceidxs,
+                [mosek.boundkey.ra] * m_choices,
+                np.zeros(m_choices),
+                np.ones(m_choices),
+            )
             task.appendcons(m_choices)
             for i in range(m_choices - 1):
                 # each larger choice requires those before it
-                task.putarow(cur_con_idx + i, choiceidxs[i:i+2], [1.0, -1.0])
+                task.putarow(cur_con_idx + i, choiceidxs[i : i + 2], [1.0, -1.0])
                 task.putconbound(cur_con_idx + i, mosek.boundkey.lo, 0.0, 0.0)
                 cur_con_idx += 1
             base = np.log(choices[0])
             logdiffs = np.diff(np.log(choices)).tolist()
-            task.putarow(cur_con_idx, choiceidxs.tolist() + [idx],
-                         logdiffs + [-1])  # choices are summed
+            task.putarow(
+                cur_con_idx, choiceidxs.tolist() + [idx], logdiffs + [-1]
+            )  # choices are summed
             task.putconbound(cur_con_idx, mosek.boundkey.fx, -base, -base)
             cur_con_idx += 1
     #
     #   Set the objective function
     #
-    task.putclist([int(m + 3*n_lse)], [1])
+    task.putclist([int(m + 3 * n_lse)], [1])
     task.putobjsense(mosek.objsense.minimize)
     #
     #   Set solver parameters, and call .solve().
     #
     verbose = kwargs.get("verbose", True)
     if verbose:
+
         def streamprinter(text):
             "Stream printer for output from mosek."
             print(text)
@@ -236,9 +251,11 @@ def optimize(*, c, A, k, p_idxs, **kwargs):
     try:
         task.optimize()
     except mosek.Error as e:  # pragma: no cover
-        if e.errno in [mosek.rescode.err_missing_license_file,
-                       mosek.rescode.err_license_version,
-                       mosek.rescode.err_license_expired]:
+        if e.errno in [
+            mosek.rescode.err_missing_license_file,
+            mosek.rescode.err_license_version,
+            mosek.rescode.err_license_expired,
+        ]:
             raise InvalidLicense() from e
         raise e
 
@@ -262,31 +279,33 @@ def optimize(*, c, A, k, p_idxs, **kwargs):
         raise UnknownInfeasible("solution status: ", msk_solsta)
 
     # recover primal variables
-    x = [0.] * m
+    x = [0.0] * m
     task.getxxslice(sol, 0, m, x)
     # recover binary variables
     # xbin = [0.] * (n_choicevars)
     # task.getxxslice(sol, msk_nvars, msk_nvars + n_choicevars, xbin)
     # wrap things up in a dictionary
-    solution = {"status": "optimal", "primal": np.array(x),
-                "objective": np.exp(task.getprimalobj(sol))}
+    solution = {
+        "status": "optimal",
+        "primal": np.array(x),
+        "objective": np.exp(task.getprimalobj(sol)),
+    }
     # recover dual variables for log-sum-exp epigraph constraints
     # (skip epigraph of the objective function).
     if choicevaridxs:  # no dual solution
         solution["la"] = []
         solution["nu"] = []
     else:
-        z_duals = [0.] * (p_lse - 1)
-        task.getsuxslice(mosek.soltype.itr, m + 3*n_lse + 1, msk_nvars, z_duals)
+        z_duals = [0.0] * (p_lse - 1)
+        task.getsuxslice(mosek.soltype.itr, m + 3 * n_lse + 1, msk_nvars, z_duals)
         z_duals = np.array(z_duals)
         z_duals[z_duals < 0] = 0
         # recover dual variables for the remaining user-provided constraints
         if log_c_lin is None:
             solution["la"] = z_duals
         else:
-            aff_duals = [0.] * log_c_lin.size
-            task.getsucslice(mosek.soltype.itr, n_lse + p_lse, cur_con_idx,
-                             aff_duals)
+            aff_duals = [0.0] * log_c_lin.size
+            task.getsucslice(mosek.soltype.itr, n_lse + p_lse, cur_con_idx, aff_duals)
             aff_duals = np.array(aff_duals)
             aff_duals[aff_duals < 0] = 0
             # merge z_duals with aff_duals

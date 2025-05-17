@@ -1,4 +1,5 @@
 "global mutable variables"
+
 import os
 from collections import defaultdict
 
@@ -11,13 +12,16 @@ def load_settings(path=None, trybuild=True):
         path = os.sep.join([os.path.dirname(__file__), "env", "settings"])
     try:  # if the settings file already exists, read it
         with open(path) as settingsfile:
-            lines = [line[:-1].split(" : ") for line in settingsfile
-                     if len(line.split(" : ")) == 2]
+            lines = [
+                line[:-1].split(" : ")
+                for line in settingsfile
+                if len(line.split(" : ")) == 2
+            ]
             settings_ = {name: value.split(", ") for name, value in lines}
             for name, value in settings_.items():
                 # flatten 1-element lists unless they're the solver list
                 if len(value) == 1 and name != "installed_solvers":
-                    settings_[name], = value
+                    (settings_[name],) = value
     except IOError:  # pragma: no cover
         settings_ = {"installed_solvers": [""]}
     if settings_["installed_solvers"] == [""] and trybuild:  # pragma: no cover
@@ -27,7 +31,8 @@ def load_settings(path=None, trybuild=True):
         if settings_["installed_solvers"] != [""]:
             settings_["just built!"] = True
         else:
-            print("""
+            print(
+                """
 =============
 Build failed!  :(
 =============
@@ -41,7 +46,8 @@ to gpkit@mit.edu or https://github.com/convexengineering/gpkit/issues/new
 so we can prevent others from having to see this message.
 
         Thanks!  :)
-""")
+"""
+            )
     settings_["default_solver"] = settings_["installed_solvers"][0]
     return settings_
 
@@ -51,7 +57,10 @@ settings = load_settings()
 
 class SignomialsEnabledMeta(type):
     "Metaclass to implement falsiness for SignomialsEnabled"
-    def __bool__(cls): return cls._true  # pylint: disable=multiple-statements
+
+    def __bool__(cls):
+        return cls._true  # pylint: disable=multiple-statements
+
 
 class SignomialsEnabled(metaclass=SignomialsEnabledMeta):  # pylint: disable=no-init
     """Class to put up and tear down signomial support in an instance of GPkit.
@@ -65,16 +74,22 @@ class SignomialsEnabled(metaclass=SignomialsEnabledMeta):  # pylint: disable=no-
         >>>     constraints = [x >= 1-y]
         >>> gpkit.Model(x, constraints).localsolve()
     """
+
     _true = False  # default signomial permissions
+
     # pylint: disable=multiple-statements
-    def __enter__(self): SignomialsEnabled._true = True
-    def __exit__(self, type_, val, traceback): SignomialsEnabled._true = False
+    def __enter__(self):
+        SignomialsEnabled._true = True
+
+    def __exit__(self, type_, val, traceback):
+        SignomialsEnabled._true = False
 
 
 class Vectorize:
     """Creates an environment in which all variables are
-       exended in an additional dimension.
+    exended in an additional dimension.
     """
+
     vectorization = ()  # the current vectorization shape
 
     def __init__(self, dimension_length):
@@ -91,8 +106,9 @@ class Vectorize:
 
 class NamedVariables:
     """Creates an environment in which all variables have
-       a model name and num appended to their varkeys.
+    a model name and num appended to their varkeys.
     """
+
     lineage = ()  # the current model nesting
     modelnums = defaultdict(int)  # the number of models of each lineage
     namedvars = defaultdict(list)  # variables created in the current nesting
@@ -116,4 +132,4 @@ class NamedVariables:
     def __exit__(self, type_, val, traceback):
         "Leaves a named environment."
         del self.namedvars[self.lineage]
-        NamedVariables.lineage = self.lineage[:-1]   # NOTE: Side effects
+        NamedVariables.lineage = self.lineage[:-1]  # NOTE: Side effects

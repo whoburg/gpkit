@@ -1,4 +1,4 @@
-.PHONY: install-dev clean test lint sort
+.PHONY: install-dev clean test lint sort format
 
 # Development environment setup
 install-dev:
@@ -11,6 +11,10 @@ lint:
 # Import sorting
 sort:
 	isort --profile black gpkit
+
+# Code formatting
+format:
+	black gpkit
 
 # Testing
 test:
@@ -30,6 +34,7 @@ help:
 	@echo "  install-dev        Install development dependencies"
 	@echo "  lint              Run pylint"
 	@echo "  sort              Sort imports with isort"
+	@echo "  format            Format code with black"
 	@echo "  test              Run tests"
 	@echo "  clean             Clean build artifacts"
 	@echo "  help              Show this help message"

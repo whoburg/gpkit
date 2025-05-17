@@ -1,5 +1,6 @@
 "GP and SP modeling package"
-#pylint:disable=wrong-import-position
+
+# pylint:disable=wrong-import-position
 __version__ = "1.1"
 GPCOLORS = ["#59ade4", "#FA3333"]
 GPBLU, GPRED = GPCOLORS
@@ -24,7 +25,8 @@ from .varkey import VarKey
 
 if "just built!" in settings:  # pragma: no cover
     run_unit_tests(verbosity=1)
-    print("""
+    print(
+        """
 GPkit is now installed with solver(s) %s
 To incorporate new solvers at a later date, run `gpkit.build()`.
 
@@ -42,4 +44,6 @@ and engineering-design models (https://github.com/convexengineering/gplibrary/)
 to be useful resources for your own applications.
 
 Enjoy!
-""" % settings["installed_solvers"])
+"""
+        % settings["installed_solvers"]
+    )

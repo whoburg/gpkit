@@ -1,4 +1,5 @@
 """Assorted helper methods"""
+
 from collections.abc import Iterable
 
 import numpy as np
@@ -11,9 +12,11 @@ def broadcast_substitution(key, array):
 
 def veclinkedfn(linkedfn, i):
     "Generate an indexed linking function."
+
     def newlinkedfn(c):
         "Linked function that pulls out a particular index"
         return np.array(linkedfn(c))[i]
+
     return newlinkedfn
 
 
@@ -69,8 +72,10 @@ def splitsweep(sub):
     "Splits a substitution into (is_sweepvar, sweepval)"
     try:
         sweep, value = sub
-        if sweep is "sweep" and (isinstance(value, Iterable) or  # pylint: disable=literal-comparison
-                                 hasattr(value, "__call__")):
+        if sweep is "sweep" and (
+            isinstance(value, Iterable)  # pylint: disable=literal-comparison
+            or hasattr(value, "__call__")
+        ):
             return True, value
     except (TypeError, ValueError):
         pass

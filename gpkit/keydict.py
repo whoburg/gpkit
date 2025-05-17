@@ -1,4 +1,5 @@
 "Implements KeyDict and KeySet classes"
+
 from collections import defaultdict
 from collections.abc import Hashable
 
@@ -9,6 +10,7 @@ from .small_scripts import is_sweepvar, isnan, veclinkedfn
 
 DIMLESS_QUANTITY = Quantity(1, "dimensionless")
 INT_DTYPE = np.dtype(int)
+
 
 def clean_value(key, value):
     """Gets the value of variable-less monomials, so that
@@ -44,6 +46,7 @@ class KeyMap:
     Note that if a item is set using a key that does not have a `.key`
     attribute, that key can be set and accessed normally.
     """
+
     collapse_arrays = False
     keymap = []
     log_gets = False
@@ -75,9 +78,11 @@ class KeyMap:
         if otherkeys:
             if all(k.veckey == newkey.veckey for k in otherkeys):
                 return newkey.veckey, None
-            raise ValueError("%s refers to multiple keys in this substitutions"
-                             " KeyDict. Use `.variables_byname(%s)` to see all"
-                             " of them." % (key, key))
+            raise ValueError(
+                "%s refers to multiple keys in this substitutions"
+                " KeyDict. Use `.variables_byname(%s)` to see all"
+                " of them." % (key, key)
+            )
         if self.collapse_arrays and newkey.idx:
             return newkey.veckey, newkey.idx
         return newkey, None
@@ -98,13 +103,15 @@ class KeyMap:
                     val = super().__getitem__(key)[idx]  # pylint: disable=no-member
                     return True if is_sweepvar(val) else not isnan(val).any()
                 except TypeError:
-                    raise TypeError("%s has an idx, but its value in this"
-                                    " KeyDict is the scalar %s."
-                                    % (key, super().__getitem__(key)))  # pylint: disable=no-member
+                    raise TypeError(
+                        "%s has an idx, but its value in this"
+                        " KeyDict is the scalar %s." % (key, super().__getitem__(key))
+                    )  # pylint: disable=no-member
                 except IndexError:
-                    raise IndexError("key %s with idx %s is out of bounds"
-                                     " for value %s" %
-                                     (key, idx, super().__getitem__(key)))  # pylint: disable=no-member
+                    raise IndexError(
+                        "key %s with idx %s is out of bounds"
+                        " for value %s" % (key, idx, super().__getitem__(key))
+                    )  # pylint: disable=no-member
         return key in self.keymap
 
     def update_keymap(self):
@@ -135,6 +142,7 @@ class KeyDict(KeyMap, dict):
 
     See also: gpkit/tests/t_keydict.py.
     """
+
     collapse_arrays = True
 
     def get(self, key, *alternative):
@@ -153,7 +161,9 @@ class KeyDict(KeyMap, dict):
         if not self and len(args) == 1 and isinstance(args[0], KeyDict):
             super().update(args[0])
             self.keymap.update(args[0].keymap)
-            self._unmapped_keys.update(args[0]._unmapped_keys)  # pylint:disable=protected-access
+            self._unmapped_keys.update(
+                args[0]._unmapped_keys
+            )  # pylint:disable=protected-access
         else:
             for k, v in dict(*args, **kwargs).items():
                 self[k] = v
@@ -162,10 +172,10 @@ class KeyDict(KeyMap, dict):
         got = self[key]
         if isinstance(got, dict):
             for k, v in got.items():
-                got[k] = v*(k.units or DIMLESS_QUANTITY)
+                got[k] = v * (k.units or DIMLESS_QUANTITY)
             return got
         if not hasattr(key, "units"):
-            key, = self.keymap[self.parse_and_index(key)[0]]
+            (key,) = self.keymap[self.parse_and_index(key)[0]]
         return Quantity(got, key.units or "dimensionless")
 
     def __getitem__(self, key):
@@ -228,16 +238,16 @@ class KeyDict(KeyMap, dict):
                 super().__setitem__(key, np.array(old, dtype="object"))
             super().__getitem__(key)[idx] = value
             return  # successfully set a single index!
-        if key.shape: # now if we're setting an array...
+        if key.shape:  # now if we're setting an array...
             if hasattr(value, "__call__"):  # a linked vector-function
                 key.vecfn = value
                 value = np.empty(key.shape, dtype="object")
-                it = np.nditer(value, flags=['multi_index', 'refs_ok'])
+                it = np.nditer(value, flags=["multi_index", "refs_ok"])
                 while not it.finished:
                     i = it.multi_index
                     it.iternext()
                     value[i] = veclinkedfn(key.vecfn, i)
-            if getattr(value, "shape", None):   # is the value an array?
+            if getattr(value, "shape", None):  # is the value an array?
                 if value.dtype == INT_DTYPE:
                     value = np.array(value, "f")  # convert to float
                 if dict.__contains__(self, key):
@@ -251,7 +261,7 @@ class KeyDict(KeyMap, dict):
                     goodvals = ~isnan(value)
                     super().__getitem__(key)[goodvals] = value[goodvals]
                     return  # successfully set only some indexes!
-            elif not is_sweepvar(value): # or needs to be made one?
+            elif not is_sweepvar(value):  # or needs to be made one?
                 if not hasattr(value, "__len__"):
                     value = np.full(key.shape, value, "f")
                 elif not isinstance(value[0], np.ndarray):
@@ -298,6 +308,7 @@ class KeyDict(KeyMap, dict):
 
 class KeySet(KeyMap, set):
     "KeyMaps that don't collapse arrays or store values."
+
     collapse_arrays = False
 
     def update(self, keys):

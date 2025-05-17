@@ -1,4 +1,5 @@
 "Implements tests for all external repositories."
+
 import os
 import subprocess
 import sys
@@ -36,9 +37,10 @@ def test_repo(repo=".", xmloutput=False):
     if "skipsolvers" in settings:
         skipsolvers = [s.strip() for s in settings["skipsolvers"].split(",")]
 
-    testpy = ("from gpkit.tests.from_paths import run;"
-              "run(xmloutput=%s, skipsolvers=%s)"
-              % (xmloutput, skipsolvers))
+    testpy = (
+        "from gpkit.tests.from_paths import run;"
+        "run(xmloutput=%s, skipsolvers=%s)" % (xmloutput, skipsolvers)
+    )
     subprocess.call(["python", "-c", testpy])
     if repo != ".":
         os.chdir("..")
@@ -58,7 +60,7 @@ def test_repos(repos=None, xmloutput=False, ingpkitmodels=False):
     """
     if not ingpkitmodels:
         git_clone("gplibrary")
-        repos_list_filename = "gplibrary"+os.sep+"EXTERNALTESTS"
+        repos_list_filename = "gplibrary" + os.sep + "EXTERNALTESTS"
         pip_install("gplibrary", local=True)
     else:
         print("USING LOCAL DIRECTORY AS GPKITMODELS DIRECTORY")

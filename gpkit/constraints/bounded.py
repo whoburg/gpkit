@@ -1,4 +1,5 @@
 "Implements Bounded"
+
 from collections import defaultdict
 
 import numpy as np
@@ -53,6 +54,7 @@ class Bounded(ConstraintSet):
     upper : float (default None)
         upper bound for all varkeys, replaces 1/eps
     """
+
     sens_threshold = 1e-7
     logtol_threshold = 3
 
@@ -60,14 +62,20 @@ class Bounded(ConstraintSet):
         if not isinstance(constraints, ConstraintSet):
             constraints = ConstraintSet(constraints)
         self.lowerbound = lower or eps
-        self.upperbound = upper or 1/eps
+        self.upperbound = upper or 1 / eps
         constrained_varkeys = constraints.constrained_varkeys()
-        self.bound_varkeys = frozenset(vk for vk in constrained_varkeys
-                                       if vk not in constraints.substitutions)
-        bounding_constraints = varkey_bounds(self.bound_varkeys,
-                                             self.lowerbound, self.upperbound)
-        super().__init__({"original constraints": constraints,
-                          "variable bounds": bounding_constraints})
+        self.bound_varkeys = frozenset(
+            vk for vk in constrained_varkeys if vk not in constraints.substitutions
+        )
+        bounding_constraints = varkey_bounds(
+            self.bound_varkeys, self.lowerbound, self.upperbound
+        )
+        super().__init__(
+            {
+                "original constraints": constraints,
+                "variable bounds": bounding_constraints,
+            }
+        )
 
     def process_result(self, result):
         "Add boundedness to the model's solution"
@@ -82,22 +90,23 @@ class Bounded(ConstraintSet):
         initsolwarning(result, "Arbitrarily Bounded Variables")
         for i, varkey in enumerate(self.bound_varkeys):
             value = result["variables"][varkey]
-            c_senss = [result["sensitivities"]["constraints"].get(c, 0)
-                       for c in self["variable bounds"][i]]
+            c_senss = [
+                result["sensitivities"]["constraints"].get(c, 0)
+                for c in self["variable bounds"][i]
+            ]
             if self.lowerbound:
                 bound = "lower bound of %.2g" % self.lowerbound
                 if c_senss[0] >= self.sens_threshold:
                     out["sensitive to " + bound].add(varkey)
-                if np.log(value/self.lowerbound) <= self.logtol_threshold:
+                if np.log(value / self.lowerbound) <= self.logtol_threshold:
                     out["value near " + bound].add(varkey)
             if self.upperbound:
                 bound = "upper bound of %.2g" % self.upperbound
                 if c_senss[-1] >= self.sens_threshold:
                     out["sensitive to " + bound].add(varkey)
-                if np.log(self.upperbound/value) <= self.logtol_threshold:
+                if np.log(self.upperbound / value) <= self.logtol_threshold:
                     out["value near " + bound].add(varkey)
         for bound, vks in out.items():
             msg = "% 34s: %s" % (bound, ", ".join([str(v) for v in vks]))
-            appendsolwarning(msg, out, result,
-                             "Arbitrarily Bounded Variables")
+            appendsolwarning(msg, out, result, "Arbitrarily Bounded Variables")
         return out

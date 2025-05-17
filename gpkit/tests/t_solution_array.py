@@ -1,4 +1,5 @@
 """Tests for SolutionArray class"""
+
 import unittest
 
 import numpy as np
@@ -14,7 +15,7 @@ class TestSolutionArray(unittest.TestCase):
     """Unit tests for the SolutionArray class"""
 
     def test_call(self):
-        A = Variable('A', '-', 'Test Variable')
+        A = Variable("A", "-", "Test Variable")
         prob = Model(A, [A >= 1])
         sol = prob.solve(verbosity=0)
         self.assertAlmostEqual(sol(A), 1.0, 8)
@@ -25,12 +26,12 @@ class TestSolutionArray(unittest.TestCase):
         y = Variable("y", "m")
         m = Model(y, [y >= x])
         sol = m.solve(verbosity=0)
-        self.assertAlmostEqual(sol("y")/sol("x"), 1.0, 6)
-        self.assertAlmostEqual(sol(x)/sol(y), 1.0, 6)
+        self.assertAlmostEqual(sol("y") / sol("x"), 1.0, 6)
+        self.assertAlmostEqual(sol(x) / sol(y), 1.0, 6)
 
     def test_call_vector(self):
         n = 5
-        x = VectorVariable(n, 'x')
+        x = VectorVariable(n, "x")
         prob = Model(sum(x), [x >= 2.5])
         sol = prob.solve(verbosity=0)
         solx = sol(x)
@@ -48,20 +49,17 @@ class TestSolutionArray(unittest.TestCase):
         P_max = Variable("P", Pvals, "m", "Perimeter")
         H = Variable("H", "m", "Length")
         W = Variable("W", "m", "Width")
-        m = Model(12/(W*H**3),
-                  [H <= H_max,
-                   H*W >= A_min,
-                   P_max >= 2*H + 2*W])
+        m = Model(12 / (W * H**3), [H <= H_max, H * W >= A_min, P_max >= 2 * H + 2 * W])
         sol = m.solve(verbosity=0)
         Psol = sol.subinto(P_max)
         self.assertEqual(len(Psol), Nsweep)
-        self.assertAlmostEqual(0*gpkit.ureg.m,
-                               np.max(np.abs(Pvals*gpkit.ureg.m - Psol)))
-        self.assertAlmostEqual(0*gpkit.ureg.m,
-                               np.max(np.abs(Psol - sol(P_max))))
+        self.assertAlmostEqual(
+            0 * gpkit.ureg.m, np.max(np.abs(Pvals * gpkit.ureg.m - Psol))
+        )
+        self.assertAlmostEqual(0 * gpkit.ureg.m, np.max(np.abs(Psol - sol(P_max))))
 
     def test_table(self):
-        x = Variable('x')
+        x = Variable("x")
         gp = Model(x, [x >= 12])
         sol = gp.solve(verbosity=0)
         tab = sol.table()
@@ -77,15 +75,15 @@ class TestSolutionArray(unittest.TestCase):
         sol = m.solve(verbosity=0)
         self.assertAlmostEqual(sol(Tmin), tminsub)
         self.assertFalse(
-            "1000N" in
-            sol.table().replace(" ", "").replace("[", "").replace("]", ""))
+            "1000N" in sol.table().replace(" ", "").replace("[", "").replace("]", "")
+        )
 
     def test_key_options(self):
         # issue 993
         x = Variable("x")
         y = Variable("y")
         with SignomialsEnabled():
-            m = Model(y, [y + 6*x >= 13 + x**2])
+            m = Model(y, [y + 6 * x >= 13 + x**2])
         msol = m.localsolve(verbosity=0)
         spsol = m.sp().localsolve(verbosity=0)  # pylint: disable=no-member
         gpsol = m.program.gps[-1].solve(verbosity=0)
@@ -101,7 +99,7 @@ class TestResultsTable(unittest.TestCase):
 
     def test_nan_printing(self):
         """Test that solution prints when it contains nans"""
-        x = VarKey(name='x')
+        x = VarKey(name="x")
         data = {x: np.array([np.nan, 1, 1, 1, 1])}
         title = "Free variables"
         printstr = "\n".join(var_table(data, title))
@@ -112,17 +110,20 @@ class TestResultsTable(unittest.TestCase):
         x = Variable("x")
         y = Variable("y")
         with SignomialsEnabled():
-            sig = (y + 6*x >= 13 + x**2)
+            sig = y + 6 * x >= 13 + x**2
         m = Model(y, [sig])
         sol = m.localsolve(verbosity=0)
-        self.assertTrue(all([isinstance(gp.result.table(), Strings)
-                             for gp in m.program.gps]))
-        self.assertAlmostEqual(sol["cost"]/4.0, 1.0, 5)
-        self.assertAlmostEqual(sol("x")/3.0, 1.0, 3)
+        self.assertTrue(
+            all([isinstance(gp.result.table(), Strings) for gp in m.program.gps])
+        )
+        self.assertAlmostEqual(sol["cost"] / 4.0, 1.0, 5)
+        self.assertAlmostEqual(sol("x") / 3.0, 1.0, 3)
+
 
 TESTS = [TestSolutionArray, TestResultsTable]
 
 if __name__ == "__main__":  # pragma: no cover
     # pylint: disable=wrong-import-position
     from gpkit.tests.helpers import run_tests
+
     run_tests(TESTS)

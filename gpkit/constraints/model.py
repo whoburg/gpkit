@@ -1,4 +1,5 @@
 "Implements Model"
+
 import numpy as np
 
 from ..exceptions import Infeasible, InvalidGPConstraint
@@ -36,6 +37,7 @@ class Model(CostedConstraintSet):
     `program` is set during a solve
     `solution` is set at the end of a solve
     """
+
     program = None
     solution = None
 
@@ -46,20 +48,19 @@ class Model(CostedConstraintSet):
             self.cost = None
             # lineage holds the (name, num) environment a model was created in,
             # including its own (name, num), and those of models above it
-            with NamedVariables(self.__class__.__name__) as (self.lineage,
-                                                             setup_vars):
-                args = tuple(arg for arg in [cost, constraints]
-                             if arg is not None) + args
+            with NamedVariables(self.__class__.__name__) as (self.lineage, setup_vars):
+                args = (
+                    tuple(arg for arg in [cost, constraints] if arg is not None) + args
+                )
                 cs = self.setup(*args, **kwargs)  # pylint: disable=no-member
-                if (isinstance(cs, tuple) and len(cs) == 2
-                        and isinstance(cs[1], dict)):
+                if isinstance(cs, tuple) and len(cs) == 2 and isinstance(cs[1], dict):
                     constraints, substitutions = cs
                 else:
                     constraints = cs
             cost = self.cost
         elif args and not substitutions:
             # backwards compatibility: substitutions as third argument
-            substitutions, = args
+            (substitutions,) = args
 
         cost = cost or Monomial(1)
         constraints = constraints or []
@@ -79,7 +80,9 @@ class Model(CostedConstraintSet):
     sp = progify(SequentialGeometricProgram)
     localsolve = solvify(progify(SequentialGeometricProgram, "localsolve"))
 
-    def verify_docstring(self):  # pylint:disable=too-many-locals,too-many-branches,too-many-statements
+    def verify_docstring(
+        self,
+    ):  # pylint:disable=too-many-locals,too-many-branches,too-many-statements
         "Verifies docstring bounds are sufficient but not excessive."
         err = "while verifying %s:\n" % self.__class__.__name__
         bounded, meq_bounded = self.bounded.copy(), self.meq_bounded.copy()
@@ -92,9 +95,12 @@ class Model(CostedConstraintSet):
                 if not badvks:
                     continue
                 badvks = ", ".join(str(v) for v in badvks)
-                badvks += (" were" if len(badvks) > 1 else " was")
-                err += ("    %s %s-bounded; expected %s-unbounded"
-                        "\n" % (badvks, direction, direction))
+                badvks += " were" if len(badvks) > 1 else " was"
+                err += "    %s %s-bounded; expected %s-unbounded" "\n" % (
+                    badvks,
+                    direction,
+                    direction,
+                )
             raise ValueError(err)
         bounded.update(exp_unbounds)  # if not, treat expected as bounded
         add_meq_bounds(bounded, meq_bounded)  # and add more meqs
@@ -103,26 +109,29 @@ class Model(CostedConstraintSet):
             for condition in list(meq_bounded[bound]):
                 meq_bounded[bound].remove(condition)
                 newcond = condition - bounded
-                if newcond and not any(c.issubset(newcond)
-                                       for c in meq_bounded[bound]):
+                if newcond and not any(c.issubset(newcond) for c in meq_bounded[bound]):
                     meq_bounded[bound].add(newcond)
             bsets = " or ".join(str(list(c)) for c in meq_bounded[bound])
-            self.missingbounds[bound] = (", but would gain it from any of"
-                                         " these sets of bounds: " + bsets)
+            self.missingbounds[bound] = (
+                ", but would gain it from any of" " these sets of bounds: " + bsets
+            )
         # then add everything that's not in bounded
-        if len(bounded)+len(self.missingbounds) != 2*len(self.varkeys):
+        if len(bounded) + len(self.missingbounds) != 2 * len(self.varkeys):
             for key in self.varkeys:
                 for bound in ("upper", "lower"):
                     if (key, bound) not in bounded:
                         if (key, bound) not in self.missingbounds:
                             self.missingbounds[(key, bound)] = ""
         if self.missingbounds:  # anything unbounded? err!
-            boundstrs = "\n".join("  %s has no %s bound%s" % (v, b, x)
-                                  for (v, b), x
-                                  in self.missingbounds.items())
-            docstring = ("To fix this add the following to %s's"
-                         " docstring (you may not need it all):"
-                         " \n" % self.__class__.__name__)
+            boundstrs = "\n".join(
+                "  %s has no %s bound%s" % (v, b, x)
+                for (v, b), x in self.missingbounds.items()
+            )
+            docstring = (
+                "To fix this add the following to %s's"
+                " docstring (you may not need it all):"
+                " \n" % self.__class__.__name__
+            )
             for direction in ["upper", "lower"]:
                 mb = [k for (k, b) in self.missingbounds if b == direction]
                 if mb:
@@ -130,7 +139,10 @@ class Model(CostedConstraintSet):
 %s Unbounded
 ---------------
 %s
-""" % (direction.title(), ", ".join(set(k.name for k in mb)))
+""" % (
+                        direction.title(),
+                        ", ".join(set(k.name for k in mb)),
+                    )
             raise ValueError(err + boundstrs + "\n\n" + docstring)
 
     def sweep(self, sweeps, **solveargs):
@@ -138,7 +150,7 @@ class Model(CostedConstraintSet):
         sols = []
         for sweepvar, sweepvals in sweeps.items():
             original_val = self.substitutions.get(sweepvar, None)
-            self.substitutions.update({sweepvar: ('sweep', sweepvals)})
+            self.substitutions.update({sweepvar: ("sweep", sweepvals)})
             try:
                 sols.append(self.solve(**solveargs))
             except InvalidGPConstraint:
@@ -176,7 +188,7 @@ class Model(CostedConstraintSet):
         bounded = Bounded(self)
         tants = ConstantsRelaxed(bounded)
         if tants.relaxvars.size:
-            feas = Model(tants.relaxvars.prod()**30 * self.cost, tants)
+            feas = Model(tants.relaxvars.prod() ** 30 * self.cost, tants)
         else:
             feas = Model(self.cost, bounded)
 
@@ -190,10 +202,12 @@ class Model(CostedConstraintSet):
             tants.check_relaxed(sol)
         except Infeasible:
             if verbosity:
-                print("<DEBUG> Model is not feasible with relaxed constants"
-                      " and bounded variables.")
+                print(
+                    "<DEBUG> Model is not feasible with relaxed constants"
+                    " and bounded variables."
+                )
             traints = ConstraintsRelaxed(self)
-            feas = Model(traints.relaxvars.prod()**30 * self.cost, traints)
+            feas = Model(traints.relaxvars.prod() ** 30 * self.cost, traints)
             try:
                 try:
                     sol = feas.solve(**solveargs)
@@ -209,7 +223,9 @@ class Model(CostedConstraintSet):
                 print("<DEBUG> Model is feasible with these modifications:")
                 print("\n" + "\n".join(warnings) + "\n")
             else:
-                print("<DEBUG> Model seems feasible without modification,"
-                      " or only needs relaxations of less than 1%."
-                      " Check the returned solution for details.")
+                print(
+                    "<DEBUG> Model seems feasible without modification,"
+                    " or only needs relaxations of less than 1%."
+                    " Check the returned solution for details."
+                )
         return sol

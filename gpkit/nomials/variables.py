@@ -1,4 +1,5 @@
 "Implement Variable and ArrayVariable classes"
+
 from collections.abc import Iterable
 
 import numpy as np
@@ -39,18 +40,21 @@ class Variable(Monomial):
     Monomials containing a VarKey with the name '$name',
     where $name is the vector's name and i is the VarKey's index.
     """
+
     def __init__(self, *args, **descr):
         if len(args) == 1 and isinstance(args[0], VarKey):
-            self.key, = args
+            (self.key,) = args
         else:
             for arg in args:
                 if isinstance(arg, Strings) and "name" not in descr:
                     descr["name"] = arg
-                elif (isinstance(arg, Numbers) or hasattr(arg, "__call__")
-                      and "value" not in descr):
+                elif (
+                    isinstance(arg, Numbers)
+                    or hasattr(arg, "__call__")
+                    and "value" not in descr
+                ):
                     descr["value"] = arg
-                elif (isinstance(arg, Iterable)
-                      and not isinstance(arg, Strings)):
+                elif isinstance(arg, Iterable) and not isinstance(arg, Strings):
                     if is_sweepvar(arg):
                         descr["value"] = arg
                     else:
@@ -82,7 +86,7 @@ class Variable(Monomial):
         assert x.sub(3) == Variable('x', value=3)
         """
         if len(args) == 1 and "val" not in kwargs:
-            arg, = args
+            (arg,) = args
             if not isinstance(arg, dict):
                 args = [{self: arg}]
         return Monomial.sub(self, *args, **kwargs)
@@ -108,7 +112,10 @@ class ArrayVariable(NomialArray):  # pylint: disable=too-many-locals
     NomialArray of Monomials, each containing a VarKey with name '$name_{i}',
     where $name is the vector's name and i is the VarKey's index.
     """
-    def __new__(cls, shape, *args, **descr):  # pylint: disable=too-many-branches, too-many-statements, arguments-differ
+
+    def __new__(
+        cls, shape, *args, **descr
+    ):  # pylint: disable=too-many-branches, too-many-statements, arguments-differ
         if "idx" in descr:
             raise ValueError("the description field 'idx' is reserved")
 
@@ -121,9 +128,11 @@ class ArrayVariable(NomialArray):  # pylint: disable=too-many-locals
         for arg in args:
             if isinstance(arg, Strings) and "name" not in descr:
                 descr["name"] = arg
-            elif (isinstance(arg, (Numbers, Iterable))
-                  and not isinstance(arg, Strings)
-                  and "value" not in descr):
+            elif (
+                isinstance(arg, (Numbers, Iterable))
+                and not isinstance(arg, Strings)
+                and "value" not in descr
+            ):
                 descr["value"] = arg
             elif hasattr(arg, "__call__"):
                 descr["value"] = arg
@@ -146,8 +155,10 @@ class ArrayVariable(NomialArray):  # pylint: disable=too-many-locals
                 elif not hasattr(values, "shape"):
                     values = np.array(values)
                 if values.shape != shape:
-                    raise ValueError("value's shape %s is different from the"
-                                     " vector's %s." % (values.shape, shape))
+                    raise ValueError(
+                        "value's shape %s is different from the"
+                        " vector's %s." % (values.shape, shape)
+                    )
 
         veckeydescr = descr.copy()
         addmodelstodescr(veckeydescr)
@@ -159,7 +170,7 @@ class ArrayVariable(NomialArray):  # pylint: disable=too-many-locals
 
         descr["veckey"] = veckey
         vl = np.empty(shape, dtype="object")
-        it = np.nditer(vl, flags=['multi_index', 'refs_ok'])
+        it = np.nditer(vl, flags=["multi_index", "refs_ok"])
         while not it.finished:
             i = it.multi_index
             it.iternext()
@@ -177,8 +188,11 @@ class ArrayVariable(NomialArray):  # pylint: disable=too-many-locals
         return obj
 
 
-class VectorizableVariable(Variable, ArrayVariable):  # pylint: disable=too-many-ancestors
+class VectorizableVariable(
+    Variable, ArrayVariable
+):  # pylint: disable=too-many-ancestors
     "A Variable outside a vectorized environment, an ArrayVariable within."
+
     def __new__(cls, *args, **descr):
         if Vectorize.vectorization:
             shape = descr.pop("shape", ())

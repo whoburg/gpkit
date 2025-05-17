@@ -1,4 +1,5 @@
 "Docstring-parsing methods"
+
 import ast
 import inspect
 import re
@@ -11,7 +12,7 @@ def expected_unbounded(instance, doc):
     # pylint: disable=too-many-locals,too-many-nested-blocks
     exp_unbounded = set()
     for direction in ["upper", "lower"]:
-        flag = direction[0].upper()+direction[1:]+" Unbounded\n"
+        flag = direction[0].upper() + direction[1:] + " Unbounded\n"
         count = doc.count(flag)
         if count == 0:
             continue
@@ -21,12 +22,12 @@ def expected_unbounded(instance, doc):
         idx = doc.index(flag) + len(flag)
         idx2 = doc[idx:].index("\n")
         try:
-            idx3 = doc[idx:][idx2+1:].index("\n\n")
+            idx3 = doc[idx:][idx2 + 1 :].index("\n\n")
         except ValueError:
-            idx3 = doc[idx:][idx2+1:].index("\n")
-        varstrs = doc[idx:][idx2+1:][:idx3].strip()
+            idx3 = doc[idx:][idx2 + 1 :].index("\n")
+        varstrs = doc[idx:][idx2 + 1 :][:idx3].strip()
         varstrs = varstrs.replace("\n", ", ")  # cross newlines
-        varstrs = re.sub(" +", " ", varstrs)   # multiple-whitespace removal
+        varstrs = re.sub(" +", " ", varstrs)  # multiple-whitespace removal
         if varstrs:
             for var in varstrs.split(", "):
                 if " (if " in var:  # it's a conditional!
@@ -46,13 +47,15 @@ def expected_unbounded(instance, doc):
                         obj = getattr(obj, subdot)
                     variables = obj
                 except AttributeError:
-                    raise AttributeError("`%s` is noted in %s as "
-                                         "unbounded, but is not "
-                                         "an attribute of that model."
-                                         % (var, instance.__class__.__name__))
+                    raise AttributeError(
+                        "`%s` is noted in %s as "
+                        "unbounded, but is not "
+                        "an attribute of that model."
+                        % (var, instance.__class__.__name__)
+                    )
                 if not hasattr(variables, "shape"):
                     variables = np.array([variables])
-                it = np.nditer(variables, flags=['multi_index', 'refs_ok'])
+                it = np.nditer(variables, flags=["multi_index", "refs_ok"])
                 while not it.finished:
                     i = it.multi_index
                     it.iternext()
@@ -65,17 +68,20 @@ class parse_variables:  # pylint:disable=invalid-name
 
     Generally called as `@parse_variables(__doc__, globals())`.
     """
+
     def __init__(self, string, scopevars=None):
         self.string = string
         self.scopevars = scopevars
         if scopevars is None:
-            raise DeprecationWarning("""
+            raise DeprecationWarning(
+                """
 parse_variables is no longer used directly with exec, but as a decorator:
 
     @parse_variables(__doc__, globals())
     def setup(...):
 
-""")
+"""
+            )
 
     def __call__(self, function):  # pylint:disable=too-many-locals
         orig_lines, lineno = inspect.getsourcelines(function)
@@ -93,19 +99,30 @@ parse_variables is no longer used directly with exec, but as a decorator:
         while orig_lines[next_indented_idx][indent_length] in [" ", "\t"]:
             indent_length += 1
         second_indent = orig_lines[next_indented_idx][:indent_length]
-        parse_lines = [second_indent + line + "\n"
-                       for line in parse_varstring(self.string).split("\n")]
-        parse_lines += [second_indent + '# (@parse_variables spacer line)\n']
-        parse_lines += [second_indent + '# (setup spacer line)\n']*setup_lines
+        parse_lines = [
+            second_indent + line + "\n"
+            for line in parse_varstring(self.string).split("\n")
+        ]
+        parse_lines += [second_indent + "# (@parse_variables spacer line)\n"]
+        parse_lines += [second_indent + "# (setup spacer line)\n"] * setup_lines
         # make ast of these new lines, insert it into the original ast
-        new_lines = (orig_lines[1:setup_lines+1] + parse_lines
-                     + orig_lines[setup_lines+1:])
-        new_src = "\n".join([l[first_indent_length:-1] for l in new_lines
-                             if "#" not in l[:first_indent_length]])
+        new_lines = (
+            orig_lines[1 : setup_lines + 1]
+            + parse_lines
+            + orig_lines[setup_lines + 1 :]
+        )
+        new_src = "\n".join(
+            [
+                l[first_indent_length:-1]
+                for l in new_lines
+                if "#" not in l[:first_indent_length]
+            ]
+        )
         new_ast = ast.parse(new_src, "<parse_variables>")
-        ast.increment_lineno(new_ast, n=lineno-len(parse_lines))
-        code = compile(new_ast, inspect.getsourcefile(function), "exec",
-                       dont_inherit=True)  # don't inherit __future__ from here
+        ast.increment_lineno(new_ast, n=lineno - len(parse_lines))
+        code = compile(
+            new_ast, inspect.getsourcefile(function), "exec", dont_inherit=True
+        )  # don't inherit __future__ from here
         out = {}
         exec(code, self.scopevars, out)  # pylint: disable=exec-used
         return out[function.__name__]
@@ -127,7 +144,7 @@ def parse_varstring(string):
 
 def vv_declare(string, flag, idx2, countstr):
     "Turns Variable declarations into VectorVariable ones"
-    length = string[len(flag):idx2].strip()
+    length = string[len(flag) : idx2].strip()
     return countstr.replace("Variable(", "VectorVariable(%s, " % length)
 
 
@@ -157,12 +174,14 @@ def check_and_parse_flag(string, flag, declaration_func=None):
             if not line.strip():  # whitespace only
                 break
             try:
-                units = line[line.index("[")+1:line.index("]")]
+                units = line[line.index("[") + 1 : line.index("]")]
             except ValueError:
-                raise ValueError("A unit declaration bracketed by [] was"
-                                 " not found on the line reading:\n"
-                                 "    %s" % line)
-            nameval = line[:line.index("[")].split()
+                raise ValueError(
+                    "A unit declaration bracketed by [] was"
+                    " not found on the line reading:\n"
+                    "    %s" % line
+                )
+            nameval = line[: line.index("[")].split()
             labelstart = line.index("]") + 1
             if labelstart >= len(line):
                 label = ""
@@ -172,31 +191,34 @@ def check_and_parse_flag(string, flag, declaration_func=None):
                 label = line[labelstart:].replace("'", "\\'")
             countstr += variable_declaration(nameval, units, label, line)
             # note that this is a 0-based line indexing
-            lineidxs.append(originalstr[:originalstr.index(line)].count("\n"))
+            lineidxs.append(originalstr[: originalstr.index(line)].count("\n"))
         if declaration_func is None:
             overallstr += countstr
         else:
             overallstr += declaration_func(string, flag, idx2, countstr)
-        string = string[idx2+len(flag):]
+        string = string[idx2 + len(flag) :]
     return overallstr, lineidxs
 
 
-PARSETIP = ("Is this line following the format `Name (optional Value) [Units]"
-            " (Optional Description)` without any whitespace in the Name or"
-            " Value fields?")
+PARSETIP = (
+    "Is this line following the format `Name (optional Value) [Units]"
+    " (Optional Description)` without any whitespace in the Name or"
+    " Value fields?"
+)
 
 
 def variable_declaration(nameval, units, label, line, errorcatch=True):
     "Turns parsed output into a Variable declaration"
     if len(nameval) > 2:
-        raise ValueError("while parsing the line '%s', additional fields"
-                         " (separated by whitespace) were found between Value"
-                         " '%s' and the Units `%s`. %s"
-                         % (line, nameval[1], units, PARSETIP))
+        raise ValueError(
+            "while parsing the line '%s', additional fields"
+            " (separated by whitespace) were found between Value"
+            " '%s' and the Units `%s`. %s" % (line, nameval[1], units, PARSETIP)
+        )
     if len(nameval) == 2:
-        out = ("{0} = self.{0} = Variable('{0}', {1}, '{2}', '{3}')")
+        out = "{0} = self.{0} = Variable('{0}', {1}, '{2}', '{3}')"
         out = out.format(nameval[0], nameval[1], units, label)
     elif len(nameval) == 1:
-        out = ("{0} = self.{0} = Variable('{0}', '{1}', '{2}')")
+        out = "{0} = self.{0} = Variable('{0}', '{1}', '{2}')"
         out = out.format(nameval[0], units, label)
     return out + "\n"

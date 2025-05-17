@@ -1,4 +1,5 @@
 """Convenience classes and functions for unit testing"""
+
 import importlib
 import os
 import sys
@@ -51,6 +52,7 @@ def new_test(name, solver, import_dict, path, testfn=None):
         # No docstring because it'd be uselessly the same for each example
 
         import gpkit
+
         with NewDefaultSolver(solver):
             testfn(name, import_dict, path)(self)
 
@@ -59,15 +61,19 @@ def new_test(name, solver, import_dict, path, testfn=None):
 
         # check all global state is falsy
         for globname, global_thing in [
-                ("model numbers", gpkit.globals.NamedVariables.modelnums),
-                ("lineage", gpkit.NamedVariables.lineage),
-                ("signomials enabled", gpkit.SignomialsEnabled),
-                ("vectorization", gpkit.Vectorize.vectorization),
-                ("namedvars", gpkit.NamedVariables.namedvars)]:
+            ("model numbers", gpkit.globals.NamedVariables.modelnums),
+            ("lineage", gpkit.NamedVariables.lineage),
+            ("signomials enabled", gpkit.SignomialsEnabled),
+            ("vectorization", gpkit.Vectorize.vectorization),
+            ("namedvars", gpkit.NamedVariables.namedvars),
+        ]:
             if global_thing:  # pragma: no cover
-                raise ValueError("global attribute %s should have been"
-                                 " falsy after the test, but was instead %s"
-                                 % (globname, global_thing))
+                raise ValueError(
+                    "global attribute %s should have been"
+                    " falsy after the test, but was instead %s"
+                    % (globname, global_thing)
+                )
+
     return test
 
 
@@ -78,17 +84,22 @@ def logged_example_testcase(name, imported, path):
 
     Returns a method.
     """
+
     def test(self):
         # pylint: disable=missing-docstring
         # No docstring because it'd be uselessly the same for each example
-        filepath = ("".join([path, os.sep, "%s_output.txt" % name])
-                    if name not in imported else None)
+        filepath = (
+            "".join([path, os.sep, "%s_output.txt" % name])
+            if name not in imported
+            else None
+        )
         with StdoutCaptured(logfilepath=filepath):
             if name in imported:
                 importlib.reload(imported[name])
             else:
                 imported[name] = importlib.import_module(name)
         getattr(self, name)(imported[name])
+
     return test
 
 
@@ -110,6 +121,7 @@ def run_tests(tests, xmloutput=None, verbosity=2):
         suite.addTests(loader.loadTestsFromTestCase(t))
     if xmloutput:
         import xmlrunner  # pylint: disable=import-error
+
         result = xmlrunner.XMLTestRunner(output=xmloutput).run(suite)
     else:  # pragma: no cover
         result = unittest.TextTestRunner(verbosity=verbosity).run(suite)
@@ -119,6 +131,7 @@ def run_tests(tests, xmloutput=None, verbosity=2):
 
 class NullFile:
     "A fake file interface that does nothing"
+
     def write(self, string):
         "Do not write, do not pass go."
 
@@ -128,6 +141,7 @@ class NullFile:
 
 class NewDefaultSolver:
     "Creates an environment with a different default solver"
+
     def __init__(self, solver):
         self.solver = solver
         self.prev_default_solver = None
@@ -135,17 +149,20 @@ class NewDefaultSolver:
     def __enter__(self):
         "Change default solver."
         import gpkit
+
         self.prev_default_solver = gpkit.settings["default_solver"]
         gpkit.settings["default_solver"] = self.solver
 
     def __exit__(self, *args):
         "Reset default solver."
         import gpkit
+
         gpkit.settings["default_solver"] = self.prev_default_solver
 
 
 class StdoutCaptured:
     "Puts everything that would have printed to stdout in a log file instead"
+
     def __init__(self, logfilepath=None):
         self.logfilepath = logfilepath
         self.original_stdout = None
@@ -154,8 +171,9 @@ class StdoutCaptured:
     def __enter__(self):
         "Capture stdout"
         self.original_stdout = sys.stdout
-        sys.stdout = (open(self.logfilepath, mode="w")
-                      if self.logfilepath else NullFile())
+        sys.stdout = (
+            open(self.logfilepath, mode="w") if self.logfilepath else NullFile()
+        )
 
     def __exit__(self, *args):
         "Return stdout"

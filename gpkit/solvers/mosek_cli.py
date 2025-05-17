@@ -1,10 +1,11 @@
 """Module for using the MOSEK EXPOPT command line interface
 
-    Example
-    -------
-    ``result = _mosek.cli_expopt.imize(cs, A, p_idxs, "gpkit_mosek")``
+Example
+-------
+``result = _mosek.cli_expopt.imize(cs, A, p_idxs, "gpkit_mosek")``
 
 """
+
 import errno
 import os
 import shutil
@@ -89,8 +90,9 @@ def optimize_generator(path=None, **_):
         # run mskexpopt and print stdout
         solution_filename = filename + ".sol"
         try:
-            for logline in check_output(["mskexpopt", filename, "-sol",
-                                         solution_filename]).split(b"\n"):
+            for logline in check_output(
+                ["mskexpopt", filename, "-sol", solution_filename]
+            ).split(b"\n"):
                 print(logline)
         except CalledProcessError as e:
             # invalid license return codes:
@@ -123,10 +125,12 @@ def optimize_generator(path=None, **_):
         if tmpdir:
             shutil.rmtree(path, ignore_errors=False, onerror=remove_read_only)
 
-        return dict(status=solsta[:-1],
-                    objective=objective_val,
-                    primal=primal_vals,
-                    nu=dual_vals)
+        return dict(
+            status=solsta[:-1],
+            objective=objective_val,
+            primal=primal_vals,
+            nu=dual_vals,
+        )
 
     return optimize
 
@@ -146,15 +150,14 @@ def write_output_file(filename, c, A, p_idxs):
         f.writelines(["%d\n" % x for x in p_idxs])
 
         f.write("\n*t j A_tj\n")
-        f.writelines(["%d %d %.20e\n" % tuple(x)
-                      for x in zip(A.row, A.col, A.data)])
+        f.writelines(["%d %d %.20e\n" % tuple(x) for x in zip(A.row, A.col, A.data)])
 
 
 def assert_equal(received, expected):
     "Asserts that a file's next line is as expected."
     if expected.rstrip() != received.rstrip():  # pragma: no cover
-        errstr = repr(expected)+" is not the same as "+repr(received)
-        raise RuntimeWarning("could not read mskexpopt output file: "+errstr)
+        errstr = repr(expected) + " is not the same as " + repr(received)
+        raise RuntimeWarning("could not read mskexpopt output file: " + errstr)
 
 
 def read_vals(fil):

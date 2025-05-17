@@ -9,6 +9,6 @@ Supported solvers are
 [mosek](http://mosek.com)
 and [cvxopt](http://cvxopt.org/).
 
-[![CI Status](https://github.com/convexengineering/gpkit/actions/workflows/tests.yml/badge.svg)](https://github.com/convexengineering/gpkit/actions/workflows/tests.yml)
+[![CI Status](https://github.com/whoburg/gpkit/actions/workflows/tests.yml/badge.svg)](https://github.com/whoburg/gpkit/actions/workflows/tests.yml)
 
 Originally developed with Ned Burnell, whose extensive contributions were foundational to the early design.

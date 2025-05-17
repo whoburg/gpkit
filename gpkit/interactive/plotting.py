@@ -1,4 +1,5 @@
 """Plotting methods"""
+
 from collections import Counter
 
 import matplotlib.pyplot as plt
@@ -31,10 +32,14 @@ def compare(models, sweeps, posys, tol=0.001):
                 p = posy
             color = GPCOLORS[i % len(GPCOLORS)]
             if sol._is_cost(p):  # pylint: disable=protected-access
-                ax.fill_between(sol.sampled_at,
-                                sol.cost_lb(), sol.cost_ub(),
-                                facecolor=color, edgecolor=color,
-                                linewidth=0.75)
+                ax.fill_between(
+                    sol.sampled_at,
+                    sol.cost_lb(),
+                    sol.cost_ub(),
+                    facecolor=color,
+                    edgecolor=color,
+                    linewidth=0.75,
+                )
             else:
                 ax.plot(sol.sampled_at, sol(p), color=color)
 
@@ -58,14 +63,14 @@ def plot_convergence(model):
     cost = np.array([])
     for n in range(len(model.program.gps)):
         try:
-            cost = np.append(cost, model.program.gps[n].result['cost'])
-            it = np.append(it, n+1)
+            cost = np.append(cost, model.program.gps[n].result["cost"])
+            it = np.append(it, n + 1)
         except TypeError:
             pass
-    ax.plot(it, cost, '-o')
-    ax.set_xlabel('Iteration')
-    ax.set_ylabel('Cost')
-    ax.set_xticks(range(1, len(model.program.gps)+1))
+    ax.plot(it, cost, "-o")
+    ax.set_xlabel("Iteration")
+    ax.set_ylabel("Cost")
+    ax.set_xticks(range(1, len(model.program.gps) + 1))
     return fig, ax
 
 
@@ -123,10 +128,12 @@ def treemap(model, itemize="variables", sizebycount=False):
             parents.append(grandparent)
             sizes.append(0)
 
-    fig = go.Figure(go.Treemap(
-        ids=modelnames,
-        labels=[modelname.split(".")[-1] for modelname in modelnames],
-        parents=parents,
-        values=sizes if sizebycount else None,
-    ))
+    fig = go.Figure(
+        go.Treemap(
+            ids=modelnames,
+            labels=[modelname.split(".")[-1] for modelname in modelnames],
+            parents=parents,
+            values=sizes if sizebycount else None,
+        )
+    )
     return fig

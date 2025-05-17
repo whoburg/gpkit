@@ -1,11 +1,12 @@
 """Module for creating NomialArray instances.
 
-    Example
-    -------
-    >>> x = gpkit.Monomial('x')
-    >>> px = gpkit.NomialArray([1, x, x**2])
+Example
+-------
+>>> x = gpkit.Monomial('x')
+>>> px = gpkit.NomialArray([1, x, x**2])
 
 """
+
 from functools import reduce  # pylint: disable=redefined-builtin
 from operator import eq, ge, le, xor
 
@@ -33,8 +34,10 @@ def array_constraint(symbol, func):
         if not isinstance(other, NomialArray):
             other = NomialArray(other)
         result = vecfunc(self, other)
-        return ArrayConstraint(result, getattr(self, "key", self),
-                               symbol, getattr(other, "key", other))
+        return ArrayConstraint(
+            result, getattr(self, "key", self), symbol, getattr(other, "key", other)
+        )
+
     return wrapped_func
 
 
@@ -62,27 +65,30 @@ class NomialArray(ReprMixin, np.ndarray):
         return out
 
     def __rtruediv__(self, other):
-        out = (np.ndarray.__mul__(self**-1, other))
+        out = np.ndarray.__mul__(self**-1, other)
         out.ast = ("div", (other, self))
         return out
 
     def __add__(self, other, *, reverse_order=False):
         astorder = (self, other) if not reverse_order else (other, self)
-        out = (np.ndarray.__add__(self, other))
+        out = np.ndarray.__add__(self, other)
         out.ast = ("add", astorder)
         return out
 
     # pylint: disable=multiple-statements
-    def __rmul__(self, other): return self.__mul__(other, reverse_order=True)
-    def __radd__(self, other): return self.__add__(other, reverse_order=True)
+    def __rmul__(self, other):
+        return self.__mul__(other, reverse_order=True)
+
+    def __radd__(self, other):
+        return self.__add__(other, reverse_order=True)
 
     def __pow__(self, expo):  # pylint: disable=arguments-differ
-        out = (np.ndarray.__pow__(self, expo))  # pylint: disable=too-many-function-args
+        out = np.ndarray.__pow__(self, expo)  # pylint: disable=too-many-function-args
         out.ast = ("pow", (self, expo))
         return out
 
     def __neg__(self):
-        out = (np.ndarray.__neg__(self))
+        out = np.ndarray.__neg__(self)
         out.ast = ("neg", self)
         return out
 
@@ -103,8 +109,11 @@ class NomialArray(ReprMixin, np.ndarray):
             return try_str_without(self.flatten()[0], excluded)
 
         return "[%s]" % ", ".join(
-            [try_str_without(np.ndarray.__getitem__(self, i), excluded)
-             for i in range(self.shape[0])])  # pylint: disable=unsubscriptable-object
+            [
+                try_str_without(np.ndarray.__getitem__(self, i), excluded)
+                for i in range(self.shape[0])
+            ]
+        )  # pylint: disable=unsubscriptable-object
 
     def latex(self, excluded=()):
         "Returns latex representation without certain fields."
@@ -129,7 +138,9 @@ class NomialArray(ReprMixin, np.ndarray):
         Special case to avoid creation of 0-dimensional arrays
         See http://docs.scipy.org/doc/numpy/user/basics.subclassing.html"""
         if out_arr.ndim:
-            return np.ndarray.__array_wrap__(self, out_arr, context)  # pylint: disable=too-many-function-args
+            return np.ndarray.__array_wrap__(
+                self, out_arr, context
+            )  # pylint: disable=too-many-function-args
         val = out_arr.item()
         return np.float(val) if isinstance(val, np.generic) else val
 
@@ -185,7 +196,7 @@ class NomialArray(ReprMixin, np.ndarray):
         hmap = NomialMap()
         for m in self.flat:  # pylint:disable=not-an-iterable
             try:
-                (mexp, mc), = m.hmap.items()
+                ((mexp, mc),) = m.hmap.items()
             except (AttributeError, ValueError):
                 return np.ndarray.prod(self, *args, **kwargs)
             c *= mc

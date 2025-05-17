@@ -1,4 +1,5 @@
 """Miscellaneous small classes"""
+
 from functools import reduce
 from operator import xor
 
@@ -12,6 +13,7 @@ Numbers = (int, float, np.number, Quantity)
 
 class FixedScalarMeta(type):
     "Metaclass to implement instance checking for fixed scalars"
+
     def __instancecheck__(cls, obj):
         return getattr(obj, "hmap", None) and len(obj.hmap) == 1 and not obj.vks
 
@@ -22,6 +24,7 @@ class FixedScalar(metaclass=FixedScalarMeta):  # pylint: disable=no-init
 
 class Count:
     "Like python 2's itertools.count, for Python 3 compatibility."
+
     def __init__(self):
         self.count = -1
 
@@ -33,23 +36,32 @@ class Count:
 
 def matrix_converter(name):
     "Generates conversion function."
+
     def to_(self):  # used in tocoo, tocsc, etc below
         "Converts to another type of matrix."
         # pylint: disable=unused-variable
-        return getattr(self.tocsr(), "to"+name)()
+        return getattr(self.tocsr(), "to" + name)()
+
     return to_
 
 
 class CootMatrix:
     "A very simple sparse matrix representation."
+
     def __init__(self, row, col, data):
         self.row, self.col, self.data = row, col, data
-        self.shape = [(max(self.row) + 1) if self.row else 0,
-                      (max(self.col) + 1) if self.col else 0]
+        self.shape = [
+            (max(self.row) + 1) if self.row else 0,
+            (max(self.col) + 1) if self.col else 0,
+        ]
 
     def __eq__(self, other):
-        return (self.row == other.row and self.col == other.col
-                and self.data == other.data and self.shape == other.shape)
+        return (
+            self.row == other.row
+            and self.col == other.col
+            and self.data == other.data
+            and self.shape == other.shape
+        )
 
     tocoo = matrix_converter("coo")
     tocsc = matrix_converter("csc")
@@ -60,6 +72,7 @@ class CootMatrix:
     def tocsr(self):
         "Converts to a Scipy sparse csr_matrix"
         from scipy.sparse import csr_matrix
+
         return csr_matrix((self.data, (self.row, self.col)))
 
     def dot(self, arg):
@@ -69,6 +82,7 @@ class CootMatrix:
 
 class SolverLog:
     "Adds a `write` method to list so it's file-like and can replace stdout."
+
     def __init__(self, output=None, *, verbosity=0):
         self.written = ""
         self.verbosity = verbosity
@@ -130,8 +144,9 @@ def _append_dict(d_in, d_out):
             try:
                 d_out[k].append(v)
             except KeyError as e:
-                raise RuntimeWarning("Key `%s` was added after the first sweep."
-                                     % k) from e
+                raise RuntimeWarning(
+                    "Key `%s` was added after the first sweep." % k
+                ) from e
     return d_out
 
 
@@ -155,7 +170,7 @@ def _enray(d_in, d_out):
             d_out[k] = _enray(v, v.__class__())
         else:
             if len(v) == 1:
-                v, = v
+                (v,) = v
             else:
                 if isinstance(v[0], list):
                     v = np.array(v, dtype="object")
@@ -180,6 +195,7 @@ class HashVector(dict):
     >>> x = gpkit.nomials.Monomial("x")
     >>> exp = gpkit.small_classes.HashVector({x: 2})
     """
+
     hashvalue = None
 
     def __hash__(self):
@@ -206,7 +222,7 @@ class HashVector(dict):
         If the other object inherits from dict, multiplication is element-wise
         and their key's intersection will form the new keys."""
         try:
-            return self.__class__({k: v*other for (k, v) in self.items()})
+            return self.__class__({k: v * other for (k, v) in self.items()})
         except:  # pylint: disable=bare-except
             return NotImplemented
 
@@ -233,13 +249,26 @@ class HashVector(dict):
         return NotImplemented
 
     # pylint: disable=multiple-statements
-    def __neg__(self): return -1*self
-    def __sub__(self, other): return self + -other
-    def __rsub__(self, other): return other + -self
-    def __radd__(self, other): return self + other
-    def __truediv__(self, other): return self * other**-1
-    def __rtruediv__(self, other): return other * self**-1
-    def __rmul__(self, other): return self * other
+    def __neg__(self):
+        return -1 * self
+
+    def __sub__(self, other):
+        return self + -other
+
+    def __rsub__(self, other):
+        return other + -self
+
+    def __radd__(self, other):
+        return self + other
+
+    def __truediv__(self, other):
+        return self * other**-1
+
+    def __rtruediv__(self, other):
+        return other * self**-1
+
+    def __rmul__(self, other):
+        return self * other
 
 
 EMPTY_HV = HashVector()

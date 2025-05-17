@@ -1,4 +1,5 @@
 """Defines the VarKey class"""
+
 from .repr_conventions import ReprMixin
 from .small_classes import Count, qty
 
@@ -18,6 +19,7 @@ class VarKey(ReprMixin):  # pylint:disable=too-many-instance-attributes
     -------
     VarKey with the given name and descr.
     """
+
     unique_id = Count().next
     subscripts = ("lineage", "idx")
 
@@ -78,7 +80,7 @@ class VarKey(ReprMixin):  # pylint:disable=too-many-instance-attributes
                         replaced += 1
                         namespace = namespace[1:]
                     if len(to_replace) > replaced:
-                        namespace.insert(0, "."*(len(to_replace)-replaced))
+                        namespace.insert(0, "." * (len(to_replace) - replaced))
             if "hiddenlineage" not in excluded:
                 necessarylineage = self.necessarylineage
                 if necessarylineage is None and self.veckey:
@@ -100,8 +102,11 @@ class VarKey(ReprMixin):  # pylint:disable=too-many-instance-attributes
     __repr__ = str_without
 
     # pylint: disable=multiple-statements
-    def __hash__(self): return self.hashvalue
-    def __getattr__(self, attr): return self.descr.get(attr, None)
+    def __hash__(self):
+        return self.hashvalue
+
+    def __getattr__(self, attr):
+        return self.descr.get(attr, None)
 
     @property
     def models(self):
@@ -116,8 +121,7 @@ class VarKey(ReprMixin):  # pylint:disable=too-many-instance-attributes
         if "idx" not in excluded and self.idx:
             name = "{%s}_{%s}" % (name, ",".join(map(str, self.idx)))
         if "lineage" not in excluded and self.lineage:
-            name = "{%s}_{%s}" % (name,
-                                  self.lineagestr("modelnums" not in excluded))
+            name = "{%s}_{%s}" % (name, self.lineagestr("modelnums" not in excluded))
         return name
 
     def __eq__(self, other):

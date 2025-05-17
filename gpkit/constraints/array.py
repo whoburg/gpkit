@@ -1,4 +1,5 @@
 "Implements ArrayConstraint"
+
 from .single_equation import SingleEquationConstraint
 
 
@@ -8,6 +9,7 @@ class ArrayConstraint(SingleEquationConstraint, list):
     When created by NomialArray `left` and `right` are likely to be
     be either NomialArrays or Varkeys of VectorVariables.
     """
+
     def __init__(self, constraints, left, oper, right):
         self.constraints = constraints
         list.__init__(self, constraints)

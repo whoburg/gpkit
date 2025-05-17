@@ -1,4 +1,5 @@
 "wraps pint in gpkit monomials"
+
 import pint
 
 ureg = pint.UnitRegistry()  # pylint: disable=invalid-name
@@ -18,6 +19,7 @@ def qty(unit):
 
 class GPkitUnits:
     "Return Monomials instead of Quantitites"
+
     division_cache = {}
     multiplication_cache = {}
     monomial_cache = {}
@@ -25,6 +27,7 @@ class GPkitUnits:
     def __call__(self, unity):
         "Returns a unit Monomial, caching the result for future retrievals"
         from . import Monomial
+
         if unity not in self.monomial_cache:
             self.monomial_cache[unity] = Monomial(qty(unity))
         return self.monomial_cache[unity]
@@ -40,9 +43,9 @@ class GPkitUnits:
             return self.division_cache[key]
         except KeyError:
             if numerator.units and denominator.units:
-                conversion = numerator.units/denominator.units
+                conversion = numerator.units / denominator.units
             else:
-                conversion = numerator.units or 1/denominator.units
+                conversion = numerator.units or 1 / denominator.units
             try:
                 self.division_cache[key] = float(conversion)
             except DimensionalityError:
@@ -55,7 +58,7 @@ class GPkitUnits:
         try:
             return self.multiplication_cache[key]
         except KeyError:
-            mul_units = qty((thing1*thing2).units)
+            mul_units = qty((thing1 * thing2).units)
             try:
                 self.multiplication_cache[key] = (None, float(mul_units))
             except DimensionalityError:

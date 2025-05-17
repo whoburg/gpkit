@@ -1,4 +1,5 @@
 """Test KeyDict class"""
+
 import unittest
 
 import numpy as np

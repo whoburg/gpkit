@@ -1,4 +1,5 @@
 "Implements the NomialMap class"
+
 from collections import defaultdict
 
 import numpy as np
@@ -20,9 +21,10 @@ class NomialMap(HashVector):
     For example,  {{x : 1}: 2.0, {y: 1}: 3.0} represents 2*x + 3*y, where
     x and y are VarKey objects.
     """
+
     units = None
     expmap = None  # used for monomial-mapping postsubstitution; see .mmap()
-    csmap = None   # used for monomial-mapping postsubstitution; see .mmap()
+    csmap = None  # used for monomial-mapping postsubstitution; see .mmap()
 
     def copy(self):
         "Return a copy of this"
@@ -58,7 +60,7 @@ class NomialMap(HashVector):
         "Adds NomialMaps together"
         if self.units != other.units:
             try:
-                other *= float(other.units/self.units)
+                other *= float(other.units / self.units)
             except (TypeError, AttributeError):  # if one of those is None
                 raise DimensionalityError(self.units, other.units)
         hmap = HashVector.__add__(self, other)
@@ -68,8 +70,7 @@ class NomialMap(HashVector):
     def diff(self, varkey):
         "Differentiates a NomialMap with respect to a varkey"
         out = NomialMap()
-        out.units_of_product(self.units,
-                             1/varkey.units if varkey.units else None)
+        out.units_of_product(self.units, 1 / varkey.units if varkey.units else None)
         for exp in self:
             if varkey in exp:
                 x = exp[varkey]
@@ -79,8 +80,8 @@ class NomialMap(HashVector):
                     exp.hashvalue ^= hash((varkey, 1))
                     del exp[varkey]
                 else:
-                    exp.hashvalue ^= hash((varkey, x)) ^ hash((varkey, x-1))
-                    exp[varkey] = x-1
+                    exp.hashvalue ^= hash((varkey, x)) ^ hash((varkey, x - 1))
+                    exp[varkey] = x - 1
                 out[exp] = c
         return out
 
@@ -130,9 +131,8 @@ class NomialMap(HashVector):
             exps, cval = varlocs[vk], fixed[vk]
             if hasattr(cval, "hmap"):
                 if cval.hmap is None or any(cval.hmap.keys()):
-                    raise ValueError("Monomial substitutions are not"
-                                     " supported.")
-                cval, = cval.hmap.to(vk.units or DIMLESS_QUANTITY).values()
+                    raise ValueError("Monomial substitutions are not" " supported.")
+                (cval,) = cval.hmap.to(vk.units or DIMLESS_QUANTITY).values()
             elif hasattr(cval, "to"):
                 cval = cval.to(vk.units or DIMLESS_QUANTITY).magnitude
             for o_exp, exp in exps:
@@ -159,8 +159,8 @@ class NomialMap(HashVector):
         selfexps = list(self.keys())
         for orig_exp, self_exp in self.expmap.items():
             if self_exp not in self:  # can occur in tautological constraints
-                continue              #     after substitution
-            fraction = self.csmap.get(orig_exp, orig[orig_exp])/self[self_exp]
+                continue  #     after substitution
+            fraction = self.csmap.get(orig_exp, orig[orig_exp]) / self[self_exp]
             orig_idx = origexps.index(orig_exp)
             pmap[selfexps.index(self_exp)][orig_idx] = fraction
         return pmap
@@ -170,7 +170,7 @@ class NomialMap(HashVector):
 def subinplace(cp, exp, o_exp, vk, cval, squished):
     "Modifies cp by substituing cval/expval for vk in exp"
     x = exp[vk]
-    powval = float(cval)**x if cval != 0 or x >= 0 else np.sign(cval)*np.inf
+    powval = float(cval) ** x if cval != 0 or x >= 0 else np.sign(cval) * np.inf
     cp.csmap[o_exp] *= powval
     if exp in cp:
         c = cp.pop(exp)

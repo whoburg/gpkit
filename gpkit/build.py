@@ -1,4 +1,5 @@
 "Finds solvers, sets gpkit settings, and builds gpkit"
+
 import os
 import shutil
 import subprocess
@@ -52,22 +53,25 @@ def call(cmd):
 def diff(filename, diff_dict):
     "Applies a simple diff to a file. Logs."
     with open(filename, "r") as a:
-        with open(filename+".new", "w") as b:
+        with open(filename + ".new", "w") as b:
             for line_number, line in enumerate(a):
                 if line[:-1].strip() in diff_dict:
-                    newline = diff_dict[line[:-1].strip()]+"\n"
-                    log("#\n#     Change in %s"
-                        "on line %i" % (filename, line_number + 1))
+                    newline = diff_dict[line[:-1].strip()] + "\n"
+                    log(
+                        "#\n#     Change in %s"
+                        "on line %i" % (filename, line_number + 1)
+                    )
                     log("#     --", line[:-1][:70])
                     log("#     ++", newline[:70])
                     b.write(newline)
                 else:
                     b.write(line)
-    shutil.move(filename+".new", filename)
+    shutil.move(filename + ".new", filename)
 
 
 class SolverBackend:
     "Inheritable class for finding solvers. Logs."
+
     name = look = None
 
     def __init__(self):
@@ -83,11 +87,12 @@ class SolverBackend:
 
 class MosekCLI(SolverBackend):
     "MOSEK command line interface finder."
+
     name = "mosek_cli"
 
     def look(self):  # pylint: disable=too-many-return-statements
         "Looks in default install locations for a mosek before version 9."
-        log("#   (A \"success\" is if mskexpopt complains that")
+        log('#   (A "success" is if mskexpopt complains that')
         log("#    we haven't specified a file for it to open.)")
         already_in_path = self.run()
         if already_in_path:
@@ -110,22 +115,25 @@ class MosekCLI(SolverBackend):
 
         if "MSKHOME" in os.environ:  # allow specification of root dir
             rootdir = os.environ["MSKHOME"]
-            log("# Using MSKHOME environment variable (value %s) instead of"
-                " OS-default MOSEK home directory" % rootdir)
+            log(
+                "# Using MSKHOME environment variable (value %s) instead of"
+                " OS-default MOSEK home directory" % rootdir
+            )
         if not os.path.isdir(rootdir):
             return log("# expected MOSEK directory not found: %s" % rootdir)
 
-        possible_versions = [f for f in os.listdir(rootdir)
-                             if len(f) == 1 and f < "9"]
+        possible_versions = [f for f in os.listdir(rootdir) if len(f) == 1 and f < "9"]
         if not possible_versions:
-            return log("# no version folders (e.g. '7', '8') found"
-                       " in mosek directory \"%s\"" % rootdir)
+            return log(
+                "# no version folders (e.g. '7', '8') found"
+                ' in mosek directory "%s"' % rootdir
+            )
         version = sorted(possible_versions)[-1]
         tools_dir = pathjoin(rootdir, version, "tools")
         lib_dir = pathjoin(tools_dir, "platform", mosek_platform)
         bin_dir = pathjoin(lib_dir, "bin")
         settings["mosek_bin_dir"] = bin_dir
-        os.environ['PATH'] = os.environ['PATH'] + os.pathsep + bin_dir
+        os.environ["PATH"] = os.environ["PATH"] + os.pathsep + bin_dir
         log("#   Adding %s to the PATH" % bin_dir)
 
         return self.run("in " + bin_dir)
@@ -135,13 +143,14 @@ class MosekCLI(SolverBackend):
         try:
             if call("mskexpopt") in (1052, 28):  # 28 for MacOSX
                 return where
-        except:   # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             pass  # exception type varies by operating system
         return None
 
 
 class CVXopt(SolverBackend):
     "CVXopt finder."
+
     name = "cvxopt"
 
     def look(self):
@@ -149,6 +158,7 @@ class CVXopt(SolverBackend):
         try:
             log("#   Trying to import cvxopt...")
             import cvxopt  # pylint: disable=unused-import
+
             return "in the default PYTHONPATH"
         except ImportError:
             pass
@@ -156,6 +166,7 @@ class CVXopt(SolverBackend):
 
 class MosekConif(SolverBackend):
     "MOSEK exponential cone solver finder."
+
     name = "mosek_conif"
 
     def look(self):
@@ -163,15 +174,18 @@ class MosekConif(SolverBackend):
         try:
             log("#   Trying to import mosek...")
             import mosek
+
             if hasattr(mosek.conetype, "pexp"):
                 return "in the default PYTHONPATH"
             return None
         except ImportError:
             pass
 
+
 def build():
     "Builds GPkit"
     import gpkit
+
     log("# Building GPkit version %s" % gpkit.__version__)
     log("# Moving to the directory from which GPkit was imported.")
     start_dir = os.getcwd()
@@ -183,8 +197,10 @@ def build():
     if not installed_solvers:
         log("Can't find any solvers!\n")
     if "GPKITSOLVERS" in os.environ:
-        log("Replaced found solvers (%s) with environment var GPKITSOLVERS"
-            " (%s)" % (installed_solvers, os.environ["GPKITSOLVERS"]))
+        log(
+            "Replaced found solvers (%s) with environment var GPKITSOLVERS"
+            " (%s)" % (installed_solvers, os.environ["GPKITSOLVERS"])
+        )
         settings["installed_solvers"] = os.environ["GPKITSOLVERS"]
     else:
         settings["installed_solvers"] = ", ".join(installed_solvers)
@@ -200,6 +216,7 @@ def build():
         f.write(LOGSTR)
 
     os.chdir(start_dir)
+
 
 if __name__ == "__main__":
     build()

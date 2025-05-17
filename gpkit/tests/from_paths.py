@@ -1,4 +1,5 @@
 "Runs each file listed in pwd/TESTS as a test"
+
 import os
 import re
 import unittest
@@ -17,8 +18,8 @@ def clean(string):
     https://stackoverflow.com/questions/3303312/
     how-do-i-convert-a-string-to-a-valid-variable-name-in-python
     """
-    string = re.sub('[^0-9a-zA-Z_]', '_', string)  # Replace invalid with _
-    return re.sub('^[^a-zA-Z_]+', '', string)  # Remove leading until valid
+    string = re.sub("[^0-9a-zA-Z_]", "_", string)  # Replace invalid with _
+    return re.sub("^[^a-zA-Z_]+", "", string)  # Remove leading until valid
 
 
 def add_filetest(testclass, path):
@@ -39,14 +40,18 @@ def add_filetest(testclass, path):
         finally:
             os.chdir(top_level)
 
-    setattr(testclass, "test_"+clean(path), test_fn)
+    setattr(testclass, "test_" + clean(path), test_fn)
 
 
 def newtest_fn(name, solver, import_dict, path):
     "Doubly nested callbacks to run the test with `getattr(self, name)()`"
-    return new_test(name, solver, import_dict, path,
-                    testfn=(lambda name, import_dict, path:
-                            lambda self: getattr(self, name)()))  # pylint:disable=undefined-variable
+    return new_test(
+        name,
+        solver,
+        import_dict,
+        path,
+        testfn=(lambda name, import_dict, path: lambda self: getattr(self, name)()),
+    )  # pylint:disable=undefined-variable
 
 
 def run(filename="TESTS", xmloutput=False, skipsolvers="look around"):
@@ -56,13 +61,17 @@ def run(filename="TESTS", xmloutput=False, skipsolvers="look around"):
             add_filetest(TestFiles, path)
     if skipsolvers == "look around":
         from .test_repo import get_settings
+
         skipsolvers = get_settings()["skipsolvers"]
-    solvers = [s for s in settings["installed_solvers"]
-               if not skipsolvers or s not in skipsolvers]
-    tests = generate_example_tests("", [TestFiles], solvers,
-                                   newtest_fn=newtest_fn)
+    solvers = [
+        s
+        for s in settings["installed_solvers"]
+        if not skipsolvers or s not in skipsolvers
+    ]
+    tests = generate_example_tests("", [TestFiles], solvers, newtest_fn=newtest_fn)
     if not solvers:
         # Dummy test in case all installed solvers are skipped.
         tests[0].test_dummy = lambda self: None
     from gpkit.tests.run_tests import run as run_
+
     run_(tests=tests, xmloutput=xmloutput)

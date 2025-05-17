@@ -1,4 +1,5 @@
 "Contains nomials, inequalities, and arrays"
+
 from .array import NomialArray
 from .core import Nomial
 from .data import NomialData

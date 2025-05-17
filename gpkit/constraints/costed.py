@@ -1,4 +1,5 @@
 "Implement CostedConstraintSet"
+
 import numpy as np
 
 from ..repr_conventions import lineagestr
@@ -15,6 +16,7 @@ class CostedConstraintSet(ConstraintSet):
     constraints : Iterable
     substitutions : dict
     """
+
     lineage = None
 
     def __init__(self, cost, constraints, substitutions=None):
@@ -35,18 +37,28 @@ class CostedConstraintSet(ConstraintSet):
     def _rootlines(self, excluded=()):
         "String showing cost, to be used when this is the top constraint"
         if self.cost.vks:
-            description = ["", "Cost Function", "-------------",
-                           " %s" % self.cost.str_without(excluded),
-                           "", "Constraints", "-----------"]
-        else:   # don't print the cost if it's a constant
+            description = [
+                "",
+                "Cost Function",
+                "-------------",
+                " %s" % self.cost.str_without(excluded),
+                "",
+                "Constraints",
+                "-----------",
+            ]
+        else:  # don't print the cost if it's a constant
             description = ["", "Constraints", "-----------"]
         if self.lineage:
             fullname = lineagestr(self)
-            description = [fullname, "="*len(fullname)] + description
+            description = [fullname, "=" * len(fullname)] + description
         return description
 
     def _rootlatex(self, excluded=()):
         "Latex showing cost, to be used when this is the top constraint"
-        return "\n".join(["\\text{minimize}",
-                          "    & %s \\\\" % self.cost.latex(excluded),
-                          "\\text{subject to}"])
+        return "\n".join(
+            [
+                "\\text{minimize}",
+                "    & %s \\\\" % self.cost.latex(excluded),
+                "\\text{subject to}",
+            ]
+        )

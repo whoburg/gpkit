@@ -34,43 +34,44 @@ def referencesplot(model, *, openimmediately=True):
     def clean_lineage(lineage, clusterdepth=2):
         prelineage = ".".join(lineage.split(".")[:clusterdepth])
         last = "0".join(lineage.split(".")[clusterdepth:])
-        return "model."+prelineage + "." + last
+        return "model." + prelineage + "." + last
 
-    lines = ['jsondata = [']
+    lines = ["jsondata = ["]
     for lineage, limports in imports.items():
         name, short = clean_lineage(lineage), lineage.split(".")[-1]
         limports = map(clean_lineage, limports)
         lines.append(
             '  {"name":"%s","fullname":"%s","shortname":"%s","imports":%s},'
-            % (name, lineage, short, repr(list(limports)).replace("'", '"')))
+            % (name, lineage, short, repr(list(limports)).replace("'", '"'))
+        )
     lines[-1] = lines[-1][:-1]
     lines.append("]")
 
     if totalv_ss:
+
         def get_total_senss(clineage, vlineage, normalize=False):
             v_ss = totalv_ss[clineage]
-            num = sum(abs(ss) for vk, ss in v_ss.items()
-                      if vk.lineagestr() == vlineage)
+            num = sum(abs(ss) for vk, ss in v_ss.items() if vk.lineagestr() == vlineage)
             if not normalize:
                 return num
-            return num/sum(abs(ss) for ss in v_ss.values())
+            return num / sum(abs(ss) for ss in v_ss.values())
+
         lines.append("globalsenss = {")
         for clineage, limports in imports.items():
             if not limports:
                 continue
             limports = {vl: get_total_senss(clineage, vl) for vl in limports}
-            lines.append('  "%s": %s,' %
-                         (clineage, repr(limports).replace("'", '"')))
+            lines.append('  "%s": %s,' % (clineage, repr(limports).replace("'", '"')))
         lines[-1] = lines[-1][:-1]
         lines.append("}")
         lines.append("normalizedsenss = {")
         for clineage, limports in imports.items():
             if not limports:
                 continue
-            limports = {vl: get_total_senss(clineage, vl, normalize=True)
-                        for vl in limports}
-            lines.append('  "%s": %s,' %
-                         (clineage, repr(limports).replace("'", '"')))
+            limports = {
+                vl: get_total_senss(clineage, vl, normalize=True) for vl in limports
+            }
+            lines.append('  "%s": %s,' % (clineage, repr(limports).replace("'", '"')))
         lines[-1] = lines[-1][:-1]
         lines.append("}")
 
@@ -82,5 +83,4 @@ def referencesplot(model, *, openimmediately=True):
         shutil.copy(os.path.join(os.path.dirname(__file__), htmlfile), htmlfile)
 
     if openimmediately:
-        webbrowser.open("file://" + os.path.join(os.getcwd(), htmlfile),
-                        autoraise=True)
+        webbrowser.open("file://" + os.path.join(os.getcwd(), htmlfile), autoraise=True)

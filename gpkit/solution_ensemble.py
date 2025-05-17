@@ -1,4 +1,5 @@
 "implements SolutionEnsemble class"
+
 import pickle
 
 import numpy as np
@@ -17,8 +18,10 @@ def vardescr(var):
     "Returns a string fully describing a variable"
     return "%s (%s)" % (var.label, var)
 
+
 class OpenedSolutionEnsemble:
     "Helper class for use with `with` to handle opening/closing an ensemble"
+
     def __init__(self, filename="solensemble.pkl"):
         self.filename = filename
         try:
@@ -32,6 +35,7 @@ class OpenedSolutionEnsemble:
     def __exit__(self, type_, val, traceback):
         self.solensemble.save(self.filename)
 
+
 class SolutionEnsemble:
     """An ensemble of solutions.
 
@@ -44,8 +48,9 @@ class SolutionEnsemble:
     """
 
     def __str__(self):
-        out = ("Solution ensemble with a baseline and %s modified solutions:"
-               % (len(self.solutions) - 1))
+        out = "Solution ensemble with a baseline and %s modified solutions:" % (
+            len(self.solutions) - 1
+        )
         for differences in self.solutions:
             if differences:
                 out += "\n    " + self.labels[differences]
@@ -77,15 +82,14 @@ class SolutionEnsemble:
         keys = nameref.keymap[kstr]
         if len(keys) != 1:
             raise KeyError(var)
-        basevar, = keys
+        (basevar,) = keys
         return basevar
 
     def filter(self, *requirements):
         "Filters by requirements, returning another solution ensemble"
         candidates = set(self.solutions)
         for requirement in requirements:
-            if (isinstance(requirement, str)
-                    or not hasattr(requirement, "__len__")):
+            if isinstance(requirement, str) or not hasattr(requirement, "__len__"):
                 requirement = [requirement]
             subreqs = []
             for subreq in requirement:
@@ -109,11 +113,13 @@ class SolutionEnsemble:
 
     def get_solutions(self, *requirements):
         "Filters by requirements, returning a list of solutions."
-        return [sol
-                for diff, sol in self.filter(*requirements).solutions.items()
-                if diff]
+        return [
+            sol for diff, sol in self.filter(*requirements).solutions.items() if diff
+        ]
 
-    def append(self, solution, verbosity=1):  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
+    def append(
+        self, solution, verbosity=1
+    ):  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
         "Appends solution to the Ensemble"
         solution.set_necessarylineage()
         for var in solution["variables"]:
@@ -127,12 +133,15 @@ class SolutionEnsemble:
             return
 
         solconstraintstr, baseconstraintstr = (
-            sol.modelstr[sol.modelstr.find("Constraints"):]
-            for sol in [solution, self.baseline])
+            sol.modelstr[sol.modelstr.find("Constraints") :]
+            for sol in [solution, self.baseline]
+        )
         if solconstraintstr != baseconstraintstr:
-            raise ValueError("the new model's constraints are not identical"
-                             " to the base model's constraints."
-                             " (Use .baseline.diff(sol) to compare.)")
+            raise ValueError(
+                "the new model's constraints are not identical"
+                " to the base model's constraints."
+                " (Use .baseline.diff(sol) to compare.)"
+            )
 
         solution.pop("warnings", None)
         solution.pop("freevariables", None)
@@ -145,8 +154,7 @@ class SolutionEnsemble:
         for subd, value in solution["sensitivities"].items():
             if subd == "constraints":
                 solution["sensitivities"][subd] = {}
-                cstrs = {str(c): c
-                         for c in self.baseline["sensitivities"][subd]}
+                cstrs = {str(c): c for c in self.baseline["sensitivities"][subd]}
                 for oldkey, val in value.items():
                     if np.abs(val).max() < 1e-2:
                         if hasattr(val, "shape"):
@@ -181,7 +189,10 @@ class SolutionEnsemble:
 
         freedvars = set()
         setvars = set()
-        def check_var(var,):
+
+        def check_var(
+            var,
+        ):
             fixed_in_baseline = var in self.baseline["constants"]
             fixed_in_solution = var in solution["constants"]
             bval = self.baseline["variables"][var]
@@ -209,36 +220,44 @@ class SolutionEnsemble:
                     check_var(VarKey(idx=it.multi_index, **var.descr))
                     it.iternext()
 
-        for freedvar, in sorted(freedvars, key=varsort):
+        for (freedvar,) in sorted(freedvars, key=varsort):
             differences.append((freedvar, "freed"))
             labels.append(vardescr(freedvar) + " freed")
         for setvar, setval in sorted(setvars, key=varsort):
             differences.append((setvar, setval))
-            labels.append(vardescr(setvar) + " set to %.5g%s"
-                          % (setval, setvar.unitstr(into=' %s')))
+            labels.append(
+                vardescr(setvar)
+                + " set to %.5g%s" % (setval, setvar.unitstr(into=" %s"))
+            )
         if "sweepvariables" in solution:
-            for var, vals in sorted(solution["sweepvariables"].items(),
-                                    key=varsort):
+            for var, vals in sorted(solution["sweepvariables"].items(), key=varsort):
                 var = self[var]
                 if var.shape:
                     it = np.nditer(np.empty(var.shape), flags=["multi_index"])
                     while not it.finished:
-                        valsi = vals[(...,)+it.multi_index]
+                        valsi = vals[(...,) + it.multi_index]
                         if not np.isnan(valsi).any():
                             idxvar = VarKey(idx=it.multi_index, **var.descr)
-                            differences.append((idxvar, "sweep",
-                                                (min(valsi), max(valsi))))
-                            labels.append(vardescr(idxvar) + " swept from"
-                                          + " %.5g to" % min(valsi)
-                                          + " %.5g" % max(valsi)
-                                          + idxvar.unitstr(into=' %s'))
+                            differences.append(
+                                (idxvar, "sweep", (min(valsi), max(valsi)))
+                            )
+                            labels.append(
+                                vardescr(idxvar)
+                                + " swept from"
+                                + " %.5g to" % min(valsi)
+                                + " %.5g" % max(valsi)
+                                + idxvar.unitstr(into=" %s")
+                            )
                         it.iternext()
                 else:
                     differences.append((var, "sweep", (min(vals), max(vals))))
-                    labels.append(vardescr(var) + " swept from"
-                                  + " %.5g to" % min(vals)
-                                  + " %.5g" % max(vals)
-                                  + var.unitstr(into=' %s'))
+                    labels.append(
+                        vardescr(var)
+                        + " swept from"
+                        + " %.5g to" % min(vals)
+                        + " %.5g" % max(vals)
+                        + var.unitstr(into=" %s")
+                    )
         difference = tuple(differences)
         label = ", ".join(labels)
         if verbosity > 0:

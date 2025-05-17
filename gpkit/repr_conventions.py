@@ -1,4 +1,5 @@
 "Repository for representation standards"
+
 import re
 import sys
 
@@ -20,12 +21,21 @@ else:  # pragma: no cover
     UNICODE_EXPONENTS = True
     UNIT_FORMATTING = ":P~"
 
+
 def lineagestr(lineage, modelnums=True):
     "Returns properly formatted lineage string"
     if not isinstance(lineage, tuple):
         lineage = getattr(lineage, "lineage", None)
-    return ".".join(["%s%i" % (name, num) if (num and modelnums) else name
-                     for name, num in lineage]) if lineage else ""
+    return (
+        ".".join(
+            [
+                "%s%i" % (name, num) if (num and modelnums) else name
+                for name, num in lineage
+            ]
+        )
+        if lineage
+        else ""
+    )
 
 
 def unitstr(units, into="%s", options=UNIT_FORMATTING, dimless=""):
@@ -41,6 +51,7 @@ def unitstr(units, into="%s", options=UNIT_FORMATTING, dimless=""):
     units = rawstr.replace(" ", "").replace("dimensionless", dimless)
     return into % units or dimless
 
+
 def latex_unitstr(units):
     "Returns latex unitstr"
     us = unitstr(units, r"~\mathrm{%s}", ":L~")
@@ -55,14 +66,14 @@ def strify(val, excluded):
         if isqty:
             units = val
             val = val.magnitude
-        if np.pi/12 < val < 100*np.pi and abs(12*val/np.pi % 1) <= 1e-2:
+        if np.pi / 12 < val < 100 * np.pi and abs(12 * val / np.pi % 1) <= 1e-2:
             # val is in bounds and a clean multiple of PI!
-            if val > 3.1:                            # product of PI
-                val = "%.3g%s" % (val/np.pi, PI_STR)
+            if val > 3.1:  # product of PI
+                val = "%.3g%s" % (val / np.pi, PI_STR)
                 if val == "1%s" % PI_STR:
                     val = PI_STR
-            else:                                   # division of PI
-                val = "(%s/%.3g)" % (PI_STR, np.pi/val)
+            else:  # division of PI
+                val = "(%s/%.3g)" % (PI_STR, np.pi / val)
         else:
             val = "%.3g" % val
         if isqty:
@@ -75,8 +86,8 @@ def strify(val, excluded):
 def parenthesize(string, addi=True, mult=True):
     "Parenthesizes a string if it needs it and isn't already."
     parensless = string if "(" not in string else INSIDE_PARENS.sub("", string)
-    bare_addi = (" + " in parensless or " - " in parensless)
-    bare_mult = ("·" in parensless or "/" in parensless)
+    bare_addi = " + " in parensless or " - " in parensless
+    bare_mult = "·" in parensless or "/" in parensless
     if parensless and (addi and bare_addi) or (mult and bare_mult):
         return "(%s)" % string
     return string
@@ -84,12 +95,14 @@ def parenthesize(string, addi=True, mult=True):
 
 class ReprMixin:
     "This class combines various printing methods for easier adoption."
+
     lineagestr = lineagestr
     unitstr = unitstr
     latex_unitstr = latex_unitstr
 
     cached_strs = None
     ast = None
+
     # pylint: disable=too-many-branches, too-many-statements
     def parse_ast(self, excluded=()):
         "Turns the AST of this object's construction into a faithful string"
@@ -130,13 +143,17 @@ class ReprMixin:
             x = values[1]
             if left == "1":
                 aststr = "1"
-            elif (UNICODE_EXPONENTS and not getattr(x, "shape", None)
-                  and int(x) == x and 2 <= x <= 9):
+            elif (
+                UNICODE_EXPONENTS
+                and not getattr(x, "shape", None)
+                and int(x) == x
+                and 2 <= x <= 9
+            ):
                 x = int(x)
                 if x in (2, 3):
-                    aststr = "%s%s" % (left, chr(176+x))
+                    aststr = "%s%s" % (left, chr(176 + x))
                 elif x in (4, 5, 6, 7, 8, 9):
-                    aststr = "%s%s" % (left, chr(8304+x))
+                    aststr = "%s%s" % (left, chr(8304 + x))
             else:
                 aststr = "%s^%s" % (left, x)
         elif oper == "prod":  # TODO: only do if it makes a shorter string
@@ -153,8 +170,7 @@ class ReprMixin:
                 for el in idx:
                     if isinstance(el, slice):
                         start = el.start or ""
-                        stop = (el.stop if el.stop and el.stop < sys.maxsize
-                                else "")
+                        stop = el.stop if el.stop and el.stop < sys.maxsize else ""
                         step = ":%s" % el.step if el.step is not None else ""
                         elstrs.append("%s:%s%s" % (start, stop, step))
                     elif isinstance(el, Numbers):
@@ -181,4 +197,4 @@ class ReprMixin:
 
     def _repr_latex_(self):
         "Returns default latex for automatic iPython Notebook rendering."
-        return "$$"+self.latex()+"$$"  # pylint: disable=no-member
+        return "$$" + self.latex() + "$$"  # pylint: disable=no-member

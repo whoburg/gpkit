@@ -1,4 +1,5 @@
 """Machinery for exps, cs, varlocs data -- common to nomials and programs"""
+
 import numpy as np
 
 from ..keydict import KeySet
@@ -14,6 +15,7 @@ class NomialData(ReprMixin):
     varlocs: {VarKey: list} (terms each variable appears in)
     units: pint.UnitsContainer
     """
+
     # pylint: disable=too-many-instance-attributes
     _hashvalue = _varlocs = _exps = _cs = _varkeys = None
 
@@ -40,7 +42,7 @@ class NomialData(ReprMixin):
             self._cs = np.array(list(self.hmap.values()))
             if self.hmap.units:
                 # TODO: treat vars as dimensionless, it's a hack
-                self._cs = self._cs*self.hmap.units
+                self._cs = self._cs * self.hmap.units
         return self._cs
 
     def __hash__(self):

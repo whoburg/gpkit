@@ -1,4 +1,5 @@
 "Interactive GPkit widgets for iPython notebook"
+
 import ipywidgets as widgets
 from traitlets import link
 
@@ -52,17 +53,17 @@ def modelinteract(model, fns_of_sol, ranges=None, **solvekwargs):
                 _, sweep = v
                 v = sweep[0]
                 model.substitutions.update({k: v})
-            vmin, vmax = v/2.0, v*2.0
+            vmin, vmax = v / 2.0, v * 2.0
             if is_sweepvar(v):
                 vmin = min(vmin, min(sweep))
                 vmax = max(vmax, min(sweep))
             if ranges and ranges[k]:
                 vmin, vmax = ranges[k]
-            vstep = (vmax-vmin)/24.0
-            varkey_latex = "$"+k.latex(excluded=["lineage"])+"$"
-            floatslider = widgets.FloatSlider(min=vmin, max=vmax,
-                                              step=vstep, value=v,
-                                              description=varkey_latex)
+            vstep = (vmax - vmin) / 24.0
+            varkey_latex = "$" + k.latex(excluded=["lineage"]) + "$"
+            floatslider = widgets.FloatSlider(
+                min=vmin, max=vmax, step=vstep, value=v, description=varkey_latex
+            )
             floatslider.varkey = k
             ranges_out[str(k)] = floatslider
 
@@ -112,6 +113,7 @@ def modelcontrolpanel(model, showvars=(), fns_of_sol=None, **solvekwargs):
             break
 
     if fns_of_sol is None:
+
         def __defaultfn(solution):
             "Display function to run when a slider is moved."
             # NOTE: if there are some freevariables in showvars, filter
@@ -128,14 +130,15 @@ def modelcontrolpanel(model, showvars=(), fns_of_sol=None, **solvekwargs):
         cb = widgets.Checkbox(value=True, width="3ex")
         unit_latex = sl.varkey.latex_unitstr()
         if unit_latex:
-            unit_latex = r"$"+unit_latex+"$"
+            unit_latex = r"$" + unit_latex + "$"
         units = widgets.Label(value=unit_latex)
         units.font_size = "1.16em"
         box = widgets.HBox(children=[cb, sl, units])
-        link((box, 'visible'), (cb, 'value'))
+        link((box, "visible"), (cb, "value"))
         sliderboxes.append(box)
 
-    widgets_css = widgets.HTML("""<style>
+    widgets_css = widgets.HTML(
+        """<style>
     [style="font-size: 1.16em;"] { padding-top: 0.25em; }
     [style="width: 3ex; font-size: 1.165em;"] { padding-top: 0.2em; }
     .widget-numeric-text { width: auto; }
@@ -144,18 +147,20 @@ def modelcontrolpanel(model, showvars=(), fns_of_sol=None, **solvekwargs):
     .widget-slider .widget-label { width: 20ex; }
     .widget-checkbox .widget-label { width: 15ex; }
     .form-control { border: none; box-shadow: none; }
-    </style>""")
+    </style>"""
+    )
     settings = [widgets_css]
     for sliderbox in sliderboxes:
         settings.append(create_settings(sliderbox))
     sweep = widgets.Checkbox(value=False, width="3ex")
-    label = ("Plot top sliders against: (separate with two spaces)")
+    label = "Plot top sliders against: (separate with two spaces)"
     boxlabel = widgets.Label(value=label, width="200ex")
     y_axes = widgets.Text(value="none", width="20ex")
 
     def append_plotfn():
         "Creates and adds plotfn to fn_of_sols"
         from .plot_sweep import plot_1dsweepgrid
+
         yvars = [model.cost]
         for varname in y_axes.value.split("  "):  # pylint: disable=no-member
             varname = varname.strip()
@@ -171,9 +176,11 @@ def modelcontrolpanel(model, showvars=(), fns_of_sol=None, **solvekwargs):
 
         def __defaultfn(sol):
             "Plots a 1D sweep grid, starting from a single solution"
-            fig, _ = plot_1dsweepgrid(model, ranges, yvars, origsol=sol,
-                                      verbosity=0, solver="mosek_cli")
+            fig, _ = plot_1dsweepgrid(
+                model, ranges, yvars, origsol=sol, verbosity=0, solver="mosek_cli"
+            )
             fig.show()
+
         fns_of_sol.append(__defaultfn)
 
     def redo_plots(_):
@@ -184,15 +191,14 @@ def modelcontrolpanel(model, showvars=(), fns_of_sol=None, **solvekwargs):
             append_plotfn()
         if not fns_of_sol:
             fns_of_sol.append(__defaultfntable)
-        sl.value = sl.value*(1.000001)  # pylint: disable=undefined-loop-variable
+        sl.value = sl.value * (1.000001)  # pylint: disable=undefined-loop-variable
 
     sweep.observe(redo_plots, "value")
     y_axes.on_submit(redo_plots)
     sliderboxes.insert(0, widgets.HBox(children=[sweep, boxlabel, y_axes]))
-    tabs = widgets.Tab(children=[widgets.VBox(children=sliderboxes,
-                                              padding="1.25ex")])
+    tabs = widgets.Tab(children=[widgets.VBox(children=sliderboxes, padding="1.25ex")])
 
-    tabs.set_title(0, 'Sliders')
+    tabs.set_title(0, "Sliders")
 
     return tabs
 
@@ -202,13 +208,14 @@ def create_settings(box):
     _, slider, sl_units = box.children
 
     enable = widgets.Checkbox(value=box.visible, width="3ex")
-    link((box, 'visible'), (enable, 'value'))
+    link((box, "visible"), (enable, "value"))
 
     def slider_link(obj, attr):
         "Function to link one object to an attr of the slider."
+
         # pylint: disable=unused-argument
         def link_fn(name, new_value):
-            "How to update the object's value given min/max on the slider. "
+            "How to update the object's value given min/max on the slider."
             if new_value >= slider.max:
                 slider.max = new_value
             # if any value is greater than the max, the max slides up
@@ -220,17 +227,17 @@ def create_settings(box):
                     slider.value = new_value
                 else:
                     pass  # bounds nonsensical, probably because we picked up
-                          # a small value during user typing.
+                    # a small value during user typing.
             elif attr == "min" and new_value >= slider.value:
                 slider.value = new_value
             setattr(slider, attr, new_value)
-            slider.step = (slider.max - slider.min)/24.0
+            slider.step = (slider.max - slider.min) / 24.0
+
         obj.on_trait_change(link_fn, "value")
         link((slider, attr), (obj, "value"))
 
     text_html = "<span class='form-control' style='width: auto;'>"
-    setvalue = widgets.FloatText(value=slider.value,
-                                 description=slider.description)
+    setvalue = widgets.FloatText(value=slider.value, description=slider.description)
     slider_link(setvalue, "value")
     fromlabel = widgets.HTML(text_html + "from")
     setmin = widgets.FloatText(value=slider.min, width="10ex")
@@ -242,10 +249,11 @@ def create_settings(box):
     units = widgets.Label()
     units.width = "6ex"
     units.font_size = "1.165em"
-    link((sl_units, 'value'), (units, 'value'))
+    link((sl_units, "value"), (units, "value"))
     descr = widgets.HTML(text_html + slider.varkey.descr.get("label", ""))
     descr.width = "40ex"
 
-    return widgets.HBox(children=[enable, setvalue, units, descr,
-                                  fromlabel, setmin, tolabel, setmax],
-                        width="105ex")
+    return widgets.HBox(
+        children=[enable, setvalue, units, descr, fromlabel, setmin, tolabel, setmax],
+        width="105ex",
+    )

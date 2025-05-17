@@ -1,4 +1,5 @@
 """Unit testing of tests in docs/source/examples"""
+
 import json
 import os
 import pickle
@@ -21,8 +22,9 @@ from gpkit.tests.helpers import generate_example_tests
 
 def assert_logtol(first, second, logtol=1e-6):
     "Asserts that the logs of two arrays have a given abstol"
-    np.testing.assert_allclose(np.log(mag(first)), np.log(mag(second)),
-                               atol=logtol, rtol=0)
+    np.testing.assert_allclose(
+        np.log(mag(first)), np.log(mag(second)), atol=logtol, rtol=0
+    )
 
 
 # pylint: disable=too-many-public-methods
@@ -66,6 +68,7 @@ class TestExamples(unittest.TestCase):
 
     def test_autosweep(self, example):
         from gpkit import ureg
+
         bst1, tol1 = example.bst1, example.tol1
         bst2, tol2 = example.bst2, example.tol2
 
@@ -74,22 +77,21 @@ class TestExamples(unittest.TestCase):
             sol1 = bst.sample_at(l_)
             assert_logtol(sol1("l"), l_)
             assert_logtol(sol1("A"), l_**2 + 1, tol1)
-            assert_logtol(sol1["cost"], (l_**2 + 1)**2, tol1)
-            self.assertEqual(Quantity(1.0, sol1("A").units),
-                             Quantity(1.0, ureg.m)**2)
+            assert_logtol(sol1["cost"], (l_**2 + 1) ** 2, tol1)
+            self.assertEqual(Quantity(1.0, sol1("A").units), Quantity(1.0, ureg.m) ** 2)
 
         ndig = -int(np.log10(tol2))
         self.assertAlmostEqual(bst2.cost_at("cost", 3), 1.0, ndig)
         # before corner
         A_bc = np.linspace(1, 3, 50)
         sol_bc = bst2.sample_at(A_bc)
-        assert_logtol(sol_bc("A"), (A_bc/3)**0.5, tol2)
-        assert_logtol(sol_bc["cost"], A_bc/3, tol2)
+        assert_logtol(sol_bc("A"), (A_bc / 3) ** 0.5, tol2)
+        assert_logtol(sol_bc["cost"], A_bc / 3, tol2)
         # after corner
         A_ac = np.linspace(3, 10, 50)
         sol_ac = bst2.sample_at(A_ac)
-        assert_logtol(sol_ac("A"), (A_ac/3)**2, tol2)
-        assert_logtol(sol_ac["cost"], (A_ac/3)**4, tol2)
+        assert_logtol(sol_ac("A"), (A_ac / 3) ** 2, tol2)
+        assert_logtol(sol_ac["cost"], (A_ac / 3) ** 4, tol2)
         os.remove("autosweep.pkl")
 
     def test_treemap(self, example):
@@ -115,10 +117,9 @@ class TestExamples(unittest.TestCase):
 
     def test_migp(self, example):
         if settings["default_solver"] == "mosek_conif":
-            assert_logtol(example.sol(example.x), [1]*3 + [2]*6 + [3]*2)
+            assert_logtol(example.sol(example.x), [1] * 3 + [2] * 6 + [3] * 2)
         else:
-            assert_logtol(example.sol(example.x),
-                          np.sqrt(example.sol(example.num)))
+            assert_logtol(example.sol(example.x), np.sqrt(example.sol(example.num)))
 
     def test_external_function(self, example):
         external_code = example.external_code
@@ -145,7 +146,6 @@ class TestExamples(unittest.TestCase):
     def test_gettingstarted(self, example):
         pass
 
-
     def test_loose_constraintsets(self, example):
         m = example.m
         sol = m.solve(verbosity=0)
@@ -156,10 +156,8 @@ class TestExamples(unittest.TestCase):
         y = example.y
         z = example.z
         p = example.p
-        self.assertTrue(all(p.sub({x: 1, "y": 2}) == 2*z))
-        self.assertTrue(all(
-            p.sub({x: 1, y: 2, "z": [1, 2]}) == z.sub({z: [2, 4]})
-        ))
+        self.assertTrue(all(p.sub({x: 1, "y": 2}) == 2 * z))
+        self.assertTrue(all(p.sub({x: 1, y: 2, "z": [1, 2]}) == z.sub({z: [2, 4]})))
 
     def test_substitutions(self, example):
         x = example.x
@@ -212,9 +210,10 @@ class TestExamples(unittest.TestCase):
             json_dict = json.load(rf)
         os.remove("solution.json")
         for var in sol["variables"]:
-            self.assertTrue(np.all(json_dict[str(var.key)]['v']
-                                   == sol["variables"][var.key]))
-            self.assertEqual(json_dict[str(var.key)]['u'], var.unitstr())
+            self.assertTrue(
+                np.all(json_dict[str(var.key)]["v"] == sol["variables"][var.key])
+            )
+            self.assertEqual(json_dict[str(var.key)]["u"], var.unitstr())
 
     def test_sp_to_gp_sweep(self, example):
         sol = example.sol
@@ -298,11 +297,11 @@ class TestExamples(unittest.TestCase):
                 "C_D": 0.0206,
                 "C_f": 0.0036,
                 "C_L": 0.499,
-                "Re": 3.68e+06,
+                "Re": 3.68e06,
                 "S": 16.4,
-                "W": 7.34e+03,
+                "W": 7.34e03,
                 "V": 38.2,
-                "W_w": 2.40e+03
+                "W_w": 2.40e03,
             }
             # sensitivity values from p. 34 of W. Hoburg's thesis
             senscheck = {
@@ -316,14 +315,14 @@ class TestExamples(unittest.TestCase):
                 r"\tau": -0.2903,
                 "N_{ult}": 0.2903,
                 "W_0": 1.0107,
-                r"\rho": -0.2275
+                r"\rho": -0.2275,
             }
             for key in freevarcheck:
-                sol_rat = mag(sol["variables"][key])/freevarcheck[key]
-                self.assertTrue(abs(1-sol_rat) < 1e-2)
+                sol_rat = mag(sol["variables"][key]) / freevarcheck[key]
+                self.assertTrue(abs(1 - sol_rat) < 1e-2)
             for key in senscheck:
-                sol_rat = sol["sensitivities"]["variables"][key]/senscheck[key]
-                self.assertTrue(abs(1-sol_rat) < 1e-2)
+                sol_rat = sol["sensitivities"]["variables"][key] / senscheck[key]
+                self.assertTrue(abs(1 - sol_rat) < 1e-2)
         os.remove("solution.pkl")
         os.remove("solution.pgz")
         os.remove("referencesplot.json")
@@ -337,7 +336,7 @@ class TestExamples(unittest.TestCase):
 
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
-EXAMPLE_DIR = os.path.abspath(FILE_DIR + '../../../docs/source/examples')
+EXAMPLE_DIR = os.path.abspath(FILE_DIR + "../../../docs/source/examples")
 SOLVERS = settings["installed_solvers"]
 if os.path.isdir(EXAMPLE_DIR):
     TESTS = generate_example_tests(EXAMPLE_DIR, [TestExamples], SOLVERS)
@@ -347,4 +346,5 @@ else:  # pragma: no cover
 if __name__ == "__main__":  # pragma: no cover
     # pylint:disable=wrong-import-position
     from gpkit.tests.helpers import run_tests
+
     run_tests(TESTS)

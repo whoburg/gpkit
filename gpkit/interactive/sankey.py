@@ -1,4 +1,5 @@
 "implements Sankey"
+
 import os
 import re
 from collections import defaultdict
@@ -15,16 +16,18 @@ from ..repr_conventions import lineagestr, unitstr
 INSENSITIVE = 1e-2
 EPS = 1e-10
 
+
 def isnamedmodel(constraint):
     "Checks if a constraint is a named model"
-    return (isinstance(constraint, Model)
-            and constraint.__class__.__name__ != "Model")
+    return isinstance(constraint, Model) and constraint.__class__.__name__ != "Model"
+
 
 def getcolor(value):
     "color scheme for sensitivities"
     if abs(value) < INSENSITIVE:
         return "#cfcfcf"
     return GPCOLORS[0 if value < 0 else 1]
+
 
 def cleanfilename(string):
     "Parses string into valid filename"
@@ -34,6 +37,7 @@ def cleanfilename(string):
 # pylint: disable=too-many-instance-attributes
 class Sankey:
     "Return Jupyter diagrams of sensitivity flow"
+
     minsenss = 0
     maxlinks = 20
     showconstraints = True
@@ -68,17 +72,22 @@ class Sankey:
                 vecval = self.solution["constants"][vk.veckey]
                 firstval = vecval.flatten()[0]
                 if vecval.shape and (firstval == vecval).all():
-                    label = "%s = %.4g %s" % (vk.veckey.name, firstval,
-                                              unitstr(vk.veckey))
-                    fixedvecs[vk.veckey] = self.add_node(target, label,
-                                                         "constraint")
-            abs_var_sens = -abs(self.solution["sensitivities"] \
-                                             ["constants"].get(vk, EPS))
+                    label = "%s = %.4g %s" % (
+                        vk.veckey.name,
+                        firstval,
+                        unitstr(vk.veckey),
+                    )
+                    fixedvecs[vk.veckey] = self.add_node(target, label, "constraint")
+            abs_var_sens = -abs(
+                self.solution["sensitivities"]["constants"].get(vk, EPS)
+            )
             if np.isnan(abs_var_sens):
                 abs_var_sens = EPS
-            label = "%s = %.4g %s" % (vk.str_without(["lineage"]),
-                                      self.solution["variables"][vk],
-                                      unitstr(vk))
+            label = "%s = %.4g %s" % (
+                vk.str_without(["lineage"]),
+                self.solution["variables"][vk],
+                unitstr(vk),
+            )
             if vk.veckey in fixedvecs:
                 vectarget = fixedvecs[vk.veckey]
                 source = self.add_node(vectarget, label, "subarray")
@@ -145,9 +154,21 @@ class Sankey:
                     del links[(s, t)]
 
     # pylint: disable=too-many-locals
-    def diagram(self, variable=None, varlabel=None, *, minsenss=0, maxlinks=20,
-                top=0, bottom=0, left=230, right=140, width=1000, height=400,
-                showconstraints=True):
+    def diagram(
+        self,
+        variable=None,
+        varlabel=None,
+        *,
+        minsenss=0,
+        maxlinks=20,
+        top=0,
+        bottom=0,
+        left=230,
+        right=140,
+        width=1000,
+        height=400,
+        showconstraints=True
+    ):
         "creates links and an ipython widget to show them"
         margins = dict(top=top, bottom=bottom, left=left, right=right)
         self.minsenss = minsenss
@@ -166,19 +187,23 @@ class Sankey:
             csetnode = self.add_node(varlabel, self.csetlabel)
             if variable in self.solution["sensitivities"]["cost"]:
                 costnode = self.add_node(varlabel, "[cost function]")
-                self.links[costnode, varlabel] = \
-                    self.solution["sensitivities"]["cost"][variable]
+                self.links[costnode, varlabel] = self.solution["sensitivities"]["cost"][
+                    variable
+                ]
         else:
             csetnode = self.csetlabel
-            self.nodes[self.csetlabel] = {"id": self.csetlabel,
-                                          "title": self.csetlabel}
+            self.nodes[self.csetlabel] = {"id": self.csetlabel, "title": self.csetlabel}
         total_sens = self.link(self.cset, csetnode, variable)
         if variable:
             self.links[csetnode, varlabel] = total_sens
 
         links, nodes = self._links_and_nodes()
-        out = SankeyWidget(nodes=nodes, links=links, margins=margins,
-                           layout=Layout(width=str(width), height=str(height)))
+        out = SankeyWidget(
+            nodes=nodes,
+            links=links,
+            margins=margins,
+            layout=Layout(width=str(width), height=str(height)),
+        )
 
         filename = self.csetlabel
         if variable:
@@ -198,20 +223,28 @@ class Sankey:
         links = self.links.copy()
         # filter if...not below the chosen top node
         if top_node is not None:
-            self.filter(links, lambda s, t, v: top_node in s or top_node in t,
-                        forced=True)
+            self.filter(
+                links, lambda s, t, v: top_node in s or top_node in t, forced=True
+            )
         # ...below minimum sensitivity
         self.filter(links, lambda s, t, v: abs(v) > self.minsenss, forced=True)
         if not self.showconstraints:
             # ...is a constraint or subarray and we're not showing those
-            self.filter(links, lambda s, t, v:
-                        ("constraint" not in self.nodes[s]
-                         and "subarray" not in self.nodes[s]), forced=True)
+            self.filter(
+                links,
+                lambda s, t, v: (
+                    "constraint" not in self.nodes[s]
+                    and "subarray" not in self.nodes[s]
+                ),
+                forced=True,
+            )
         # ...is a subarray and we still have too many links
         self.filter(links, lambda s, t, v: "subarray" not in self.nodes[s])
         # ...is an insensitive constraint and we still have too many links
-        self.filter(links, lambda s, t, v: ("constraint" not in self.nodes[s]
-                                            or abs(v) > INSENSITIVE))
+        self.filter(
+            links,
+            lambda s, t, v: ("constraint" not in self.nodes[s] or abs(v) > INSENSITIVE),
+        )
         # ...is at culldepth, repeating up to a relative depth of 1 or 2
         culldepth = max(node.count(".") for node in self.nodes) - 1
         mindepth = 1 if not top_node else top_node.count(".") + 1
@@ -224,17 +257,31 @@ class Sankey:
         linkslist, nodes, nodeset = [], [], set()
         for (source, target), value in links.items():
             if source == top_node:
-                nodes.append({"id": self.nodes[target]["id"],
-                              "title": "⟶ %s" % self.nodes[target]["title"]})
+                nodes.append(
+                    {
+                        "id": self.nodes[target]["id"],
+                        "title": "⟶ %s" % self.nodes[target]["title"],
+                    }
+                )
                 nodeset.add(target)
             for node in [source, target]:
                 if node not in nodeset:
-                    nodes.append({"id": self.nodes[node]["id"],
-                                  "title": self.nodes[node]["title"]})
+                    nodes.append(
+                        {
+                            "id": self.nodes[node]["id"],
+                            "title": self.nodes[node]["title"],
+                        }
+                    )
                     nodeset.add(node)
-            linkslist.append({"source": source, "target": target,
-                              "value": abs(value), "color": getcolor(value),
-                              "title": "%+.2g" % value})
+            linkslist.append(
+                {
+                    "source": source,
+                    "target": target,
+                    "value": abs(value),
+                    "color": getcolor(value),
+                    "title": "%+.2g" % value,
+                }
+            )
         return linkslist, nodes
 
     def onclick(self, sankey, node_or_link):

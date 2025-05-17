@@ -1,8 +1,9 @@
 "Implement CostedConstraintSet"
 import numpy as np
-from .set import ConstraintSet
-from ..small_scripts import maybe_flatten
+
 from ..repr_conventions import lineagestr
+from ..small_scripts import maybe_flatten
+from .set import ConstraintSet
 
 
 class CostedConstraintSet(ConstraintSet):

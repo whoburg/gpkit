@@ -1,8 +1,8 @@
 "Finds solvers, sets gpkit settings, and builds gpkit"
 import os
-import sys
 import shutil
 import subprocess
+import sys
 
 LOGSTR = ""
 settings = {}

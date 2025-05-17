@@ -1,14 +1,16 @@
 "Implement Variable and ArrayVariable classes"
 from collections.abc import Iterable
+
 import numpy as np
-from .data import NomialData
-from .array import NomialArray
-from .math import Monomial
-from .map import NomialMap
+
 from ..globals import NamedVariables, Vectorize
-from ..varkey import VarKey
-from ..small_classes import Strings, Numbers, HashVector
+from ..small_classes import HashVector, Numbers, Strings
 from ..small_scripts import is_sweepvar, veclinkedfn
+from ..varkey import VarKey
+from .array import NomialArray
+from .data import NomialData
+from .map import NomialMap
+from .math import Monomial
 
 
 def addmodelstodescr(descr, addtonamedvars=None):

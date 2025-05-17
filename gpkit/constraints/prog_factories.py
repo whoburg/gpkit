@@ -1,15 +1,17 @@
 "Scripts for generating, solving and sweeping programs"
-from time import time
 import warnings as pywarnings
+from time import time
+
 import numpy as np
 from adce import adnumber
-from ..nomials import parse_subs
-from ..solution_array import SolutionArray
-from ..keydict import KeyDict
-from ..small_scripts import maybe_flatten
-from ..small_classes import FixedScalar
+
 from ..exceptions import Infeasible
 from ..globals import SignomialsEnabled
+from ..keydict import KeyDict
+from ..nomials import parse_subs
+from ..small_classes import FixedScalar
+from ..small_scripts import maybe_flatten
+from ..solution_array import SolutionArray
 
 
 def evaluate_linked(constants, linked):

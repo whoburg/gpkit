@@ -1,11 +1,13 @@
 """Tests for SolutionArray class"""
 import unittest
+
 import numpy as np
-from gpkit import Variable, VectorVariable, Model, SignomialsEnabled
+
 import gpkit
+from gpkit import Model, SignomialsEnabled, Variable, VectorVariable
+from gpkit.small_classes import Quantity, Strings
 from gpkit.solution_array import var_table
 from gpkit.varkey import VarKey
-from gpkit.small_classes import Strings, Quantity
 
 
 class TestSolutionArray(unittest.TestCase):

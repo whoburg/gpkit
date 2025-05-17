@@ -1,9 +1,9 @@
 """Models for assessing primal feasibility"""
-from .set import ConstraintSet
-from ..nomials import Variable, VectorVariable, parse_subs, NomialArray
-from ..keydict import KeyDict
 from .. import NamedVariables, SignomialsEnabled
+from ..keydict import KeyDict
+from ..nomials import NomialArray, Variable, VectorVariable, parse_subs
 from ..small_scripts import appendsolwarning, initsolwarning, mag
+from .set import ConstraintSet
 
 
 class ConstraintsRelaxedEqually(ConstraintSet):

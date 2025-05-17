@@ -1,7 +1,8 @@
 "Docstring-parsing methods"
-import re
-import inspect
 import ast
+import inspect
+import re
+
 import numpy as np
 
 

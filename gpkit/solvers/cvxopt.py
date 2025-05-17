@@ -1,8 +1,9 @@
 "Implements the GPkit interface to CVXOPT"
 import numpy as np
-from cvxopt import spmatrix, matrix
+from cvxopt import matrix, spmatrix
 from cvxopt.solvers import gp
-from gpkit.exceptions import UnknownInfeasible, DualInfeasible
+
+from gpkit.exceptions import DualInfeasible, UnknownInfeasible
 
 
 # pylint: disable=too-many-locals,too-many-statements

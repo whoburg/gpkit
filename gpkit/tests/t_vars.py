@@ -1,10 +1,19 @@
 """Test VarKey, Variable, VectorVariable, and ArrayVariable classes"""
 import sys
 import unittest
+
 import numpy as np
-from gpkit import (Monomial, NomialArray, Variable, VarKey,
-                   VectorVariable, ArrayVariable, Vectorize)
+
 import gpkit
+from gpkit import (
+    ArrayVariable,
+    Monomial,
+    NomialArray,
+    Variable,
+    VarKey,
+    Vectorize,
+    VectorVariable,
+)
 from gpkit.nomials import Variable as PlainVariable
 
 

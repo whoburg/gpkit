@@ -1,8 +1,7 @@
 "Implements Tight"
-from .set import ConstraintSet
-from ..small_scripts import mag
-from ..small_scripts import appendsolwarning, initsolwarning
 from .. import SignomialsEnabled
+from ..small_scripts import appendsolwarning, initsolwarning, mag
+from .set import ConstraintSet
 
 
 class Tight(ConstraintSet):

@@ -3,16 +3,18 @@
 
 # pylint: skip-file
 import string
-from collections import defaultdict, namedtuple, Counter
+from collections import Counter, defaultdict, namedtuple
+
+import numpy as np
+
 from gpkit.nomials import Monomial, Posynomial, Variable
 from gpkit.nomials.map import NomialMap
-from gpkit.small_scripts import mag, try_str_without
-from gpkit.small_classes import FixedScalar, HashVector
-from gpkit.exceptions import DimensionalityError
-from gpkit.repr_conventions import unitstr as get_unitstr
 from gpkit.repr_conventions import lineagestr
+from gpkit.repr_conventions import unitstr as get_unitstr
+from gpkit.small_classes import FixedScalar, HashVector
+from gpkit.small_scripts import mag, try_str_without
+from gpkit.units import DimensionalityError
 from gpkit.varkey import VarKey
-import numpy as np
 
 Tree = namedtuple("Tree", ["key", "value", "branches"])
 Transform = namedtuple("Transform", ["factor", "power", "origkey"])
@@ -824,6 +826,8 @@ def get_valstr(key, solution, into="%s"):
 
 
 import plotly.graph_objects as go
+
+
 def plotlyify(tree, solution, minval=None):
     """Plots model structure as Plotly TreeMap
 
@@ -905,6 +909,7 @@ def icicle(ids, labels, parents, values):
 
 
 import functools
+
 
 class Breakdowns(object):
     def __init__(self, sol):

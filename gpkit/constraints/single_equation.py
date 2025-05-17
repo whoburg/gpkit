@@ -1,7 +1,8 @@
 "Implements SingleEquationConstraint"
-from operator import le, ge, eq
+from operator import eq, ge, le
+
+from ..repr_conventions import UNICODE_EXPONENTS, ReprMixin
 from ..small_scripts import try_str_without
-from ..repr_conventions import ReprMixin, UNICODE_EXPONENTS
 
 
 class SingleEquationConstraint(ReprMixin):

@@ -1,12 +1,13 @@
 """Tests for tools module"""
 import unittest
+
 import numpy as np
 from numpy import log
-from gpkit import Variable, VectorVariable, Model, NomialArray
+
+from gpkit import Model, NomialArray, Variable, VectorVariable, parse_variables
+from gpkit.small_scripts import mag
 from gpkit.tools.autosweep import BinarySweepTree
 from gpkit.tools.tools import te_exp_minus1, te_secant, te_tangent
-from gpkit.small_scripts import mag
-from gpkit import parse_variables
 
 
 def assert_logtol(first, second, logtol=1e-6):

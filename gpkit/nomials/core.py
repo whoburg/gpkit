@@ -1,7 +1,7 @@
 "The shared non-mathematical backbone of all Nomials"
-from .data import NomialData
-from ..small_classes import Numbers, FixedScalar
 from ..repr_conventions import MUL, UNICODE_EXPONENTS
+from ..small_classes import FixedScalar, Numbers
+from .data import NomialData
 
 
 def nomial_latex_helper(c, pos_vars, neg_vars):

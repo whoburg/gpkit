@@ -1,10 +1,12 @@
 "Tools for optimal fits to GP sweeps"
 from time import time
+
 import numpy as np
+
+from ..exceptions import InvalidGPConstraint
 from ..small_classes import Count
 from ..small_scripts import mag
 from ..solution_array import SolutionArray
-from ..exceptions import InvalidGPConstraint
 
 
 class BinarySweepTree:  # pylint: disable=too-many-instance-attributes
@@ -202,8 +204,9 @@ class SolutionOracle:
     def plot(self, posys=None, axes=None):
         "Plots the sweep for each posy"
         import matplotlib.pyplot as plt
-        from ..interactive.plot_sweep import assign_axes
+
         from .. import GPBLU
+        from ..interactive.plot_sweep import assign_axes
         if not hasattr(posys, "__len__"):
             posys = [posys]
         for i, posy in enumerate(posys):

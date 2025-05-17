@@ -1,9 +1,9 @@
 "Implements tests for all external repositories."
 import os
-import sys
 import subprocess
-from time import sleep
+import sys
 from collections import defaultdict
+from time import sleep
 
 
 def test_repo(repo=".", xmloutput=False):

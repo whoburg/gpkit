@@ -1,8 +1,8 @@
 """Convenience classes and functions for unit testing"""
-import unittest
-import sys
-import os
 import importlib
+import os
+import sys
+import unittest
 
 
 def generate_example_tests(path, testclasses, solvers=None, newtest_fn=None):

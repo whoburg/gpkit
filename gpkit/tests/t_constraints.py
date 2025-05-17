@@ -1,21 +1,31 @@
 "Unit tests for Constraint, MonomialEquality and SignomialInequality"
 import unittest
+
 import numpy as np
-from gpkit import Variable, SignomialsEnabled, Posynomial, VectorVariable
-from gpkit.nomials import SignomialInequality, PosynomialInequality
-from gpkit.nomials import MonomialEquality
-from gpkit import Model, ConstraintSet
-from gpkit.constraints.costed import CostedConstraintSet
-from gpkit.constraints.tight import Tight
-from gpkit.constraints.loose import Loose
-from gpkit.tests.helpers import run_tests
-from gpkit.exceptions import (InvalidGPConstraint, PrimalInfeasible,
-                              DimensionalityError)
-from gpkit.constraints.relax import (ConstraintsRelaxed, ConstantsRelaxed,
-                                     ConstraintsRelaxedEqually)
-from gpkit.constraints.bounded import Bounded
-from gpkit.globals import NamedVariables
+
 import gpkit
+from gpkit import (
+    ConstraintSet,
+    Model,
+    Posynomial,
+    SignomialsEnabled,
+    Variable,
+    VectorVariable,
+)
+from gpkit.constraints.bounded import Bounded
+from gpkit.constraints.costed import CostedConstraintSet
+from gpkit.constraints.loose import Loose
+from gpkit.constraints.relax import (
+    ConstantsRelaxed,
+    ConstraintsRelaxed,
+    ConstraintsRelaxedEqually,
+)
+from gpkit.constraints.tight import Tight
+from gpkit.exceptions import InvalidGPConstraint, PrimalInfeasible
+from gpkit.globals import NamedVariables
+from gpkit.nomials import MonomialEquality, PosynomialInequality, SignomialInequality
+from gpkit.tests.helpers import run_tests
+from gpkit.units import DimensionalityError
 
 
 class TestConstraint(unittest.TestCase):

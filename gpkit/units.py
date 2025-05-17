@@ -1,5 +1,6 @@
 "wraps pint in gpkit monomials"
 import pint
+
 ureg = pint.UnitRegistry()  # pylint: disable=invalid-name
 ureg.define("USD = [money] = $")
 pint.set_application_registry(ureg)
@@ -63,3 +64,5 @@ class GPkitUnits:
 
 
 units = GPkitUnits()
+of_division = units.of_division
+of_product = units.of_product

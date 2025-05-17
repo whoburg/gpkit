@@ -1,7 +1,7 @@
 "Implements SignomialEquality"
-from .set import ConstraintSet
 from ..nomials import SingleSignomialEquality as SSE
 from ..nomials.array import array_constraint as arrify
+from .set import ConstraintSet
 
 
 class SignomialEquality(ConstraintSet):

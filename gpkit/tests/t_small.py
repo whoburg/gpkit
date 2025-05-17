@@ -1,8 +1,9 @@
 """Tests for small_classes.py and small_scripts.py"""
 import unittest
-from gpkit.small_classes import HashVector
-from gpkit.repr_conventions import unitstr
+
 import gpkit
+from gpkit.repr_conventions import unitstr
+from gpkit.small_classes import HashVector
 
 
 class TestHashVector(unittest.TestCase):

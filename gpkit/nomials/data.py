@@ -1,5 +1,6 @@
 """Machinery for exps, cs, varlocs data -- common to nomials and programs"""
 import numpy as np
+
 from ..keydict import KeySet
 from ..repr_conventions import ReprMixin
 from ..varkey import VarKey

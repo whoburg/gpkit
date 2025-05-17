@@ -1,9 +1,10 @@
 "Interactive GPkit widgets for iPython notebook"
 import ipywidgets as widgets
 from traitlets import link
-from ..small_scripts import is_sweepvar
-from ..small_classes import Numbers
+
 from ..exceptions import InvalidGPConstraint
+from ..small_classes import Numbers
+from ..small_scripts import is_sweepvar
 
 
 # pylint: disable=too-many-locals

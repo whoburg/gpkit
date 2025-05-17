@@ -5,15 +5,21 @@
     ``result = _mosek.cli_expopt.imize(cs, A, p_idxs, "gpkit_mosek")``
 
 """
+import errno
 import os
 import shutil
-import tempfile
-import errno
 import stat
-from subprocess import check_output, CalledProcessError
+import tempfile
+from subprocess import CalledProcessError, check_output
+
 from .. import settings
-from ..exceptions import (UnknownInfeasible, InvalidLicense,
-                          PrimalInfeasible, DualInfeasible)
+from ..exceptions import (
+    DualInfeasible,
+    InvalidLicense,
+    PrimalInfeasible,
+    UnknownInfeasible,
+)
+
 
 def remove_read_only(func, path, exc):  # pragma: no cover
     "If we can't remove a file/directory, change permissions and try again."

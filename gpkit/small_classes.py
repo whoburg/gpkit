@@ -1,7 +1,9 @@
 """Miscellaneous small classes"""
-from operator import xor
 from functools import reduce
+from operator import xor
+
 import numpy as np
+
 from .units import Quantity, qty  # pylint: disable=unused-import
 
 Strings = (str,)

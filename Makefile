@@ -1,4 +1,4 @@
-.PHONY: install-dev clean test lint sort format
+.PHONY: install-dev clean test test-unittest test-pytest lint sort format
 
 # Development environment setup
 install-dev:
@@ -18,8 +18,13 @@ format:
 	black gpkit
 
 # Testing
-test:
+test: test-unittest test-pytest  # Run both test runners
+
+test-unittest:  # Run tests using the original test runner
 	python -c "import gpkit.tests; gpkit.tests.run()"
+
+test-pytest:  # Run tests with pytest
+	pytest gpkit/tests -v
 
 # Cleanup
 clean:
@@ -36,6 +41,8 @@ help:
 	@echo "  lint              Run pylint"
 	@echo "  sort              Sort imports with isort"
 	@echo "  format            Format code with black"
-	@echo "  test              Run tests"
+	@echo "  test              Run both unittest and pytest"
+	@echo "  test-unittest     Run tests using the original test runner"
+	@echo "  test-pytest       Run tests with pytest"
 	@echo "  clean             Clean build artifacts"
 	@echo "  help              Show this help message"

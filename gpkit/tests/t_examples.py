@@ -105,7 +105,12 @@ class TestExamples(unittest.TestCase):
     def test_evaluated_fixed_variables(self, example):
         sol = example.sol
         t_night = example.t_night
-        self.assertTrue((sol["variables"][t_night] == [16, 12, 8]).all())
+        expected = [16, 12, 8]
+        actual = sol["variables"][t_night]
+        for exp, act in zip(expected, actual):
+            # self.assertEqual(exp, act)
+            # odd floating point round off issues when running with pytest
+            self.assertAlmostEqual(exp, act)
 
     def test_evaluated_free_variables(self, example):
         x2 = example.x2

@@ -43,10 +43,12 @@ jobs:
     - name: Check code formatting
       run: |
         make format
-    - name: Run tests
+    - name: Run tests via original runner
       run: |
-        # pytest
-        python -c "import gpkit.tests; gpkit.tests.run()"
+        make test-unittest
+    - name: Run tests via pytest
+      run: |
+        make test-pytest
     - name: Check for file changes
       run: |
         if [[ -n "$(git status --porcelain)" ]]; then

@@ -6,6 +6,12 @@ import sys
 from collections import defaultdict
 from time import sleep
 
+import pytest
+
+pytestmark = pytest.mark.skip(
+    reason="These tests require special setup and should be run separately"
+)
+
 
 def test_repo(repo=".", xmloutput=False):
     """Test repository.

@@ -46,7 +46,7 @@ jobs:
     - name: Run tests
       run: |
         # pytest
-        python -c "import gpkit.tests; gpkit.tests.run()"
+        make test
     - name: Check for file changes
       run: |
         if [[ -n "$(git status --porcelain)" ]]; then

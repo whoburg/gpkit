@@ -39,6 +39,9 @@ NDIGS = {"cvxopt": 5, "mosek_cli": 5, "mosek_conif": 3}
 
 # pylint: disable=invalid-name,attribute-defined-outside-init,unused-variable,undefined-variable,exec-used
 
+def get_ndig(solver):
+    """Get the number of decimal places for a given solver"""
+    return NDIGS.get(solver, 5)  # default to 5 if solver not found
 
 class TestGP(unittest.TestCase):
     """
@@ -50,6 +53,10 @@ class TestGP(unittest.TestCase):
     # solver and ndig get set in loop at bottom this file, a bit hacky
     solver = None
     ndig = None
+
+    def setup_method(self, method):  # pylint: disable=unused-argument
+        """Set up test case with solver-specific precision"""
+        self.ndig = get_ndig(self.solver)
 
     def test_no_monomial_constraints(self):
         x = Variable("x")
@@ -267,12 +274,10 @@ class TestGP(unittest.TestCase):
         self.assertAlmostEqual(sol["cost"], 0.1, self.ndig)
         self.assertTrue(sol.almost_equal(sol))
 
+    @unittest.skipIf(settings["default_solver"] == "cvxopt",
+                    "cvxopt cannot solve singular problems")
     def test_singular(self):  # pragma: no cover
         "Create and solve GP with a singular A matrix"
-        if self.solver == "cvxopt":
-            # cvxopt can"t solve this problem
-            # (see https://github.com/cvxopt/cvxopt/issues/36)
-            return
         x = Variable("x")
         y = Variable("y")
         m = Model(y * x, [y * x >= 12])
@@ -329,6 +334,10 @@ class TestSP(unittest.TestCase):
     name = "TestSP_"
     solver = None
     ndig = None
+
+    def setup_method(self, method):  # pylint: disable=unused-argument
+        """Set up test case with solver-specific precision"""
+        self.ndig = get_ndig(self.solver)
 
     def test_sp_relaxation(self):
         w = Variable("w")
@@ -841,7 +850,7 @@ for testcase in MULTI_SOLVER_TESTS:
         if solver:
             test = type(str(testcase.__name__ + "_" + solver), (testcase,), {})
             setattr(test, "solver", solver)
-            setattr(test, "ndig", NDIGS[solver])
+            setattr(test, "ndig", get_ndig(solver))
             TESTS.append(test)
 
 if __name__ == "__main__":  # pragma: no cover

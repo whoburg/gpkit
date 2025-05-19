@@ -36,3 +36,13 @@ package-data = { "gpkit" = ["env/settings"] }
 [tool.setuptools.dynamic]
 version = { attr = "gpkit.__version__" } 
 readme = { file = ["README.md"], content-type = "text/markdown"}
+
+[tool.pytest.ini_options]
+testpaths = ["gpkit/tests"]
+python_files = ["test_*.py", "t_*.py"]
+addopts = "-v --tb=short"
+markers = [
+    "solver: marks tests that require a solver",
+    "cvxopt: marks tests that require cvxopt",
+    "mosek: marks tests that require mosek",
+]

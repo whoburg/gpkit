@@ -9,8 +9,6 @@ from ..constraints import SingleEquationConstraint
 from ..exceptions import (
     InvalidGPConstraint,
     InvalidPosynomial,
-    InvalidSGPConstraint,
-    MathematicallyInvalid,
     PrimalInfeasible,
 )
 from ..globals import SignomialsEnabled

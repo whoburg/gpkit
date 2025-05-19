@@ -3,11 +3,11 @@
 
 # pylint: skip-file
 import string
-from collections import Counter, defaultdict, namedtuple
+from collections import defaultdict, namedtuple
 
 import numpy as np
 
-from gpkit.nomials import Monomial, Posynomial, Variable
+from gpkit.nomials import Monomial, Posynomial
 from gpkit.nomials.map import NomialMap
 from gpkit.repr_conventions import lineagestr
 from gpkit.repr_conventions import unitstr as get_unitstr
@@ -117,7 +117,6 @@ def get_breakdowns(basically_fixed_variables, solution):
     (At present, monomial constraints check both sides as "gt")
     """
     breakdowns = defaultdict(list)
-    beatout = defaultdict(set)
     for constraint, senss in sorted(
         solution["sensitivities"]["constraints"].items(),
         key=lambda kv: (-abs(float("%.2g" % kv[1])), str(kv[0])),
@@ -915,7 +914,6 @@ def legend_entry(key, shortname, solution, prefix, basically_fixed_variables):
     if is_factor(key):
         operator = " ×"
         key = key.factor
-        free, quasifixed = False, False
         if any(
             vk not in basically_fixed_variables for vk in get_free_vks(key, solution)
         ):
@@ -1056,9 +1054,6 @@ def icicle(ids, labels, parents, values):
             ids=ids, labels=labels, parents=parents, values=values, branchvalues="total"
         )
     )
-
-
-import functools
 
 
 class Breakdowns(object):

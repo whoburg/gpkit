@@ -133,16 +133,16 @@ class NomialArray(ReprMixin, np.ndarray):
     def __array_finalize__(self, obj):
         "Finalizer. Required for objects inheriting from np.ndarray."
 
-    def __array_wrap__(self, out_arr, context=None):  # pylint: disable=arguments-differ
+    def __array_wrap__(
+        self, out_arr, context=None, return_scalar=True
+    ):  # pylint: disable=arguments-differ
         """Called by numpy ufuncs.
         Special case to avoid creation of 0-dimensional arrays
         See http://docs.scipy.org/doc/numpy/user/basics.subclassing.html"""
-        if out_arr.ndim:
-            return np.ndarray.__array_wrap__(
-                self, out_arr, context
-            )  # pylint: disable=too-many-function-args
-        val = out_arr.item()
-        return np.float(val) if isinstance(val, np.generic) else val
+        if return_scalar and out_arr.ndim == 0:
+            val = out_arr.item()
+            return np.float(val) if isinstance(val, np.generic) else val
+        return np.ndarray.__array_wrap__(self, out_arr, context, return_scalar)
 
     __eq__ = array_constraint("=", eq)
     __le__ = array_constraint("<=", le)

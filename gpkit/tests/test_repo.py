@@ -3,11 +3,14 @@
 import os
 import subprocess
 import sys
-import pytest
 from collections import defaultdict
 from time import sleep
 
-pytestmark = pytest.mark.skip(reason="These tests require special setup and should be run separately")
+import pytest
+
+pytestmark = pytest.mark.skip(
+    reason="These tests require special setup and should be run separately"
+)
 
 
 def test_repo(repo=".", xmloutput=False):

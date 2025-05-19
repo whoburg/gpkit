@@ -39,9 +39,11 @@ NDIGS = {"cvxopt": 5, "mosek_cli": 5, "mosek_conif": 3}
 
 # pylint: disable=invalid-name,attribute-defined-outside-init,unused-variable,undefined-variable,exec-used
 
+
 def get_ndig(solver):
     """Get the number of decimal places for a given solver"""
     return NDIGS.get(solver, 5)  # default to 5 if solver not found
+
 
 class TestGP(unittest.TestCase):
     """
@@ -274,8 +276,10 @@ class TestGP(unittest.TestCase):
         self.assertAlmostEqual(sol["cost"], 0.1, self.ndig)
         self.assertTrue(sol.almost_equal(sol))
 
-    @unittest.skipIf(settings["default_solver"] == "cvxopt",
-                    "cvxopt cannot solve singular problems")
+    @unittest.skipIf(
+        settings["default_solver"] == "cvxopt",
+        "cvxopt cannot solve singular problems",
+    )
     def test_singular(self):  # pragma: no cover
         "Create and solve GP with a singular A matrix"
         x = Variable("x")

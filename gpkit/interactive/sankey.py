@@ -167,7 +167,7 @@ class Sankey:
         right=140,
         width=1000,
         height=400,
-        showconstraints=True
+        showconstraints=True,
     ):
         "creates links and an ipython widget to show them"
         margins = dict(top=top, bottom=bottom, left=left, right=right)

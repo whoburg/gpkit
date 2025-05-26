@@ -125,7 +125,7 @@ solutions and can be solved with 'Model.solve()'."""
         reltol=1e-4,
         iteration_limit=50,
         err_on_relax=True,
-        **solveargs
+        **solveargs,
     ):
         """Locally solves a SequentialGeometricProgram and returns the solution.
 

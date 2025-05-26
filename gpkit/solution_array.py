@@ -505,7 +505,7 @@ class SolutionArray(DictOfLists):
         reldiff=True,
         reltol=1.0,
         sortmodelsbysenss=True,
-        **tableargs
+        **tableargs,
     ):
         """Outputs differences between this solution and another
 
@@ -871,7 +871,7 @@ class SolutionArray(DictOfLists):
             "tightest constraints",
         ),
         sortmodelsbysenss=False,
-        **kwargs
+        **kwargs,
     ):
         """A table representation of this SolutionArray
 
@@ -998,7 +998,7 @@ def var_table(
     maxcolumns=5,
     skipifempty=True,
     sortmodelsbysenss=None,
-    **_
+    **_,
 ):
     """
     Pretty string representation of a dict of VarKeys

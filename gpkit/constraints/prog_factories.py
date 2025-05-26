@@ -174,7 +174,7 @@ def run_sweep(
     linked,
     solver,
     verbosity,
-    **kwargs
+    **kwargs,
 ):
     "Runs through a sweep."
     # sort sweeps by the eqstr of their varkey

@@ -756,7 +756,7 @@ def graph(
     height=None,
     maxdepth=None,
     maxwidth=81,
-    showlegend=False
+    showlegend=False,
 ):
     "Prints breakdown"
     already_set = solution._lineageset

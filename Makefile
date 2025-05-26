@@ -1,4 +1,4 @@
-.PHONY: install-dev clean test test-unittest test-pytest lint sort format
+.PHONY: install-dev clean check-clean test test-unittest test-pytest lint format
 
 # Development environment setup
 install-dev:
@@ -9,12 +9,9 @@ install-dev:
 lint:
 	pylint gpkit
 
-# Import sorting
-sort:
-	isort --profile black gpkit
-
 # Code formatting
 format:
+	isort --profile black gpkit
 	black gpkit
 
 # Testing
@@ -34,15 +31,25 @@ clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
 
+check-clean:
+	@if [ -n "$$(git status --porcelain)" ]; then \
+		echo "Found uncommitted changes:"; \
+		git status --porcelain; \
+		exit 1; \
+	else \
+		echo "Working directory is clean."; \
+	fi
+
+
 # Help
 help:
 	@echo "Available commands:"
 	@echo "  install-dev        Install development dependencies"
 	@echo "  lint              Run pylint"
-	@echo "  sort              Sort imports with isort"
 	@echo "  format            Format code with black"
 	@echo "  test              Run both unittest and pytest"
 	@echo "  test-unittest     Run tests using the original test runner"
 	@echo "  test-pytest       Run tests with pytest"
 	@echo "  clean             Clean build artifacts"
+	@echo "  check-clean       Check no uncommitted changes"
 	@echo "  help              Show this help message"

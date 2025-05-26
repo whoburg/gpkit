@@ -209,4 +209,5 @@ class NomialArray(ReprMixin, np.ndarray):
         return out
 
 
-from .math import Signomial  # pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position
+from .math import Signomial  # noqa: E402

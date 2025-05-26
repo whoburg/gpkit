@@ -1,20 +1,23 @@
 "An example to show off Breakdowns"
+
 import os
-import sys
 import pickle
+import sys
+
 import pint
 from packaging import version
+
 from gpkit.breakdowns import Breakdowns
 
 dirpath = os.path.dirname(os.path.realpath(__file__)) + os.sep
 if version.parse(pint.__version__) >= version.parse("0.13"):
-    sol = pickle.load(open(dirpath+"solar_13.p", "rb"))
+    sol = pickle.load(open(dirpath + "solar_13.p", "rb"))
 elif version.parse(pint.__version__) >= version.parse("0.12"):
-    sol = pickle.load(open(dirpath+"solar_12.p", "rb"))
+    sol = pickle.load(open(dirpath + "solar_12.p", "rb"))
 elif version.parse(pint.__version__) >= version.parse("0.10"):
-    sol = pickle.load(open(dirpath+"solar_10.p", "rb"))
+    sol = pickle.load(open(dirpath + "solar_10.p", "rb"))
 elif version.parse(pint.__version__) == version.parse("0.9"):
-    sol = pickle.load(open(dirpath+"solar.p", "rb"))
+    sol = pickle.load(open(dirpath + "solar.p", "rb"))
 else:
     sol = None
 
@@ -29,8 +32,9 @@ if sys.platform[:3] != "win" and sol is not None:
 
     print("Variable breakdowns (note the two methods of access)")
     print("===================")
-    varkey, = sol["variables"].keymap[("Mission.FlightSegment.AircraftPerf"
-                                       ".AircraftDrag.Poper")]
+    (varkey,) = sol["variables"].keymap[
+        ("Mission.FlightSegment.AircraftPerf" ".AircraftDrag.Poper")
+    ]
     bds.plot(varkey)
     bds.plot("AircraftPerf.AircraftDrag.MotorPerf.Q")
 

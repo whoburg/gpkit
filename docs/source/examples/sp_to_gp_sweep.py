@@ -1,6 +1,8 @@
 "example of an SP that turns into a GP"
+
 import numpy as np
-from gpkit import Model, Variable, SignomialsEnabled, units
+
+from gpkit import Model, SignomialsEnabled, Variable, units
 from gpkit.constraints.tight import Tight
 
 
@@ -17,13 +19,12 @@ def SimPleAC():
     e = Variable("e", 0.92, "-", "Oswald efficiency factor")
     k = Variable("k", 1.17, "-", "form factor")
     N_ult = Variable("N_{ult}", 3.3, "-", "ultimate load factor")
-    S_wetratio = Variable("(\\frac{S}{S_{wet}})", 2.075, "-",
-                          "wetted area ratio")
+    S_wetratio = Variable("(\\frac{S}{S_{wet}})", 2.075, "-", "wetted area ratio")
     tau = Variable("\\tau", 0.12, "-", "airfoil thickness to chord ratio")
-    W_W_coeff1 = Variable("W_{W_{coeff1}}", 2e-5, "1/m",
-                          "wing weight coefficent 1")  # 12e-5 originally
-    W_W_coeff2 = Variable("W_{W_{coeff2}}", 60, "Pa",
-                          "wing weight coefficent 2")
+    W_W_coeff1 = Variable(
+        "W_{W_{coeff1}}", 2e-5, "1/m", "wing weight coefficent 1"
+    )  # 12e-5 originally
+    W_W_coeff2 = Variable("W_{W_{coeff2}}", 60, "Pa", "wing weight coefficent 2")
 
     # Dimensional constants
     Range = Variable("Range", 3000, "km", "aircraft range")
@@ -62,38 +63,48 @@ def SimPleAC():
     # Weight and lift model
     constraints += [
         W >= W_0 + W_w + W_f,
-        W_0 + W_w + 0.5 * W_f <= 0.5 * rho * S * C_L * V ** 2,
-        W <= 0.5 * rho * S * C_Lmax * V_min ** 2,
+        W_0 + W_w + 0.5 * W_f <= 0.5 * rho * S * C_L * V**2,
+        W <= 0.5 * rho * S * C_Lmax * V_min**2,
         T_flight >= Range / V,
-        LoD == C_L/C_D]
+        LoD == C_L / C_D,
+    ]
 
     # Thrust and drag model
     C_D_fuse = CDA0 / S
     C_D_wpar = k * C_f * S_wetratio
-    C_D_ind = C_L ** 2 / (np.pi * A * e)
+    C_D_ind = C_L**2 / (np.pi * A * e)
     constraints += [
         W_f >= TSFC * T_flight * D,
-        D >= 0.5 * rho * S * C_D * V ** 2,
+        D >= 0.5 * rho * S * C_D * V**2,
         C_D >= C_D_fuse + C_D_wpar + C_D_ind,
-        V_f_fuse <= 10*units("m")*CDA0,
+        V_f_fuse <= 10 * units("m") * CDA0,
         Re <= (rho / mu) * V * (S / A) ** 0.5,
-        C_f >= 0.074 / Re ** 0.2]
+        C_f >= 0.074 / Re**0.2,
+    ]
 
     # Fuel volume model
     with SignomialsEnabled():
         constraints += [
             V_f == W_f / g / rho_f,
             # linear with b and tau, quadratic with chord
-            V_f_wing**2 <= 0.0009*S**3/A*tau**2,
+            V_f_wing**2 <= 0.0009 * S**3 / A * tau**2,
             V_f_avail <= V_f_wing + V_f_fuse,  # [SP]
-            Tight([V_f_avail >= V_f])]
+            Tight([V_f_avail >= V_f]),
+        ]
 
     # Wing weight model
     constraints += [
         W_w_surf >= W_W_coeff2 * S,
-        W_w_strc**2 >= W_W_coeff1**2/tau**2 * N_ult**2*A**3*(V_f_fuse*g*rho_f
-                                                             + W_0)*W*S,
-        W_w >= W_w_surf + W_w_strc]
+        W_w_strc**2
+        >= W_W_coeff1**2
+        / tau**2
+        * N_ult**2
+        * A**3
+        * (V_f_fuse * g * rho_f + W_0)
+        * W
+        * S,
+        W_w >= W_w_surf + W_w_strc,
+    ]
 
     m = Model(objective, constraints)
 
@@ -101,7 +112,8 @@ def SimPleAC():
 
 
 sa = SimPleAC()
-sa.substitutions.update({"V_f_wing": ("sweep", np.linspace(0.1, 0.5, 3)),
-                         "V_f_fuse": 0.5})
+sa.substitutions.update(
+    {"V_f_wing": ("sweep", np.linspace(0.1, 0.5, 3)), "V_f_fuse": 0.5}
+)
 sol = sa.solve(verbosity=0)
 print(sol.summary())

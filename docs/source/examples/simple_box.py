@@ -1,5 +1,6 @@
 "Maximizes box volume given area and aspect ratio constraints."
-from gpkit import Variable, Model
+
+from gpkit import Model, Variable
 
 # Parameters
 alpha = Variable("alpha", 2, "-", "lower limit, wall aspect ratio")
@@ -15,16 +16,18 @@ w = Variable("w", "m", "width")
 d = Variable("d", "m", "depth")
 
 # Constraints
-constraints = [A_wall >= 2*h*w + 2*h*d,
-               A_floor >= w*d,
-               h/w >= alpha,
-               h/w <= beta,
-               d/w >= gamma,
-               d/w <= delta]
+constraints = [
+    A_wall >= 2 * h * w + 2 * h * d,
+    A_floor >= w * d,
+    h / w >= alpha,
+    h / w <= beta,
+    d / w >= gamma,
+    d / w <= delta,
+]
 
 # Objective function
-V = h*w*d
-objective = 1/V  # To maximize V, we minimize its reciprocal
+V = h * w * d
+objective = 1 / V  # To maximize V, we minimize its reciprocal
 
 # Formulate the Model
 m = Model(objective, constraints)

@@ -1,5 +1,7 @@
 "Vectorization demonstration"
+
 from gpkit import Model, Variable, Vectorize
+
 
 class Test(Model):
     """A simple scalar model
@@ -8,9 +10,11 @@ class Test(Model):
     ---------------
     x
     """
+
     def setup(self):
         x = self.x = Variable("x")
         return [x >= 1]
+
 
 print("SCALAR")
 m = Test()

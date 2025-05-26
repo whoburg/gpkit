@@ -1,17 +1,19 @@
 "Demonstrates manual and auto sweeping and plotting"
+
 import matplotlib as mpl
-mpl.use('Agg')
-# comment out the lines above to show figures in a window
 import numpy as np
+
 from gpkit import Model, Variable, units
 from gpkit.constraints.tight import Tight
 
+mpl.use("Agg")
+
 x = Variable("x", "m", "Swept Variable")
 y = Variable("y", "m^2", "Cost")
-m = Model(y, [
-    y >= (x/2)**-0.5 * units.m**2.5 + 1*units.m**2,
-    Tight([y >= (x/2)**2])
-    ])
+m = Model(
+    y,
+    [y >= (x / 2) ** -0.5 * units.m**2.5 + 1 * units.m**2, Tight([y >= (x / 2) ** 2])],
+)
 
 # arguments are: model, swept: values, posnomial for y-axis
 sol = m.sweep({x: np.linspace(1, 3, 20)}, verbosity=0)

@@ -1,7 +1,9 @@
 """Modular aircraft concept"""
-import pickle
+
 import numpy as np
+
 from gpkit import Model, Vectorize, parse_variables
+from gpkit.interactive.references import referencesplot
 
 
 class AircraftP(Model):
@@ -21,6 +23,7 @@ class AircraftP(Model):
     Wfuel, aircraft.W, state.mu
 
     """
+
     @parse_variables(__doc__, globals())
     def setup(self, aircraft, state):
         self.aircraft = aircraft
@@ -38,9 +41,11 @@ class AircraftP(Model):
         D = self.wing_aero.D
         CL = self.wing_aero.CL
 
-        return Wburn >= 0.1*D, W + Wfuel <= 0.5*rho*CL*S*V**2, {
-            "performance":
-                self.perf_models}
+        return (
+            Wburn >= 0.1 * D,
+            W + Wfuel <= 0.5 * rho * CL * S * V**2,
+            {"performance": self.perf_models},
+        )
 
 
 class Aircraft(Model):
@@ -58,14 +63,14 @@ class Aircraft(Model):
     ---------------
     wing.c, wing.S
     """
+
     @parse_variables(__doc__, globals())
     def setup(self):
         self.fuse = Fuselage()
         self.wing = Wing()
         self.components = [self.fuse, self.wing]
 
-        return [W >= sum(c.W for c in self.components),
-                self.components]
+        return [W >= sum(c.W for c in self.components), self.components]
 
     dynamic = AircraftP
 
@@ -80,6 +85,7 @@ class FlightState(Model):
     rho   0.74     [kg/m^3]   air density
 
     """
+
     @parse_variables(__doc__, globals())
     def setup(self):
         pass
@@ -97,6 +103,7 @@ class FlightSegment(Model):
     Wfuel, aircraft.W
 
     """
+
     def setup(self, aircraft):
         self.aircraft = aircraft
 
@@ -106,8 +113,7 @@ class FlightSegment(Model):
         self.Wburn = self.aircraftp.Wburn
         self.Wfuel = self.aircraftp.Wfuel
 
-        return {"aircraft performance": self.aircraftp,
-                "flightstate": self.flightstate}
+        return {"aircraft performance": self.aircraftp, "flightstate": self.flightstate}
 
 
 class Mission(Model):
@@ -121,6 +127,7 @@ class Mission(Model):
     ---------------
     aircraft.W
     """
+
     def setup(self, aircraft):
         self.aircraft = aircraft
 
@@ -132,11 +139,12 @@ class Mission(Model):
         self.takeoff_fuel = Wfuel[0]
 
         return {
-            "fuel constraints":
-                [Wfuel[:-1] >= Wfuel[1:] + Wburn[:-1],
-                 Wfuel[-1] >= Wburn[-1]],
-            "flight segment":
-                self.fs}
+            "fuel constraints": [
+                Wfuel[:-1] >= Wfuel[1:] + Wburn[:-1],
+                Wfuel[-1] >= Wburn[-1],
+            ],
+            "flight segment": self.fs,
+        }
 
 
 class WingAero(Model):
@@ -158,6 +166,7 @@ class WingAero(Model):
     ---------------
     CL, wing.S, state.mu, state.rho, state.V
     """
+
     @parse_variables(__doc__, globals())
     def setup(self, wing, state):
         self.wing = wing
@@ -170,9 +179,11 @@ class WingAero(Model):
         V = state.V
         mu = state.mu
 
-        return [D >= 0.5*rho*V**2*CD*S,
-                Re == rho*V*c/mu,
-                CD >= 0.074/Re**0.2 + CL**2/np.pi/A/e]
+        return [
+            D >= 0.5 * rho * V**2 * CD * S,
+            Re == rho * V * c / mu,
+            CD >= 0.074 / Re**0.2 + CL**2 / np.pi / A / e,
+        ]
 
 
 class Wing(Model):
@@ -194,10 +205,10 @@ class Wing(Model):
     ---------------
     c, S
     """
+
     @parse_variables(__doc__, globals())
     def setup(self):
-        return [c == (S/A)**0.5,
-                W >= S*rho]
+        return [c == (S / A) ** 0.5, W >= S * rho]
 
     dynamic = WingAero
 
@@ -212,9 +223,11 @@ class Fuselage(Model):
     W  100 [lbf]  weight
 
     """
+
     @parse_variables(__doc__, globals())
     def setup(self):
         pass
+
 
 AC = Aircraft()
 MISSION = Mission(AC)
@@ -225,19 +238,19 @@ sol.save("solution.pkl")
 
 vars_of_interest = set(AC.varkeys)
 # note that there's two ways to access submodels
-assert (MISSION["flight segment"]["aircraft performance"]
-        is MISSION.fs.aircraftp)
+assert MISSION["flight segment"]["aircraft performance"] is MISSION.fs.aircraftp
 vars_of_interest.update(MISSION.fs.aircraftp.unique_varkeys)
 vars_of_interest.add(M["D"])
 print(sol.summary(vars_of_interest))
 print(sol.table(tables=["loose constraints"]))
 
-M.append(MISSION.fs.aircraftp.Wburn >= 0.2*MISSION.fs.aircraftp.wing_aero.D)
+M.append(MISSION.fs.aircraftp.Wburn >= 0.2 * MISSION.fs.aircraftp.wing_aero.D)
 sol = M.solve(verbosity=0)
 print(sol.diff("solution.pkl", showvars=vars_of_interest, sortbymodel=False))
 
 try:
     from gpkit.interactive.sankey import Sankey
+
     variablesankey = Sankey(sol, M).diagram(AC.wing.A)
     sankey = Sankey(sol, M).diagram(width=1200, height=400, maxlinks=30)
     # the line below shows an interactive graph if run in jupyter notebook
@@ -245,5 +258,4 @@ try:
 except (ImportError, ModuleNotFoundError):
     print("Making Sankey diagrams requires the ipysankeywidget package")
 
-from gpkit.interactive.references import referencesplot
 referencesplot(M, openimmediately=False)

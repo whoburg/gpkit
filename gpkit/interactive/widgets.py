@@ -166,7 +166,7 @@ def modelcontrolpanel(model, showvars=(), fns_of_sol=None, **solvekwargs):
             varname = varname.strip()
             try:
                 yvars.append(model[varname])
-            except:  # pylint: disable=bare-except
+            except Exception:
                 break
         ranges = {}
         for sb in sliderboxes[1:]:

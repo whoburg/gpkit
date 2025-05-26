@@ -1,4 +1,5 @@
 "Can be found in gpkit/docs/source/examples/external_constraint.py"
+
 from external_function import external_code
 
 
@@ -16,9 +17,9 @@ class ExternalConstraint:
         "Returns locally-approximating GP constraint"
         # Creating a default constraint for the first solve
         if self.x not in x0:
-            return (self.y >= self.x)
+            return self.y >= self.x
         # Otherwise calls external code at the current position...
         x_star = x0[self.x]
         res = external_code(x_star)
         # ...and returns a posynomial approximation around that position
-        return (self.y >= res * self.x/x_star)
+        return self.y >= res * self.x / x_star

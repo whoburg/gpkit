@@ -1,7 +1,9 @@
 "Treemap example"
-import plotly  # pylint: disable=unused-import
-from gpkit.interactive.plotting import treemap
+
+# import plotly
 from performance_modeling import M
+
+from gpkit.interactive.plotting import treemap
 
 fig = treemap(M)
 # plotly.offline.plot(fig, filename="treemap.html")  # uncomment to show

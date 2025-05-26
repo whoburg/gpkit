@@ -1,4 +1,5 @@
 "Demo of accessing variables in models"
+
 from gpkit import Model, Variable
 
 
@@ -14,11 +15,12 @@ class Battery(Model):
     E
 
     """
+
     def setup(self):
         h = Variable("h", 200, "Wh/kg", "specific energy")
         E = self.E = Variable("E", "MJ", "stored energy")
         m = self.m = Variable("m", "lb", "battery mass")
-        return [E <= m*h]
+        return [E <= m * h]
 
 
 class Motor(Model):
@@ -33,11 +35,12 @@ class Motor(Model):
     Pmax
 
     """
+
     def setup(self):
         m = self.m = Variable("m", "lb", "motor mass")
         f = Variable("f", 20, "lb/hp", "mass per unit power")
         Pmax = self.Pmax = Variable("P_{max}", "hp", "max output power")
-        return [m >= f*Pmax]
+        return [m >= f * Pmax]
 
 
 class PowerSystem(Model):
@@ -52,6 +55,7 @@ class PowerSystem(Model):
     E, Pmax
 
     """
+
     def setup(self):
         battery, motor = Battery(), Motor()
         components = [battery, motor]
@@ -59,8 +63,8 @@ class PowerSystem(Model):
         self.E = battery.E
         self.Pmax = motor.Pmax
 
-        return [components,
-                m >= sum(comp.m for comp in components)]
+        return [components, m >= sum(comp.m for comp in components)]
+
 
 PS = PowerSystem()
 print("Getting the only var 'E': %s" % PS["E"])

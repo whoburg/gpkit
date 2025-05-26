@@ -9,7 +9,7 @@ Supported solvers are
 [mosek](http://mosek.com)
 and [cvxopt](http://cvxopt.org/).
 
-[![CI Status](https://github.com/whoburg/gpkit/actions/workflows/tests.yml/badge.svg)](https://github.com/whoburg/gpkit/actions/workflows/tests.yml)
-[![CI Status](https://github.com/whoburg/gpkit/actions/workflows/lint.yml/badge.svg)](https://github.com/whoburg/gpkit/actions/workflows/lint.yml)
+[![Test Status](https://github.com/whoburg/gpkit/actions/workflows/tests.yml/badge.svg)](https://github.com/whoburg/gpkit/actions/workflows/tests.yml)
+[![Lint Status](https://github.com/whoburg/gpkit/actions/workflows/lint.yml/badge.svg)](https://github.com/whoburg/gpkit/actions/workflows/lint.yml)
 
 Originally developed with Ned Burnell, whose extensive contributions were foundational to the early design.

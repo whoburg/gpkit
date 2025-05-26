@@ -40,7 +40,7 @@ class TestNomialSubs(unittest.TestCase):
                         return np.array(c[y]) + adnumber([1, 2, 3])
                     return c[y] + np.array([1, 2, 3])
 
-                self.x = x = VectorVariable(3, "x", vectorlink)
+                self.x = VectorVariable(3, "x", vectorlink)
 
         m = VectorLinked()
         self.assertEqual(m.substitutions[m.x[0].key](m.substitutions), 2)
@@ -81,7 +81,7 @@ class TestNomialSubs(unittest.TestCase):
         """Test special single-argument substitution for Variable"""
         x = Variable("x")
         y = Variable("y")
-        m = x * y**2
+        _ = x * y**2
         self.assertEqual(x.sub(3), 3)
         # make sure x was not mutated
         self.assertEqual(x, Variable("x"))
@@ -257,7 +257,7 @@ class TestModelSubs(unittest.TestCase):
         )
         self.assertEqual(len(sol["cost"]), 4)
         npt.assert_allclose(
-            [float(l) for l in (sol(t_day) + sol(t_night)) / gpkit.ureg.hours], 24
+            [float(d) for d in (sol(t_day) + sol(t_night)) / gpkit.ureg.hours], 24
         )
 
     def test_vector_init(self):

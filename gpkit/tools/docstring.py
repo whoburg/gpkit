@@ -113,9 +113,9 @@ parse_variables is no longer used directly with exec, but as a decorator:
         )
         new_src = "\n".join(
             [
-                l[first_indent_length:-1]
-                for l in new_lines
-                if "#" not in l[:first_indent_length]
+                line[first_indent_length:-1]
+                for line in new_lines
+                if "#" not in line[:first_indent_length]
             ]
         )
         new_ast = ast.parse(new_src, "<parse_variables>")

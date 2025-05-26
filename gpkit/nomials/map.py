@@ -5,8 +5,8 @@ from collections import defaultdict
 import numpy as np
 
 from .. import units
-from ..small_classes import EMPTY_HV, HashVector, Strings, qty
-from ..units import DimensionalityError
+from ..small_classes import EMPTY_HV, HashVector, Strings
+from ..units import DimensionalityError, qty
 from .substitution import parse_subs
 
 DIMLESS_QUANTITY = qty("dimensionless")
@@ -159,7 +159,7 @@ class NomialMap(HashVector):
         selfexps = list(self.keys())
         for orig_exp, self_exp in self.expmap.items():
             if self_exp not in self:  # can occur in tautological constraints
-                continue  #     after substitution
+                continue  # after substitution
             fraction = self.csmap.get(orig_exp, orig[orig_exp]) / self[self_exp]
             orig_idx = origexps.index(orig_exp)
             pmap[selfexps.index(self_exp)][orig_idx] = fraction

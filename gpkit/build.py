@@ -143,7 +143,7 @@ class MosekCLI(SolverBackend):
         try:
             if call("mskexpopt") in (1052, 28):  # 28 for MacOSX
                 return where
-        except:  # pylint: disable=bare-except
+        except Exception:
             pass  # exception type varies by operating system
         return None
 
@@ -157,7 +157,8 @@ class CVXopt(SolverBackend):
         "Attempts to import cvxopt."
         try:
             log("#   Trying to import cvxopt...")
-            import cvxopt  # pylint: disable=unused-import
+            # pylint: disable=unused-import
+            import cvxopt  # noqa: F401
 
             return "in the default PYTHONPATH"
         except ImportError:

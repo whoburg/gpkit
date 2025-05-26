@@ -5,7 +5,7 @@ from operator import xor
 
 import numpy as np
 
-from .units import Quantity, qty  # pylint: disable=unused-import
+from .units import Quantity
 
 Strings = (str,)
 Numbers = (int, float, np.number, Quantity)
@@ -221,10 +221,13 @@ class HashVector(dict):
 
         If the other object inherits from dict, multiplication is element-wise
         and their key's intersection will form the new keys."""
-        try:
+        # try:
+        #     return self.__class__({k: v * other for (k, v) in self.items()})
+        # except:  # pylint: disable=bare-except
+        #     return NotImplemented
+        if isinstance(other, (Numbers, dict)):
             return self.__class__({k: v * other for (k, v) in self.items()})
-        except:  # pylint: disable=bare-except
-            return NotImplemented
+        return NotImplemented
 
     def __add__(self, other):
         """Accepts scalars and dicts. Returns with each value added.

@@ -146,7 +146,7 @@ def topsenss_filter(data, showvars, nvars=5):
     mean_abs_senss = {
         k: np.abs(s).mean() for k, s in data.items() if not np.isnan(s).any()
     }
-    topk = [k for k, _ in sorted(mean_abs_senss.items(), key=lambda l: l[1])]
+    topk = [k for k, _ in sorted(mean_abs_senss.items(), key=lambda x: x[1])]
     filter_already_shown = showvars.intersection(topk)
     for k in filter_already_shown:
         topk.remove(k)
@@ -247,7 +247,7 @@ def constraint_table(data, title, sortbymodel=True, showmodels=True, **_):
                 line = "  " + line[maxlen:]
         constraintlines.append(line)
         lines += [(openingstr + " : ", constraintlines[0])]
-        lines += [("", l) for l in constraintlines[1:]]
+        lines += [("", x) for x in constraintlines[1:]]
     if not lines:
         lines = [("", "(none)")]
     maxlens = np.max(
@@ -291,7 +291,7 @@ def warnings_table(self, _, **kwargs):
         for i, data in enumerate(data_vec):
             if len(data) == 0:
                 continue
-            data = sorted(data, key=lambda l: l[0])  # sort by msg
+            data = sorted(data, key=lambda x: x[0])  # sort by msg
             title = wtype
             if len(data_vec) > 1:
                 title += " in sweep %i" % i
@@ -1162,7 +1162,7 @@ def var_table(
                     ]
                 )
             ]
-            + [" & ".join(l) + " \\\\" for l in lines]
+            + [" & ".join(line) + " \\\\" for line in lines]
             + ["\n".join(["\\bottomrule", "\\end{longtable}}", ""])]
         )
     return lines

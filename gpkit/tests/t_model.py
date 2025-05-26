@@ -37,7 +37,8 @@ from gpkit.small_classes import CootMatrix
 NDIGS = {"cvxopt": 5, "mosek_cli": 5, "mosek_conif": 3}
 # name: decimal places of accuracy achieved in these tests
 
-# pylint: disable=invalid-name,attribute-defined-outside-init,unused-variable,undefined-variable,exec-used
+# pylint: disable=invalid-name,attribute-defined-outside-init
+# pylint: disable=unused-variable,undefined-variable,exec-used
 
 
 def get_ndig(solver):
@@ -794,7 +795,7 @@ class Sub(Model):
     "Submodel with mass, for testing"
 
     def setup(self):
-        m = Variable("m", "lb", "mass")
+        m = Variable("m", "lb", "mass")  # noqa: F841
 
 
 class Widget(Model):
@@ -843,7 +844,6 @@ class TestModelNoSolve(unittest.TestCase):
         self.assertIn(w.subB["m"].key, m_vbn_keys)
         # dig a level deeper, into the keymap
         self.assertEqual(len(w.varkeys.keymap["m"]), 2)
-        w2 = Widget()
 
 
 TESTS = [TestModelSolverSpecific, TestModelNoSolve]

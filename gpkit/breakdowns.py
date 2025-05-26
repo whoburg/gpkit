@@ -1,11 +1,13 @@
 # TODO: cleanup weird conditionals
 #      add conversions to plotly/sankey
 
-# pylint: skip-file
 import string
 from collections import defaultdict, namedtuple
 
 import numpy as np
+
+# pylint: skip-file
+import plotly.graph_objects as go
 
 from gpkit.nomials import Monomial, Posynomial
 from gpkit.nomials.map import NomialMap
@@ -764,7 +766,9 @@ def graph(
         solution.set_necessarylineage()
     collapse = (
         not showlegend
-    )  # TODO: set to True while showlegend is True for first approx of receipts; autoinclude with trace?
+    )
+    # TODO: set to True while showlegend is True for first approx of receipts;
+    # TODO: autoinclude with trace?
     if maxdepth is None:
         maxdepth = plumb(tree)
     if height is not None:
@@ -973,9 +977,6 @@ def get_valstr(key, solution, into="%s"):
     ):
         unitstr += ", fixed"
     return into % (valuestr + unitstr)
-
-
-import plotly.graph_objects as go
 
 
 def plotlyify(tree, solution, minval=None):

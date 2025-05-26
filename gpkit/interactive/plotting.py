@@ -100,9 +100,9 @@ def treemap(model, itemize="variables", sizebycount=False):
     sizes = []
 
     if itemize == "variables":
-        lineagestrs = [l.lineagestr() or "Model" for l in model.varkeys]
+        lineagestrs = [line.lineagestr() or "Model" for line in model.varkeys]
     elif itemize == "constraints":
-        lineagestrs = [l.lineagestr() or "Model" for l in model.flat()]
+        lineagestrs = [line.lineagestr() or "Model" for line in model.flat()]
 
     modelcount = Counter(lineagestrs)
     for modelname, count in modelcount.items():

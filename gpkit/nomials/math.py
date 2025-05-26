@@ -380,11 +380,6 @@ class Monomial(Posynomial):
 MONS = Numbers + (Monomial,)
 
 
-#######################################################
-####### CONSTRAINTS ###################################
-#######################################################
-
-
 class ScalarSingleEquationConstraint(SingleEquationConstraint):
     "A SingleEquationConstraint with scalar left and right sides."
 

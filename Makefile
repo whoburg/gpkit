@@ -12,7 +12,7 @@ install-test:
 
 # Code quality
 lint:
-	pylint gpkit
+	flake8 --max-line-length=88 --ignore=E203,W503,F821 --per-file-ignores="__init__.py:F401" gpkit
 
 # Code formatting
 format:

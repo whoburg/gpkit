@@ -163,7 +163,8 @@ def solvify(genfunction):
     return solvefn
 
 
-# pylint: disable=too-many-locals,too-many-arguments,too-many-branches,too-many-statements
+# pylint: disable=too-many-locals,too-many-arguments,too-many-branches
+# pylint: disable=too-many-statements
 def run_sweep(
     genfunction,
     self,
@@ -249,9 +250,9 @@ def run_sweep(
             del solution["constants"][var]
         elif linked:  # if any variables are linked, we check all of them
             if hasattr(val[0], "shape"):
-                differences = ((l != val[0]).any() for l in val[1:])
+                differences = ((x != val[0]).any() for x in val[1:])
             else:
-                differences = (l != val[0] for l in val[1:])
+                differences = (x != val[0] for x in val[1:])
             if not any(differences):
                 solution["constants"][var] = [val[0]]
         else:

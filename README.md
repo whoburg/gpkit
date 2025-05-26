@@ -10,5 +10,6 @@ Supported solvers are
 and [cvxopt](http://cvxopt.org/).
 
 [![CI Status](https://github.com/whoburg/gpkit/actions/workflows/tests.yml/badge.svg)](https://github.com/whoburg/gpkit/actions/workflows/tests.yml)
+[![CI Status](https://github.com/whoburg/gpkit/actions/workflows/lint.yml/badge.svg)](https://github.com/whoburg/gpkit/actions/workflows/lint.yml)
 
 Originally developed with Ned Burnell, whose extensive contributions were foundational to the early design.

@@ -764,9 +764,7 @@ def graph(
     already_set = solution._lineageset
     if not already_set:
         solution.set_necessarylineage()
-    collapse = (
-        not showlegend
-    )
+    collapse = not showlegend
     # TODO: set to True while showlegend is True for first approx of receipts;
     # TODO: autoinclude with trace?
     if maxdepth is None:

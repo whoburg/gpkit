@@ -41,7 +41,7 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://www.github.com/whoburg/gpkit"
+Homepage = "https://www.github.com/beautifulmachines/gpkit-core"
 
 [tool.setuptools]
 packages = ["gpkit", "gpkit.tools", "gpkit.interactive", "gpkit.constraints", "gpkit.nomials", "gpkit.tests", "gpkit.solvers"]

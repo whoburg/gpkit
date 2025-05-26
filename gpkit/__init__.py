@@ -1,5 +1,7 @@
 "GP and SP modeling package"
 
+__version__ = "0.1.0"
+
 from .build import build
 from .constraints.gp import GeometricProgram
 from .constraints.model import Model
@@ -18,7 +20,6 @@ from .tools.docstring import parse_variables
 from .units import DimensionalityError, units, ureg
 from .varkey import VarKey
 
-__version__ = "0.1.0"
 GPCOLORS = ["#59ade4", "#FA3333"]
 GPBLU, GPRED = GPCOLORS
 

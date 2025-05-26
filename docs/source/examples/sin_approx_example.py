@@ -1,7 +1,7 @@
 "Can be found in gpkit/docs/source/examples/sin_approx_example.py"
 import numpy as np
-from gpkit import Variable, Model
 
+from gpkit import Model, Variable
 
 x = Variable("x")
 y = Variable("y")

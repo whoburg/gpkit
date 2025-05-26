@@ -1,5 +1,5 @@
 "Minimizes cylindrical tank surface area for a particular volume."
-from gpkit import Variable, VectorVariable, Model
+from gpkit import Model, Variable, VectorVariable
 
 M = Variable("M", 100, "kg", "Mass of Water in the Tank")
 rho = Variable("\\rho", 1000, "kg/m^3", "Density of Water in the Tank")

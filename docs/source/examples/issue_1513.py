@@ -1,6 +1,8 @@
 "Tests non-array linked functions & subs in a vectorization environment"
 import numpy as np
-from gpkit import Variable, Model, ConstraintSet, Vectorize
+
+from gpkit import ConstraintSet, Model, Variable, Vectorize
+
 
 class Vehicle(Model):
     "Vehicle model"

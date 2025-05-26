@@ -1,6 +1,7 @@
 "Example choice variable usage"
 import numpy as np
-from gpkit import Variable, Model
+
+from gpkit import Model, Variable
 
 x = Variable("x", choices=range(1, 4))
 num = Variable("numerator", np.linspace(0.5, 7, 11))

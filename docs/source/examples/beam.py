@@ -3,7 +3,8 @@ A simple beam example with fixed geometry. Solves the discretized
 Euler-Bernoulli beam equations for a constant distributed load
 """
 import numpy as np
-from gpkit import parse_variables, Model, ureg
+
+from gpkit import Model, parse_variables, ureg
 from gpkit.small_scripts import mag
 
 eps = 2e-4   # has to be quite large for consistent cvxopt printouts;

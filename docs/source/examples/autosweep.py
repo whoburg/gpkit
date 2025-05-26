@@ -1,10 +1,12 @@
 "Show autosweep_1d functionality"
 import pickle
+
 import numpy as np
+
 import gpkit
-from gpkit import units, Variable, Model
-from gpkit.tools.autosweep import autosweep_1d
+from gpkit import Model, Variable, units
 from gpkit.small_scripts import mag
+from gpkit.tools.autosweep import autosweep_1d
 
 A = Variable("A", "m**2")
 l = Variable("l", "m")

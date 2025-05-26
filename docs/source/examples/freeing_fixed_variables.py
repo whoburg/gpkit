@@ -1,5 +1,6 @@
 "Example of freeing fixed variables"
-from gpkit import Variable, Model
+from gpkit import Model, Variable
+
 x = Variable("x")
 y = Variable("y", 3)  # fix value to 3
 m = Model(x, [x >= 1 + y, y >= 1])

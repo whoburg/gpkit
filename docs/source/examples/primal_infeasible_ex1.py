@@ -1,5 +1,5 @@
 "A simple primal infeasible example"
-from gpkit import Variable, Model
+from gpkit import Model, Variable
 
 x = Variable("x")
 y = Variable("y")

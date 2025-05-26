@@ -1,5 +1,5 @@
 """Adapted from t_SP in tests/t_geometric_program.py"""
-from gpkit import Model, Variable, SignomialsEnabled
+from gpkit import Model, SignomialsEnabled, Variable
 
 # Decision variables
 x = Variable('x')

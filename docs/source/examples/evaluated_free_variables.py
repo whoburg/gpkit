@@ -1,5 +1,5 @@
 "Example post-solve evaluated variable"
-from gpkit import Variable, Model
+from gpkit import Model, Variable
 
 # code from t_constraints.test_evalfn in tests/t_sub.py
 x = Variable("x")

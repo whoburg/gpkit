@@ -1,5 +1,5 @@
 "Example Tight ConstraintSet usage"
-from gpkit import Variable, Model
+from gpkit import Model, Variable
 from gpkit.constraints.tight import Tight
 
 Tight.reltol = 1e-2  # set the global tolerance of Tight

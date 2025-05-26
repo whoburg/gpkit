@@ -1,9 +1,11 @@
 "An example to show off Breakdowns"
 import os
-import sys
 import pickle
+import sys
+
 import pint
 from packaging import version
+
 from gpkit.breakdowns import Breakdowns
 
 dirpath = os.path.dirname(os.path.realpath(__file__)) + os.sep

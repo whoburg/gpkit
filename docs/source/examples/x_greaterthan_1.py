@@ -1,5 +1,5 @@
 "Very simple problem: minimize x while keeping x greater than 1."
-from gpkit import Variable, Model
+from gpkit import Model, Variable
 
 # Decision variable
 x = Variable("x")

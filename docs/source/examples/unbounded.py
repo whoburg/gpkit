@@ -1,5 +1,5 @@
 "Demonstrate a trivial unbounded variable"
-from gpkit import Variable, Model
+from gpkit import Model, Variable
 from gpkit.constraints.bounded import Bounded
 
 x = Variable("x")

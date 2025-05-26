@@ -1,6 +1,8 @@
 """Modular aircraft concept"""
 import pickle
+
 import numpy as np
+
 from gpkit import Model, Vectorize, parse_variables
 
 
@@ -246,4 +248,5 @@ except (ImportError, ModuleNotFoundError):
     print("Making Sankey diagrams requires the ipysankeywidget package")
 
 from gpkit.interactive.references import referencesplot
+
 referencesplot(M, openimmediately=False)

@@ -1,5 +1,5 @@
 "Example Loose ConstraintSet usage"
-from gpkit import Variable, Model
+from gpkit import Model, Variable
 from gpkit.constraints.loose import Loose
 
 Loose.reltol = 1e-4  # set the global tolerance of Loose

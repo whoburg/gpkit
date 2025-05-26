@@ -1,5 +1,5 @@
 "Example pre-solve evaluated fixed variable"
-from gpkit import Variable, Model, units
+from gpkit import Model, Variable, units
 
 # code from t_GPSubs.test_calcconst in tests/t_sub.py
 x = Variable("x", "hours")

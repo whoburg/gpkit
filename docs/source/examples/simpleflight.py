@@ -1,7 +1,10 @@
 "Minimizes airplane drag for a simple drag and structure model."
 import pickle
+
 import numpy as np
-from gpkit import Variable, Model, SolutionArray
+
+from gpkit import Model, SolutionArray, Variable
+
 pi = np.pi
 
 

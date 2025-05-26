@@ -1,5 +1,5 @@
 "Debug examples"
-from gpkit import Variable, Model, units
+from gpkit import Model, Variable, units
 
 x = Variable("x", "ft")
 x_min = Variable("x_min", 2, "ft")

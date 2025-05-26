@@ -1,5 +1,6 @@
 "Example substitution; adapted from t_sub.py/t_NomialSubs/test_Vector"
 from gpkit import Variable, VectorVariable
+
 x = Variable("x")
 y = Variable("y")
 z = VectorVariable(2, "z")

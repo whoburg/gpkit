@@ -1,6 +1,7 @@
 "example of an SP that turns into a GP"
 import numpy as np
-from gpkit import Model, Variable, SignomialsEnabled, units
+
+from gpkit import Model, SignomialsEnabled, Variable, units
 from gpkit.constraints.tight import Tight
 
 

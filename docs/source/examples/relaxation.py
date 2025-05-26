@@ -1,6 +1,6 @@
 "Relaxation examples"
 
-from gpkit import Variable, Model
+from gpkit import Model, Variable
 
 x = Variable("x")
 x_min = Variable("x_min", 2)
@@ -22,6 +22,7 @@ mr1 = Model(allrelaxed.relaxvar, allrelaxed)
 print(mr1)
 print(mr1.solve(verbosity=0).table())  # solves with an x of 1.414
 from gpkit.breakdowns import Breakdowns
+
 Breakdowns(mr1.solution).trace("cost")
 print("")
 

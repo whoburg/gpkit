@@ -1,5 +1,5 @@
 "The getting started page"
-from gpkit import Variable, VectorVariable, Model
+from gpkit import Model, Variable, VectorVariable
 from gpkit.nomials import Monomial, Posynomial, PosynomialInequality
 
 ### Example Free Variables

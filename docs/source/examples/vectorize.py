@@ -1,6 +1,7 @@
 "Vectorization demonstration"
 from gpkit import Model, Variable, Vectorize
 
+
 class Test(Model):
     """A simple scalar model
 

@@ -1,5 +1,5 @@
 "Maximizes box volume given area and aspect ratio constraints."
-from gpkit import Variable, Model
+from gpkit import Model, Variable
 
 # Parameters
 alpha = Variable("alpha", 2, "-", "lower limit, wall aspect ratio")

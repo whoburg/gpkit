@@ -1,8 +1,10 @@
 "Demonstrates manual and auto sweeping and plotting"
 import matplotlib as mpl
+
 mpl.use('Agg')
 # comment out the lines above to show figures in a window
 import numpy as np
+
 from gpkit import Model, Variable, units
 from gpkit.constraints.tight import Tight
 

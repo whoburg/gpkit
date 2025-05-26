@@ -48,7 +48,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "gpkit"
-copyright = "2020 Edward Burnell"
+copyright = "2025 Warren Hoburg"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -102,7 +102,6 @@ pygments_style = "sphinx"
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-import os
 
 on_rtd = os.environ.get("READTHEDOCS", None) == "True"
 
@@ -201,11 +200,11 @@ htmlhelp_basename = "gpkitdoc"
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
-    #'papersize': 'letterpaper',
+    # 'papersize': 'letterpaper',
     # The font size ('10pt', '11pt' or '12pt').
-    #'pointsize': '10pt',
+    # 'pointsize': '10pt',
     # Additional stuff for the LaTeX preamble.
-    #'preamble': '',
+    # 'preamble': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples

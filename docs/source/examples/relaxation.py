@@ -1,6 +1,12 @@
 "Relaxation examples"
 
 from gpkit import Model, Variable
+from gpkit.breakdowns import Breakdowns
+from gpkit.constraints.relax import (
+    ConstantsRelaxed,
+    ConstraintsRelaxed,
+    ConstraintsRelaxedEqually,
+)
 
 x = Variable("x")
 x_min = Variable("x_min", 2)
@@ -15,13 +21,11 @@ print("")
 print("With constraints relaxed equally")
 print("================================")
 
-from gpkit.constraints.relax import ConstraintsRelaxedEqually
 
 allrelaxed = ConstraintsRelaxedEqually(m)
 mr1 = Model(allrelaxed.relaxvar, allrelaxed)
 print(mr1)
 print(mr1.solve(verbosity=0).table())  # solves with an x of 1.414
-from gpkit.breakdowns import Breakdowns
 
 Breakdowns(mr1.solution).trace("cost")
 print("")
@@ -29,7 +33,6 @@ print("")
 print("With constraints relaxed individually")
 print("=====================================")
 
-from gpkit.constraints.relax import ConstraintsRelaxed
 
 constraintsrelaxed = ConstraintsRelaxed(m)
 mr2 = Model(
@@ -44,7 +47,6 @@ print("")
 print("With constants relaxed individually")
 print("===================================")
 
-from gpkit.constraints.relax import ConstantsRelaxed
 
 constantsrelaxed = ConstantsRelaxed(m)
 mr3 = Model(

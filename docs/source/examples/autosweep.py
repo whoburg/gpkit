@@ -10,16 +10,16 @@ from gpkit.small_scripts import mag
 from gpkit.tools.autosweep import autosweep_1d
 
 A = Variable("A", "m**2")
-l = Variable("l", "m")
+w = Variable("w", "m")
 
-m1 = Model(A**2, [A >= l**2 + units.m**2])
+m1 = Model(A**2, [A >= w**2 + units.m**2])
 tol1 = 1e-3
-bst1 = autosweep_1d(m1, tol1, l, [1, 10], verbosity=0)
+bst1 = autosweep_1d(m1, tol1, w, [1, 10], verbosity=0)
 print("Solved after %2i passes, cost logtol +/-%.3g" % (bst1.nsols, bst1.tol))
 # autosweep solution accessing
-l_vals = np.linspace(1, 10, 10)
-sol1 = bst1.sample_at(l_vals)
-print("values of l: %s" % l_vals)
+w_vals = np.linspace(1, 10, 10)
+sol1 = bst1.sample_at(w_vals)
+print("values of w: %s" % w_vals)
 print(
     "values of A: [%s] %s"
     % (" ".join("% .1f" % n for n in sol1("A").magnitude), sol1("A").units)
@@ -41,12 +41,12 @@ bst1.save("autosweep.pkl")
 bst1_loaded = pickle.load(open("autosweep.pkl", "rb"))
 
 # this problem is two intersecting lines in logspace
-m2 = Model(A**2, [A >= (l / 3) ** 2, A >= (l / 3) ** 0.5 * units.m**1.5])
+m2 = Model(A**2, [A >= (w / 3) ** 2, A >= (w / 3) ** 0.5 * units.m**1.5])
 tol2 = {"mosek_cli": 1e-6, "mosek_conif": 1e-6, "cvxopt": 1e-7}[
     gpkit.settings["default_solver"]
 ]
 # test Model method
-sol2 = m2.autosweep({l: [1, 10]}, tol2, verbosity=0)
+sol2 = m2.autosweep({w: [1, 10]}, tol2, verbosity=0)
 bst2 = sol2.bst
 print("Solved after %2i passes, cost logtol +/-%.3g" % (bst2.nsols, bst2.tol))
 print("Table of solutions used in the autosweep:")

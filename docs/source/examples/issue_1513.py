@@ -30,9 +30,12 @@ class Fleet2(Model):
 
     def setup(self):
         x = Variable("x")
-        lambdafun = lambda c: [c[x] - 1, np.ones(x.shape)]
+
+        def myfun(c):
+            return [c[x] - 1, np.ones(x.shape)]
+
         with Vectorize(2):
-            y = Variable("y", lambdafun)
+            y = Variable("y", myfun)
             self.Vehicle = Vehicle()
 
         self.z = z = Variable("z")

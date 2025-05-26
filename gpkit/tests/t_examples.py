@@ -72,12 +72,12 @@ class TestExamples(unittest.TestCase):
         bst1, tol1 = example.bst1, example.tol1
         bst2, tol2 = example.bst2, example.tol2
 
-        l_ = np.linspace(1, 10, 100)
+        w_ = np.linspace(1, 10, 100)
         for bst in [bst1, example.bst1_loaded]:
-            sol1 = bst.sample_at(l_)
-            assert_logtol(sol1("l"), l_)
-            assert_logtol(sol1("A"), l_**2 + 1, tol1)
-            assert_logtol(sol1["cost"], (l_**2 + 1) ** 2, tol1)
+            sol1 = bst.sample_at(w_)
+            assert_logtol(sol1("w"), w_)
+            assert_logtol(sol1("A"), w_**2 + 1, tol1)
+            assert_logtol(sol1["cost"], (w_**2 + 1) ** 2, tol1)
             self.assertEqual(Quantity(1.0, sol1("A").units), Quantity(1.0, ureg.m) ** 2)
 
         ndig = -int(np.log10(tol2))

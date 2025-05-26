@@ -12,4 +12,10 @@ and [cvxopt](http://cvxopt.org/).
 [![Test Status](https://github.com/whoburg/gpkit/actions/workflows/tests.yml/badge.svg)](https://github.com/whoburg/gpkit/actions/workflows/tests.yml)
 [![Lint Status](https://github.com/whoburg/gpkit/actions/workflows/lint.yml/badge.svg)](https://github.com/whoburg/gpkit/actions/workflows/lint.yml)
 
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to set up your development environment and submit pull requests.
+
+## Acknowledgments
+
 Originally developed with Ned Burnell, whose extensive contributions were foundational to the early design.

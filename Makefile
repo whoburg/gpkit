@@ -1,9 +1,14 @@
-.PHONY: install-dev clean check-clean test test-unittest test-pytest lint format
+.PHONY: install-dev install-lint install-test clean check-clean test test-unittest test-pytest lint format
 
 # Development environment setup
 install-dev:
-	pip install -r requirements-dev.txt
-	pip install -e .
+	pip install -e .[lint,test]
+
+install-lint:
+	pip install .[lint]
+
+install-test:
+	pip install .[test]
 
 # Code quality
 lint:
@@ -44,9 +49,11 @@ check-clean:
 # Help
 help:
 	@echo "Available commands:"
-	@echo "  install-dev        Install development dependencies"
+	@echo "  install-dev       Editable install for local development"
+	@echo "  install-lint      Install with linting tools for CI"
+	@echo "  install-test      Install with testing tools for CI"
 	@echo "  lint              Run pylint"
-	@echo "  format            Format code with black"
+	@echo "  format            Format code with isort and black"
 	@echo "  test              Run both unittest and pytest"
 	@echo "  test-unittest     Run tests using the original test runner"
 	@echo "  test-pytest       Run tests with pytest"

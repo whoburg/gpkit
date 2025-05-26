@@ -32,7 +32,7 @@ clean:
 	find . -type f -name "*.pyc" -delete
 
 check-clean:
-	if [[ -n "$(git status --porcelain)" ]]; then
+	if [ -n "$$(git status --porcelain)" ]; then
 		echo "Tests caused uncommitted changes:"
 		git status --porcelain
 		exit 1

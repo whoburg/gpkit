@@ -451,7 +451,7 @@ def crawl(
                 if vk.units:
                     units *= vk.units ** mon.exp[vk]
             subhmap = NomialMap({exp: 1})
-            subhmap.units = None if units is 1 else units
+            subhmap.units = None if (type(units) is int and units == 1) else units
             freemon = Monomial(subhmap)
             factor = mon / freemon  # autoconvert...
             if (

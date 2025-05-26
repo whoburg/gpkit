@@ -72,8 +72,8 @@ def splitsweep(sub):
     "Splits a substitution into (is_sweepvar, sweepval)"
     try:
         sweep, value = sub
-        if sweep is "sweep" and (
-            isinstance(value, Iterable)  # pylint: disable=literal-comparison
+        if type(sweep) is str and sweep == "sweep" and (
+            isinstance(value, Iterable)
             or hasattr(value, "__call__")
         ):
             return True, value

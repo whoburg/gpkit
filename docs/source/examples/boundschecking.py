@@ -1,4 +1,5 @@
 "Verifies that bounds are caught through monomials"
+
 from gpkit import Model, parse_variables
 from gpkit.exceptions import UnboundedGP, UnknownInfeasible
 
@@ -29,17 +30,18 @@ class BoundsChecking(Model):
     D
 
     """
+
     @parse_variables(__doc__, globals())
     def setup(self):
         self.cost = F
         return [
             F >= D + T,
-            D == rf*V**2*Ap,
+            D == rf * V**2 * Ap,
             Ap == nu,
-            T == mf*V,
+            T == mf * V,
             mf >= mi + mb,
-            mf == rf*V,
-            Fs <= mi
+            mf == rf * V,
+            Fs <= mi,
         ]
 
 
@@ -57,9 +59,10 @@ except UnknownInfeasible:  # pragma: no cover
     pass
 
 bpl = ", but would gain it from any of these sets: "
-assert missingbounds[(m.D.key, 'lower')] == bpl + "[(%s, 'lower')]" % m.Ap
-assert missingbounds[(m.nu.key, 'lower')] == bpl + "[(%s, 'lower')]" % m.Ap
+assert missingbounds[(m.D.key, "lower")] == bpl + "[(%s, 'lower')]" % m.Ap
+assert missingbounds[(m.nu.key, "lower")] == bpl + "[(%s, 'lower')]" % m.Ap
 # ordering is arbitrary:
-assert missingbounds[(m.Ap.key, 'lower')] in (
+assert missingbounds[(m.Ap.key, "lower")] in (
     bpl + ("[(%s, 'lower')] or [(%s, 'lower')]" % (m.D, m.nu)),
-    bpl + ("[(%s, 'lower')] or [(%s, 'lower')]" % (m.nu, m.D)))
+    bpl + ("[(%s, 'lower')] or [(%s, 'lower')]" % (m.nu, m.D)),
+)

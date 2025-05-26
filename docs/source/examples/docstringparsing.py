@@ -1,4 +1,5 @@
 "Docstring parsing example"
+
 from gpkit import Model, parse_variables
 from gpkit.tools.docstring import parse_varstring
 
@@ -34,12 +35,15 @@ class Cube(Model):
     The ordering of these blocks doesn't affect anything; order them in the
     way that makes the most sense to someone else reading your model.
     """
+
     @parse_variables(__doc__, globals())
     def setup(self):
 
-        return [A >= 2*(s[0]*s[1] + s[1]*s[2] + s[2]*s[0]),
-                s.prod() >= V,
-                s[2] >= h]
+        return [
+            A >= 2 * (s[0] * s[1] + s[1] * s[2] + s[2] * s[0]),
+            s.prod() >= V,
+            s[2] >= h,
+        ]
 
 
 print(parse_varstring(Cube.__doc__))

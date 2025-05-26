@@ -1,4 +1,5 @@
 "The getting started page"
+
 from gpkit import Model, Variable, VectorVariable
 from gpkit.nomials import Monomial, Posynomial, PosynomialInequality
 
@@ -16,7 +17,7 @@ z = Variable("z", "m", "A variable called z with units of meters")
 rho = Variable("rho", 1.225, "kg/m^3", "Density of air at sea level")
 
 ### Example Fixed Variables 2
-#Declare pi equal to 3.14
+# Declare pi equal to 3.14
 pi = Variable("pi", 3.14159, "-", constant=True)
 
 ### Example Vector Variables
@@ -46,7 +47,7 @@ x = Variable("x", "m")
 y = Variable("y", "m")
 z = Variable("z", "m")
 S = Variable("S", 1.0, "m^2")
-c = (2*x*y + 2*x*z + 2*y*z <= S)
+c = 2 * x * y + 2 * x * z + 2 * y * z <= S
 assert isinstance(c, PosynomialInequality)
 
 ### Example Formulating a Model
@@ -54,9 +55,8 @@ x = Variable("x")
 y = Variable("y")
 z = Variable("z")
 S = 200
-objective = 1/(x*y*z)
-constraints = [2*x*y + 2*x*z + 2*y*z <= S,
-               x >= 2*y]
+objective = 1 / (x * y * z)
+constraints = [2 * x * y + 2 * x * z + 2 * y * z <= S, x >= 2 * y]
 m = Model(objective, constraints)
 
 ### Example Solving the Model

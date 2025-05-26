@@ -17,7 +17,7 @@ lint:
 # Code formatting
 format:
 	isort --profile black gpkit docs
-	black gpkit
+	black gpkit docs
 
 # Testing
 test: test-unittest test-pytest  # Run both test runners

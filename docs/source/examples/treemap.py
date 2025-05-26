@@ -1,4 +1,5 @@
 "Treemap example"
+
 import plotly  # pylint: disable=unused-import
 from performance_modeling import M
 

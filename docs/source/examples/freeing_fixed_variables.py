@@ -1,4 +1,5 @@
 "Example of freeing fixed variables"
+
 from gpkit import Model, Variable
 
 x = Variable("x")

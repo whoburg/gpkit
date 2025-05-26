@@ -1,4 +1,5 @@
 "Example substitution; adapted from t_sub.py/t_NomialSubs /test_Basic"
+
 from gpkit import Variable
 
 x = Variable("x")

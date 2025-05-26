@@ -1,4 +1,5 @@
 "Example code for solution saving and differencing."
+
 import pickle
 
 from gpkit import Model, Variable
@@ -9,7 +10,7 @@ x = Variable("x")
 y = Variable("y")
 
 # objective and constraints
-objective = 0.23 + x/y # minimize x and y
+objective = 0.23 + x / y  # minimize x and y
 constraints = [x + y <= 5, x >= 1, y >= 2]
 
 # create model

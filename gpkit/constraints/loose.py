@@ -1,3 +1,4 @@
+# pylint: disable=consider-using-f-string
 "Implements Loose"
 
 from ..small_scripts import appendsolwarning, initsolwarning

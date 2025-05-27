@@ -42,6 +42,7 @@ class Model(CostedConstraintSet):
     solution = None
 
     def __init__(self, cost=None, constraints=None, *args, **kwargs):
+        # pylint: disable=keyword-arg-before-vararg
         setup_vars = None
         substitutions = kwargs.pop("substitutions", None)  # reserved keyword
         if hasattr(self, "setup"):
@@ -169,6 +170,7 @@ class Model(CostedConstraintSet):
             sols.append(bst.sample_at(np.linspace(start, end, samplepoints)))
         return sols if len(sols) > 1 else sols[0]
 
+    # pylint: disable=import-outside-toplevel
     def debug(self, solver=None, verbosity=1, **solveargs):
         "Attempts to diagnose infeasible models."
         from .bounded import Bounded

@@ -1,3 +1,4 @@
+# pylint: disable=fixme,import-outside-toplevel,consider-using-f-string
 """Implement the GeometricProgram class"""
 
 import sys
@@ -28,6 +29,7 @@ DEFAULT_SOLVER_KWARGS = {"cvxopt": {"kktsolver": "ldl"}}
 SOLUTION_TOL = {"cvxopt": 1e-3, "mosek_cli": 1e-4, "mosek_conif": 1e-3}
 
 
+# pylint: disable=too-few-public-methods
 class MonoEqualityIndexes:
     "Class to hold MonoEqualityIndexes"
 
@@ -43,11 +45,11 @@ def _get_solver(solver, kwargs):
 
         try:
             solver = settings["default_solver"]
-        except KeyError:
+        except KeyError as err:
             raise ValueError(
                 "No default solver was set during build, so"
                 " solvers must be manually specified."
-            )
+            ) from err
     if solver == "cvxopt":
         from ..solvers.cvxopt import optimize
     elif solver == "mosek_cli":
@@ -59,7 +61,7 @@ def _get_solver(solver, kwargs):
     elif hasattr(solver, "__call__"):
         solver, optimize = solver.__name__, solver
     else:
-        raise ValueError("Unknown solver '%s'." % solver)
+        raise ValueError(f"Unknown solver '{solver}'.")
     return solver, optimize
 
 
@@ -156,9 +158,9 @@ class GeometricProgram:
         self.meq_idxs = MonoEqualityIndexes()
         m_idx = 0
         row, col, data = [], [], []
-        for p_idx, (N_mons, hmap) in enumerate(zip(self.k, self.hmaps)):
-            self.p_idxs.extend([p_idx] * N_mons)
-            self.m_idxs.append(slice(m_idx, m_idx + N_mons))
+        for p_idx, (n_mons, hmap) in enumerate(zip(self.k, self.hmaps)):
+            self.p_idxs.extend([p_idx] * n_mons)
+            self.m_idxs.append(slice(m_idx, m_idx + n_mons))
             if getattr(self.hmaps[p_idx], "from_meq", False):
                 self.meq_idxs.all.add(m_idx)
                 if len(self.meq_idxs.all) > 2 * len(self.meq_idxs.first_half):
@@ -182,7 +184,7 @@ class GeometricProgram:
             data.extend(self.exps[i][var] for i in locs)
         self.A = CootMatrix(row, col, data)
 
-    # pylint: disable=too-many-statements, too-many-locals
+    # pylint: disable=too-many-statements, too-many-locals,too-many-branches
     def solve(self, solver=None, *, verbosity=1, gen_result=True, **kwargs):
         """Solves a GeometricProgram and returns the solution.
 
@@ -297,7 +299,7 @@ class GeometricProgram:
         # result packing #
         result = self._compile_result(solver_out)  # NOTE: SIDE EFFECTS
         if verbosity > 0:
-            print(
+            print(  # pylint: disable=consider-using-f-string
                 "Result packing took %.2g%% of solve time."
                 % ((time() - tic) / soltime * 100)
             )
@@ -318,9 +320,9 @@ class GeometricProgram:
             if not ("Dual" in msg and not dual_check):
                 appendsolwarning(msg, None, result, "Solution Inconsistency")
                 if verbosity > -4:
-                    print("Solution check warning: %s" % msg)
+                    print(f"Solution check warning: {msg}")
         if verbosity > 0:
-            print(
+            print(  # pylint: disable=consider-using-f-string
                 "Solution checking took %.2g%% of solve time."
                 % ((time() - tic) / soltime * 100)
             )
@@ -350,6 +352,7 @@ class GeometricProgram:
             raise RuntimeWarning("The dual solution was not returned.")
         return la, nu_by_posy
 
+    # pylint: disable=too-many-branches,too-many-arguments
     def _compile_result(self, solver_out):
         result = {"cost": float(solver_out["objective"]), "cost function": self.cost}
         primal = solver_out["primal"]

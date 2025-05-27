@@ -26,8 +26,8 @@ GPBLU, GPRED = GPCOLORS
 if "just built!" in settings:  # pragma: no cover
     run_unit_tests(verbosity=1)
     print(
-        """
-GPkit is now installed with solver(s) %s
+        f"""
+GPkit is now installed with solver(s) {settings['installed_solvers']}
 To incorporate new solvers at a later date, run `gpkit.build()`.
 
 If any tests didn't pass, please post the output above
@@ -45,5 +45,4 @@ to be useful resources for your own applications.
 
 Enjoy!
 """
-        % settings["installed_solvers"]
     )

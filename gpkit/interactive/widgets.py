@@ -1,3 +1,4 @@
+# pylint: disable=import-error,import-outside-toplevel
 "Interactive GPkit widgets for iPython notebook"
 
 import ipywidgets as widgets
@@ -55,8 +56,8 @@ def modelinteract(model, fns_of_sol, ranges=None, **solvekwargs):
                 model.substitutions.update({k: v})
             vmin, vmax = v / 2.0, v * 2.0
             if is_sweepvar(v):
-                vmin = min(vmin, min(sweep))
-                vmax = max(vmax, min(sweep))
+                vmin = min(vmin, min(sweep))  # pylint: disable=nested-min-max
+                vmax = max(vmax, min(sweep))  # pylint: disable=nested-min-max
             if ranges and ranges[k]:
                 vmin, vmax = ranges[k]
             vstep = (vmax - vmin) / 24.0
@@ -88,7 +89,7 @@ def modelinteract(model, fns_of_sol, ranges=None, **solvekwargs):
             for fn in fns_of_sol:
                 fn(sol)
         except RuntimeWarning as e:
-            print("RuntimeWarning:", str(e).split("\n")[0])
+            print("RuntimeWarning:", str(e).split("\n", maxsplit=1)[0])
             print("\n> Running model.debug()")
             model.debug()
 
@@ -166,7 +167,7 @@ def modelcontrolpanel(model, showvars=(), fns_of_sol=None, **solvekwargs):
             varname = varname.strip()
             try:
                 yvars.append(model[varname])
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
                 break
         ranges = {}
         for sb in sliderboxes[1:]:
@@ -216,7 +217,7 @@ def create_settings(box):
         # pylint: disable=unused-argument
         def link_fn(name, new_value):
             "How to update the object's value given min/max on the slider."
-            if new_value >= slider.max:
+            if new_value >= slider.max:  # pylint: disable=consider-using-max-builtin
                 slider.max = new_value
             # if any value is greater than the max, the max slides up
             # however, this is not held true for the minimum, because

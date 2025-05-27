@@ -1,3 +1,4 @@
+# pylint: skip-file
 """Plotting methods"""
 
 from collections import Counter

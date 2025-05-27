@@ -161,7 +161,7 @@ class CVXopt(SolverBackend):
 
             return "in the default PYTHONPATH"
         except ImportError:
-            pass
+            return ""
 
 
 # pylint: disable=too-few-public-methods
@@ -178,9 +178,9 @@ class MosekConif(SolverBackend):
 
             if hasattr(mosek.conetype, "pexp"):
                 return "in the default PYTHONPATH"
-            return None
+            return ""
         except ImportError:
-            pass
+            return ""
 
 
 def build():

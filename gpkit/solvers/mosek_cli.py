@@ -137,7 +137,7 @@ def optimize_generator(path=None, **_):
 
 def write_output_file(filename, c, A, p_idxs):
     "Writes a mosekexpopt compatible GP description to `filename`."
-    with open(filename, "w") as f:
+    with open(filename, "w", encoding="utf-8") as f:
         numcon = p_idxs[-1]
         numter, numvar = map(int, A.shape)
         for n in [numcon, numvar, numter]:

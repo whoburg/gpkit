@@ -141,7 +141,7 @@ class MosekCLI(SolverBackend):
         try:
             if call("mskexpopt") in (1052, 28):  # 28 for MacOSX
                 return where
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             pass  # exception type varies by operating system
         return None
 

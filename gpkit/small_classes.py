@@ -4,6 +4,7 @@ from functools import reduce
 from operator import xor
 
 import numpy as np
+from scipy.sparse import csr_matrix
 
 from .units import Quantity
 
@@ -71,8 +72,6 @@ class CootMatrix:
 
     def tocsr(self):
         "Converts to a Scipy sparse csr_matrix"
-        from scipy.sparse import csr_matrix
-
         return csr_matrix((self.data, (self.row, self.col)))
 
     def dot(self, arg):
@@ -145,7 +144,7 @@ def _append_dict(d_in, d_out):
                 d_out[k].append(v)
             except KeyError as e:
                 raise RuntimeWarning(
-                    "Key `%s` was added after the first sweep." % k
+                    f"Key `{k}` was added after the first sweep."
                 ) from e
     return d_out
 

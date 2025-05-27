@@ -35,7 +35,7 @@ def add_filetest(testclass, path):
                 os.chdir(os.path.dirname(path))
             mod = __import__(os.path.basename(path)[:-3])
             if not hasattr(mod, "test"):
-                self.fail("file '%s' had no `test` function." % path)
+                self.fail(f"file '{path}' had no `test` function.")
             mod.test()
         finally:
             os.chdir(top_level)
@@ -56,11 +56,11 @@ def newtest_fn(name, solver, import_dict, path):
 
 def run(filename="TESTS", xmloutput=False, skipsolvers="look around"):
     "Parse and run paths from a given file for each solver"
-    with open(filename, "r") as f:
+    with open(filename, "r", encoding="utf-8") as f:
         for path in f:
             add_filetest(TestFiles, path)
     if skipsolvers == "look around":
-        from .test_repo import get_settings
+        from .test_repo import get_settings  # pylint: disable=import-outside-toplevel
 
         skipsolvers = get_settings()["skipsolvers"]
     solvers = [
@@ -72,6 +72,7 @@ def run(filename="TESTS", xmloutput=False, skipsolvers="look around"):
     if not solvers:
         # Dummy test in case all installed solvers are skipped.
         tests[0].test_dummy = lambda self: None
+    # pylint: disable=import-outside-toplevel
     from gpkit.tests.run_tests import run as run_
 
     run_(tests=tests, xmloutput=xmloutput)

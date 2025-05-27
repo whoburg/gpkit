@@ -217,10 +217,10 @@ class TestMonomialEquality(unittest.TestCase):
 
     def test_inheritance(self):
         "Make sure MonomialEquality inherits from the right things"
-        F = Variable("F")
+        f = Variable("f")
         m = Variable("m")
         a = Variable("a")
-        mec = F == m * a
+        mec = f == m * a
         self.assertTrue(isinstance(mec, MonomialEquality))
 
     def test_non_monomial(self):
@@ -315,12 +315,12 @@ class TestSignomialInequality(unittest.TestCase):
 
     def test_init(self):
         "Test initialization and types"
-        D = Variable("D", units="N")
-        x1, x2, x3 = (Variable("x_%s" % i, units="N") for i in range(3))
+        drag = Variable("drag", units="N")
+        x1, x2, x3 = (Variable(f"x_{i}", units="N") for i in range(3))
         with self.assertRaises(TypeError):
-            sc = D >= x1 + x2 - x3
+            sc = drag >= x1 + x2 - x3
         with SignomialsEnabled():
-            sc = D >= x1 + x2 - x3
+            sc = drag >= x1 + x2 - x3
         self.assertTrue(isinstance(sc, SignomialInequality))
         self.assertFalse(isinstance(sc, Posynomial))
 

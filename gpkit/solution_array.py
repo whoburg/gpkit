@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 """Defines SolutionArray class"""
 
 import difflib
@@ -93,7 +94,7 @@ def msenss_table(data, _, **kwargs):
         if (msenss < 0.1).all():
             msenss = np.max(msenss)
             if msenss:
-                msenssstr = f"{'<1e%i' % max(-3, np.log10(msenss)):6s}"
+                msenssstr = f"{f'<1e{max(-3, np.log10(msenss))}':6s}"
             else:
                 msenssstr = "  =0  "
         else:
@@ -201,7 +202,7 @@ def loose_table(self, _, min_senss=1e-5, **kwargs):
     return constraint_table(data, title, **kwargs)
 
 
-# pylint: disable=too-many-branches,too-many-locals,too-many-statements
+# pylint: disable=too-many-branches,too-many-locals,too-many-statements,fixme
 def constraint_table(data, title, sortbymodel=True, showmodels=True, **_):
     "Creates lines for tables where the right side is a constraint."
     # TODO: this should support 1D array inputs from sweeps
@@ -425,7 +426,7 @@ class SolutionArray(DictOfLists):
         "choicevariables": "Choice Variables",
         "sweepvariables": "Swept Variables",
         "freevariables": "Free Variables",
-        "constants": "Fixed Variables",  # TODO: change everywhere
+        "constants": "Fixed Variables",
         "variables": "Variables",
     }
 
@@ -497,6 +498,7 @@ class SolutionArray(DictOfLists):
         return True
 
     # pylint: disable=too-many-locals, too-many-branches, too-many-statements
+    # pylint: disable=too-many-arguments
     def diff(
         self,
         other,
@@ -546,7 +548,8 @@ class SolutionArray(DictOfLists):
             if other[-4:] == ".pgz":
                 other = SolutionArray.decompress_file(other)
             else:
-                other = pickle.load(open(other, "rb"))
+                with open(other, "rb") as fil:
+                    other = pickle.load(fil)
         svars, ovars = self["variables"], other["variables"]
         lines = [
             "Solution Diff",
@@ -579,15 +582,11 @@ class SolutionArray(DictOfLists):
                 cdiff += ["", "**********************", ""]
                 lines += cdiff
         if svks - ovks:
-            lines.append(
-                "Variable(s) of this solution" " which are not in the argument:"
-            )
+            lines.append("Variable(s) of this solution which are not in the argument:")
             lines.append("\n".join(f"  {key}" for key in svks - ovks))
             lines.append("")
         if ovks - svks:
-            lines.append(
-                "Variable(s) of the argument" " which are not in this solution:"
-            )
+            lines.append("Variable(s) of the argument which are not in this solution:")
             lines.append("\n".join(f"  {key}" for key in ovks - svks))
             lines.append("")
         sharedvks = svks.intersection(ovks)
@@ -652,7 +651,8 @@ class SolutionArray(DictOfLists):
         >>> pickle.load(open("solution.pkl"))
         """
         with SolSavingEnvironment(self, saveconstraints):
-            pickle.dump(self, open(filename, "wb"), **pickleargs)
+            with open(filename, "wb") as fil:
+                pickle.dump(self, fil, **pickleargs)
 
     def save_compressed(
         self, filename="solution.pgz", *, saveconstraints=True, **cpickleargs
@@ -681,9 +681,9 @@ class SolutionArray(DictOfLists):
         self.set_necessarylineage(clear=True)
         return names
 
-    def savemat(self, filename="solution.mat", *, showvars=None, excluded=("vec")):
+    def savemat(self, filename="solution.mat", *, showvars=None, excluded="vec"):
         "Saves primal solution as matlab file"
-        from scipy.io import savemat
+        from scipy.io import savemat  # pylint: disable=import-outside-toplevel
 
         savemat(
             filename,
@@ -693,9 +693,9 @@ class SolutionArray(DictOfLists):
             },
         )
 
-    def todataframe(self, showvars=None, excluded=("vec")):
+    def todataframe(self, showvars=None, excluded="vec"):
         "Returns primal solution as pandas dataframe"
-        import pandas as pd  # pylint:disable=import-error
+        import pandas as pd  # pylint:disable=import-outside-toplevel
 
         rows = []
         cols = ["Name", "Index", "Value", "Units", "Label", "Lineage", "Other"]
@@ -790,8 +790,7 @@ class SolutionArray(DictOfLists):
                     maxspan = maxspan_
         if minspan is not None and minspan > valcols:
             valcols = 1
-        if maxspan < valcols:
-            valcols = maxspan
+        valcols = min(valcols, maxspan)
         lines = var_table(
             data,
             "",
@@ -831,7 +830,7 @@ class SolutionArray(DictOfLists):
             return self["variables"](posy)
 
         if not hasattr(posy, "sub"):
-            raise ValueError("no variable '%s' found in the solution" % posy)
+            raise ValueError(f"no variable '{posy}' found in the solution")
 
         if len(self) > 1:
             return NomialArray(
@@ -961,6 +960,7 @@ class SolutionArray(DictOfLists):
         self.set_necessarylineage(clear=True)
         return "\n".join(strs)
 
+    # pylint: disable=import-outside-toplevel
     def plot(self, posys=None, axes=None):
         "Plots a sweep for each posy"
         if len(self["sweepvariables"]) != 1:
@@ -983,6 +983,8 @@ class SolutionArray(DictOfLists):
 
 
 # pylint: disable=too-many-branches,too-many-locals,too-many-statements
+# pylint: disable=too-many-arguments,consider-using-f-string
+# pylint: disable=possibly-used-before-assignment
 def var_table(
     data,
     title,

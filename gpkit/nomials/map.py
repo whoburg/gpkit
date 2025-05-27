@@ -61,8 +61,8 @@ class NomialMap(HashVector):
         if self.units != other.units:
             try:
                 other *= float(other.units / self.units)
-            except (TypeError, AttributeError):  # if one of those is None
-                raise DimensionalityError(self.units, other.units)
+            except (TypeError, AttributeError) as exc:  # one of those is None
+                raise DimensionalityError(self.units, other.units) from exc
         hmap = HashVector.__add__(self, other)
         hmap.units = self.units
         return hmap

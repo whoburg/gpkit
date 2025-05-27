@@ -1,4 +1,5 @@
 # flake8: noqa
+# pylint: skip-file
 from solar.solar import *
 
 Vehicle = Aircraft(Npod=3, sp=True)

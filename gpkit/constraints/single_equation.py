@@ -28,12 +28,14 @@ class SingleEquationConstraint(ReprMixin):
             oper = self.unicode_opers[self.oper]
         else:
             oper = self.oper
-        return " ".join(leftstr, oper, rightstr)
+        return " ".join((leftstr, oper, rightstr))
 
     def latex(self, excluded="units"):
         "Latex representation without attributes in excluded list"
         return " ".join(
-            try_str_without(self.left, excluded, latex=True),
-            self.latex_opers[self.oper],
-            try_str_without(self.right, excluded, latex=True),
+            (
+                try_str_without(self.left, excluded, latex=True),
+                self.latex_opers[self.oper],
+                try_str_without(self.right, excluded, latex=True),
+            )
         )

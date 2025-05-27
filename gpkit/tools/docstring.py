@@ -17,7 +17,7 @@ def expected_unbounded(instance, doc):
         if count == 0:
             continue
         if count > 1:
-            raise ValueError("multiple instances of %s" % flag)
+            raise ValueError(f"multiple instances of {flag}")
 
         idx = doc.index(flag) + len(flag)
         idx2 = doc[idx:].index("\n")
@@ -48,10 +48,9 @@ def expected_unbounded(instance, doc):
                     variables = obj
                 except AttributeError:
                     raise AttributeError(
-                        "`%s` is noted in %s as "
+                        f"`{var}` is noted in {instance.__class__.__name__} as "
                         "unbounded, but is not "
                         "an attribute of that model."
-                        % (var, instance.__class__.__name__)
                     )
                 if not hasattr(variables, "shape"):
                     variables = np.array([variables])
@@ -138,7 +137,7 @@ def parse_varstring(string):
     out[0] = "from gpkit import Variable, VectorVariable" + "  " + out[0]
     for lines, indexs in (consts, variables, vecvars):
         for line, index in zip(lines.split("\n"), indexs):
-            out[index] = line + "  # from '%s'" % out[index][1:].strip()
+            out[index] = f"{line}  # from '{out[index][1:].strip()}'"
     return "\n".join(out)
 
 
@@ -211,14 +210,12 @@ def variable_declaration(nameval, units, label, line, errorcatch=True):
     "Turns parsed output into a Variable declaration"
     if len(nameval) > 2:
         raise ValueError(
-            "while parsing the line '%s', additional fields"
-            " (separated by whitespace) were found between Value"
-            " '%s' and the Units `%s`. %s" % (line, nameval[1], units, PARSETIP)
+            f"while parsing the line '{line}', additional fields"
+            f" (separated by whitespace) were found between Value"
+            f" '{nameval[1]}' and the Units `{units}`. {PARSETIP}"
         )
     if len(nameval) == 2:
-        out = "{0} = self.{0} = Variable('{0}', {1}, '{2}', '{3}')"
-        out = out.format(nameval[0], nameval[1], units, label)
+        out = f"{nameval[0]} = self.{nameval[0]} = Variable('{nameval[0]}', {nameval[1]}, '{units}', '{label}')"
     elif len(nameval) == 1:
-        out = "{0} = self.{0} = Variable('{0}', '{1}', '{2}')"
-        out = out.format(nameval[0], units, label)
+        out = f"{nameval[0]} = self.{nameval[0]} = Variable('{nameval[0]}', '{units}', '{label}')"
     return out + "\n"

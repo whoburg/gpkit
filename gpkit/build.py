@@ -66,6 +66,7 @@ def diff(filename, diff_dict):
     shutil.move(filename + ".new", filename)
 
 
+# pylint: disable=too-few-public-methods
 class SolverBackend:
     "Inheritable class for finding solvers. Logs."
 
@@ -145,6 +146,7 @@ class MosekCLI(SolverBackend):
         return None
 
 
+# pylint: disable=too-few-public-methods
 class CVXopt(SolverBackend):
     "CVXopt finder."
 
@@ -154,7 +156,7 @@ class CVXopt(SolverBackend):
         "Attempts to import cvxopt."
         try:
             log("#   Trying to import cvxopt...")
-            # pylint: disable=unused-import
+            # pylint: disable=unused-import,import-outside-toplevel
             import cvxopt  # noqa: F401
 
             return "in the default PYTHONPATH"
@@ -162,6 +164,7 @@ class CVXopt(SolverBackend):
             pass
 
 
+# pylint: disable=too-few-public-methods
 class MosekConif(SolverBackend):
     "MOSEK exponential cone solver finder."
 
@@ -171,7 +174,7 @@ class MosekConif(SolverBackend):
         "Attempts to import a mosek supporting exponential cones."
         try:
             log("#   Trying to import mosek...")
-            import mosek
+            import mosek  # pylint: disable=import-outside-toplevel
 
             if hasattr(mosek.conetype, "pexp"):
                 return "in the default PYTHONPATH"
@@ -182,7 +185,7 @@ class MosekConif(SolverBackend):
 
 def build():
     "Builds GPkit"
-    import gpkit
+    import gpkit  # pylint: disable=import-outside-toplevel
 
     log(f"# Building GPkit version {gpkit.__version__}")
     log("# Moving to the directory from which GPkit was imported.")

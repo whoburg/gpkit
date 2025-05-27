@@ -6,7 +6,7 @@ import sys
 from collections import defaultdict
 from time import sleep
 
-import pytest
+import pytest  # pylint: disable=import-error
 
 pytestmark = pytest.mark.skip(
     reason="These tests require special setup and should be run separately"

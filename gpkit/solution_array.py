@@ -93,21 +93,21 @@ def msenss_table(data, _, **kwargs):
         if (msenss < 0.1).all():
             msenss = np.max(msenss)
             if msenss:
-                msenssstr = "%6s" % ("<1e%i" % max(-3, np.log10(msenss)))
+                msenssstr = f"{'<1e%i' % max(-3, np.log10(msenss)):6s}"
             else:
                 msenssstr = "  =0  "
         else:
             meansenss = round(np.mean(msenss), 1)
-            msenssstr = "%+6.1f" % meansenss
+            msenssstr = f"{meansenss:+6.1f}"
             deltas = msenss - meansenss
             if np.max(np.abs(deltas)) > 0.1:
-                deltastrs = ["%+4.1f" % d if abs(d) >= 0.1 else "  - " for d in deltas]
-                msenssstr += " + [ %s ]" % "  ".join(deltastrs)
+                deltastrs = [f"{d:+4.1f}" if abs(d) >= 0.1 else "  - " for d in deltas]
+                msenssstr += f" + [ {'  '.join(deltastrs)} ]"
         if msenssstr == previousmsenssstr:
             msenssstr = " " * len(msenssstr)
         else:
             previousmsenssstr = msenssstr
-        lines.append("%s : %s" % (msenssstr, model))
+        lines.append(f"{msenssstr} : {model}")
     return lines + [""] if len(lines) > 3 else []
 
 
@@ -169,13 +169,13 @@ def tight_table(self, _, ntightconstrs=5, tight_senss=1e-2, **kwargs):
     if len(self) > 1:
         title += " (in last sweep)"
         data = sorted(
-            ((-float("%+6.2g" % abs(s[-1])), str(c)), "%+6.2g" % abs(s[-1]), id(c), c)
+            ((-float(f"{abs(s[-1]):+6.2g}"), str(c)), f"{abs(s[-1]):+6.2g}", id(c), c)
             for c, s in self["sensitivities"]["constraints"].items()
             if s[-1] >= tight_senss
         )[:ntightconstrs]
     else:
         data = sorted(
-            ((-float("%+6.2g" % abs(s)), str(c)), "%+6.2g" % abs(s), id(c), c)
+            ((-float(f"{abs(s):+6.2g}"), str(c)), f"{abs(s):+6.2g}", id(c), c)
             for c, s in self["sensitivities"]["constraints"].items()
             if s >= tight_senss
         )[:ntightconstrs]
@@ -184,7 +184,7 @@ def tight_table(self, _, ntightconstrs=5, tight_senss=1e-2, **kwargs):
 
 def loose_table(self, _, min_senss=1e-5, **kwargs):
     "Return constraint tightness lines"
-    title = "Insensitive Constraints |below %+g|" % min_senss
+    title = f"Insensitive Constraints |below {min_senss:+g}|"
     if len(self) > 1:
         title += " (in last sweep)"
         data = [
@@ -294,12 +294,12 @@ def warnings_table(self, _, **kwargs):
             data = sorted(data, key=lambda x: x[0])  # sort by msg
             title = wtype
             if len(data_vec) > 1:
-                title += " in sweep %i" % i
+                title += f" in sweep {i}"
             if wtype == "Unexpectedly Tight Constraints" and data[0][1]:
                 data = [
                     (
                         -int(1e5 * relax_sensitivity),
-                        "%+6.2g" % relax_sensitivity,
+                        f"{relax_sensitivity:+6.2g}",
                         id(c),
                         c,
                     )
@@ -308,7 +308,12 @@ def warnings_table(self, _, **kwargs):
                 lines += constraint_table(data, title, **kwargs)
             elif wtype == "Unexpectedly Loose Constraints" and data[0][1]:
                 data = [
-                    (-int(1e5 * rel_diff), "%.4g %s %.4g" % tightvalues, id(c), c)
+                    (
+                        -int(1e5 * rel_diff),
+                        f"{tightvalues[0]:.4g} {tightvalues[1]} {tightvalues[2]:.4g}",
+                        id(c),
+                        c,
+                    )
                     for _, (rel_diff, tightvalues, c) in data
                 ]
                 lines += constraint_table(data, title, **kwargs)
@@ -577,13 +582,13 @@ class SolutionArray(DictOfLists):
             lines.append(
                 "Variable(s) of this solution" " which are not in the argument:"
             )
-            lines.append("\n".join("  %s" % key for key in svks - ovks))
+            lines.append("\n".join(f"  {key}" for key in svks - ovks))
             lines.append("")
         if ovks - svks:
             lines.append(
                 "Variable(s) of the argument" " which are not in this solution:"
             )
-            lines.append("\n".join("  %s" % key for key in ovks - svks))
+            lines.append("\n".join(f"  {key}" for key in ovks - svks))
             lines.append("")
         sharedvks = svks.intersection(ovks)
         if reldiff:
@@ -593,7 +598,7 @@ class SolutionArray(DictOfLists):
             }
             lines += var_table(
                 rel_diff,
-                "Relative Differences |above %g%%|" % reltol,
+                f"Relative Differences |above {reltol}%|",
                 valfmt="%+.1f%%  ",
                 vecfmt="%+6.1f%% ",
                 minval=reltol,
@@ -602,13 +607,13 @@ class SolutionArray(DictOfLists):
             )
             if lines[-2][:10] == "-" * 10:  # nothing larger than reltol
                 lines.insert(
-                    -1, ("The largest is %+g%%." % unrolled_absmax(rel_diff.values()))
+                    -1, f"The largest is {unrolled_absmax(rel_diff.values()):+g}%."
                 )
         if absdiff:
             abs_diff = {vk: cast(sub, svars[vk], ovars[vk]) for vk in sharedvks}
             lines += var_table(
                 abs_diff,
-                "Absolute Differences |above %g|" % abstol,
+                f"Absolute Differences |above {abstol}|",
                 valfmt="%+.2g",
                 vecfmt="%+8.2g",
                 minval=abstol,
@@ -616,7 +621,7 @@ class SolutionArray(DictOfLists):
             )
             if lines[-2][:10] == "-" * 10:  # nothing larger than abstol
                 lines.insert(
-                    -1, ("The largest is %+g." % unrolled_absmax(abs_diff.values()))
+                    -1, f"The largest is {unrolled_absmax(abs_diff.values()):+g}."
                 )
         if senssdiff:
             ssenss = self["sensitivities"]["variables"]
@@ -626,7 +631,7 @@ class SolutionArray(DictOfLists):
             }
             lines += var_table(
                 senss_delta,
-                "Sensitivity Differences |above %g|" % sensstol,
+                f"Sensitivity Differences |above {sensstol}|",
                 valfmt="%+-.2f  ",
                 vecfmt="%+-6.2f",
                 minval=sensstol,
@@ -635,7 +640,7 @@ class SolutionArray(DictOfLists):
             )
             if lines[-2][:10] == "-" * 10:  # nothing larger than sensstol
                 lines.insert(
-                    -1, ("The largest is %+g." % unrolled_absmax(senss_delta.values()))
+                    -1, f"The largest is {unrolled_absmax(senss_delta.values()):+g}."
                 )
         return "\n".join(lines)
 
@@ -720,7 +725,7 @@ class SolutionArray(DictOfLists):
                         key.label or "",
                         key.lineage or "",
                         ", ".join(
-                            "%s=%s" % (k, v)
+                            f"{k}={v}"
                             for (k, v) in key.descr.items()
                             if k
                             not in [
@@ -924,15 +929,14 @@ class SolutionArray(DictOfLists):
                 cost = self["cost"]  # pylint: disable=unsubscriptable-object
                 if kwargs.get("latex", None):  # cost is not printed for latex
                     continue
-                strs += ["\n%s\n------------" % "Optimal Cost"]
+                strs += [f"\n{'Optimal Cost'}\n------------"]
                 if len(self) > 1:
-                    costs = ["%-8.3g" % c for c in mag(cost[:4])]
+                    costs = [f"{c:<8.3g}" for c in mag(cost[:4])]
                     strs += [
-                        " [ %s %s ]"
-                        % ("  ".join(costs), "..." if len(self) > 4 else "")
+                        f" [ {'  '.join(costs)} {'...' if len(self) > 4 else ''} ]"
                     ]
                 else:
-                    strs += [" %-.4g" % mag(cost)]
+                    strs += [f" {mag(cost):<.4g}"]
                 strs[-1] += unitstr(cost, into=" [%s]", dimless="")
                 strs += [""]
             elif table in TABLEFNS:

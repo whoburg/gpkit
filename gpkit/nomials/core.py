@@ -39,6 +39,7 @@ class Nomial(NomialData):
 
     sub = None
 
+    # pylint: disable=too-many-branches
     def str_without(self, excluded=()):
         "String representation, excluding fields ('units', varkey attributes)"
         units = "" if "units" in excluded else self.unitstr(" [%s]")
@@ -80,7 +81,7 @@ class Nomial(NomialData):
             mstrs.append(mstr)
         return " + ".join(sorted(mstrs)) + units
 
-    def latex(self, excluded=()):  # TODO: add ast parsing here
+    def latex(self, excluded=()):
         "Latex representation, parsing `excluded` just as .str_without does"
         mstrs = []
         for exp, c in self.hmap.items():
@@ -109,9 +110,9 @@ class Nomial(NomialData):
         """
         if isinstance(self, FixedScalar):
             return self.cs[0]
-        p = self.sub(
+        p = self.sub(  # pylint: disable=not-callable
             {k: k.value for k in self.vks if "value" in k.descr}
-        )  # pylint: disable=not-callable
+        )
         return p.cs[0] if isinstance(p, FixedScalar) else p
 
     def __eq__(self, other):

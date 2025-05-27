@@ -108,12 +108,13 @@ class NomialArray(ReprMixin, np.ndarray):
         if not self.shape:
             return try_str_without(self.flatten()[0], excluded)
 
-        return "[%s]" % ", ".join(
+        joined = ", ".join(
             [
                 try_str_without(np.ndarray.__getitem__(self, i), excluded)
                 for i in range(self.shape[0])
             ]
-        )  # pylint: disable=unsubscriptable-object
+        )
+        return f"[{joined}]"
 
     def latex(self, excluded=()):
         "Returns latex representation without certain fields."
@@ -133,9 +134,8 @@ class NomialArray(ReprMixin, np.ndarray):
     def __array_finalize__(self, obj):
         "Finalizer. Required for objects inheriting from np.ndarray."
 
-    def __array_wrap__(
-        self, out_arr, context=None, return_scalar=True
-    ):  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-renamed,too-many-function-args
+    def __array_wrap__(self, out_arr, context=None, return_scalar=True):
         """Called by numpy ufuncs.
         Special case to avoid creation of 0-dimensional arrays
         See http://docs.scipy.org/doc/numpy/user/basics.subclassing.html"""

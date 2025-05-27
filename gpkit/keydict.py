@@ -164,8 +164,8 @@ class KeyDict(KeyMap, dict):
             super().update(args[0])
             self.keymap.update(args[0].keymap)
             self._unmapped_keys.update(
-                args[0]._unmapped_keys
-            )  # pylint:disable=protected-access
+                args[0]._unmapped_keys  # pylint:disable=protected-access
+            )
         else:
             for k, v in dict(*args, **kwargs).items():
                 self[k] = v

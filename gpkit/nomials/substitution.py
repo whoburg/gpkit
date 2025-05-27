@@ -49,7 +49,8 @@ def append_sub(sub, keys, constants, sweep, linkedsweep):
                 pywarnings.filterwarnings("error")
                 try:
                     sub = np.array(sub) if not hasattr(sub, "shape") else sub
-                except ValueError:  # pragma: no cover  #TODO: coverage this
+                # pylint: disable=fixme
+                except ValueError:  # pragma: no cover  # TODO: coverage this
                     # ragged nested sequences, eg [[2]], [3, 4]], in py3.7+
                     sub = np.array(sub, dtype=object)
             if key.shape == sub.shape:
@@ -61,12 +62,12 @@ def append_sub(sub, keys, constants, sweep, linkedsweep):
             elif sweepsub:
                 try:
                     np.broadcast(sub, np.empty(key.shape))
-                except ValueError:
+                except ValueError as exc:
                     raise ValueError(
                         f"cannot sweep variable {key.veckey} of shape {key.shape}"
                         f" with array of shape {sub.shape}; array shape"
                         f" must either be {key.shape} or {('N',) + key.shape}"
-                    )
+                    ) from exc
                 idx = (slice(None),) + key.descr["idx"]
                 value = sub[idx]
             else:

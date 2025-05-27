@@ -22,7 +22,7 @@ class CostedConstraintSet(ConstraintSet):
     def __init__(self, cost, constraints, substitutions=None):
         self.cost = maybe_flatten(cost)
         if isinstance(self.cost, np.ndarray):  # if it's still a vector
-            raise ValueError("Cost must be scalar, not the vector %s." % cost)
+            raise ValueError("Cost must be scalar, not the vector {cost}.")
         subs = {k: k.value for k in self.cost.vks if "value" in k.descr}
         if substitutions:
             subs.update(substitutions)
@@ -41,7 +41,7 @@ class CostedConstraintSet(ConstraintSet):
                 "",
                 "Cost Function",
                 "-------------",
-                " %s" % self.cost.str_without(excluded),
+                " " + self.cost.str_without(excluded),
                 "",
                 "Constraints",
                 "-----------",
@@ -58,7 +58,7 @@ class CostedConstraintSet(ConstraintSet):
         return "\n".join(
             [
                 "\\text{minimize}",
-                "    & %s \\\\" % self.cost.latex(excluded),
+                f"    & {self.cost.latex(excluded)} \\\\",
                 "\\text{subject to}",
             ]
         )

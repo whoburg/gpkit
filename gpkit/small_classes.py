@@ -4,6 +4,7 @@ from functools import reduce
 from operator import xor
 
 import numpy as np
+from scipy.sparse import csr_matrix
 
 from .units import Quantity
 
@@ -11,6 +12,7 @@ Strings = (str,)
 Numbers = (int, float, np.number, Quantity)
 
 
+# pylint: disable=too-few-public-methods
 class FixedScalarMeta(type):
     "Metaclass to implement instance checking for fixed scalars"
 
@@ -18,7 +20,8 @@ class FixedScalarMeta(type):
         return getattr(obj, "hmap", None) and len(obj.hmap) == 1 and not obj.vks
 
 
-class FixedScalar(metaclass=FixedScalarMeta):  # pylint: disable=no-init
+# pylint: disable=too-few-public-methods
+class FixedScalar(metaclass=FixedScalarMeta):
     "Instances of this class are scalar Nomials with no variables"
 
 
@@ -39,7 +42,6 @@ def matrix_converter(name):
 
     def to_(self):  # used in tocoo, tocsc, etc below
         "Converts to another type of matrix."
-        # pylint: disable=unused-variable
         return getattr(self.tocsr(), "to" + name)()
 
     return to_
@@ -71,8 +73,6 @@ class CootMatrix:
 
     def tocsr(self):
         "Converts to a Scipy sparse csr_matrix"
-        from scipy.sparse import csr_matrix
-
         return csr_matrix((self.data, (self.row, self.col)))
 
     def dot(self, arg):
@@ -145,7 +145,7 @@ def _append_dict(d_in, d_out):
                 d_out[k].append(v)
             except KeyError as e:
                 raise RuntimeWarning(
-                    "Key `%s` was added after the first sweep." % k
+                    f"Key `{k}` was added after the first sweep."
                 ) from e
     return d_out
 

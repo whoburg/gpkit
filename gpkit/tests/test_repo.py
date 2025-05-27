@@ -6,7 +6,7 @@ import sys
 from collections import defaultdict
 from time import sleep
 
-import pytest
+import pytest  # pylint: disable=import-error
 
 pytestmark = pytest.mark.skip(
     reason="These tests require special setup and should be run separately"
@@ -45,7 +45,7 @@ def test_repo(repo=".", xmloutput=False):
 
     testpy = (
         "from gpkit.tests.from_paths import run;"
-        "run(xmloutput=%s, skipsolvers=%s)" % (xmloutput, skipsolvers)
+        f"run(xmloutput={xmloutput}, skipsolvers={skipsolvers})"
     )
     subprocess.call(["python", "-c", testpy])
     if repo != ".":
@@ -72,7 +72,8 @@ def test_repos(repos=None, xmloutput=False, ingpkitmodels=False):
         print("USING LOCAL DIRECTORY AS GPKITMODELS DIRECTORY")
         repos_list_filename = "EXTERNALTESTS"
         pip_install(".", local=True)
-    repos = [line.strip() for line in open(repos_list_filename, "r")]
+    with open(repos_list_filename, "r", encoding="utf-8") as fil:
+        repos = [line.strip() for line in fil]
     for repo in repos:
         git_clone(repo)
         test_repo(repo, xmloutput)
@@ -82,7 +83,7 @@ def get_settings():
     "Gets settings from a TESTCONFIG file"
     settings = defaultdict(str)
     if os.path.isfile("TESTCONFIG"):
-        with open("TESTCONFIG", "r") as f:
+        with open("TESTCONFIG", "r", encoding="utf-8") as f:
             for line in f:
                 if len(line.strip().split(" : ")) > 1:
                     key, value = line.strip().split(" : ")
@@ -94,7 +95,7 @@ def git_clone(repo, branch="master"):
     "Tries several times to clone a given repository"
     cmd = ["git", "clone", "--depth", "1"]
     cmd += ["-b", branch]
-    cmd += ["https://github.com/convexengineering/%s.git" % repo]
+    cmd += [f"https://github.com/convexengineering/{repo}.git"]
     call_and_retry(cmd)
 
 

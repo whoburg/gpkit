@@ -42,6 +42,7 @@ class Model(CostedConstraintSet):
     solution = None
 
     def __init__(self, cost=None, constraints=None, *args, **kwargs):
+        # pylint: disable=keyword-arg-before-vararg
         setup_vars = None
         substitutions = kwargs.pop("substitutions", None)  # reserved keyword
         if hasattr(self, "setup"):
@@ -84,7 +85,7 @@ class Model(CostedConstraintSet):
         self,
     ):  # pylint:disable=too-many-locals,too-many-branches,too-many-statements
         "Verifies docstring bounds are sufficient but not excessive."
-        err = "while verifying %s:\n" % self.__class__.__name__
+        err = f"while verifying {self.__class__.__name__}:\n"
         bounded, meq_bounded = self.bounded.copy(), self.meq_bounded.copy()
         doc = self.__class__.__doc__
         exp_unbounds = expected_unbounded(self, doc)
@@ -96,11 +97,9 @@ class Model(CostedConstraintSet):
                     continue
                 badvks = ", ".join(str(v) for v in badvks)
                 badvks += " were" if len(badvks) > 1 else " was"
-                err += "    %s %s-bounded; expected %s-unbounded" "\n" % (
-                    badvks,
-                    direction,
-                    direction,
-                )
+                err += "    "
+                err += f"{badvks} {direction}-bounded;"
+                err += f"expected {direction}-unbounded\n"
             raise ValueError(err)
         bounded.update(exp_unbounds)  # if not, treat expected as bounded
         add_meq_bounds(bounded, meq_bounded)  # and add more meqs
@@ -113,7 +112,7 @@ class Model(CostedConstraintSet):
                     meq_bounded[bound].add(newcond)
             bsets = " or ".join(str(list(c)) for c in meq_bounded[bound])
             self.missingbounds[bound] = (
-                ", but would gain it from any of" " these sets of bounds: " + bsets
+                ", but would gain it from any of these sets of bounds: " + bsets
             )
         # then add everything that's not in bounded
         if len(bounded) + len(self.missingbounds) != 2 * len(self.varkeys):
@@ -124,25 +123,21 @@ class Model(CostedConstraintSet):
                             self.missingbounds[(key, bound)] = ""
         if self.missingbounds:  # anything unbounded? err!
             boundstrs = "\n".join(
-                "  %s has no %s bound%s" % (v, b, x)
-                for (v, b), x in self.missingbounds.items()
+                f"  {v} has no {b} bound{x}" for (v, b), x in self.missingbounds.items()
             )
             docstring = (
-                "To fix this add the following to %s's"
+                f"To fix this add the following to {self.__class__.__name__}'s"
                 " docstring (you may not need it all):"
-                " \n" % self.__class__.__name__
+                " \n"
             )
             for direction in ["upper", "lower"]:
                 mb = [k for (k, b) in self.missingbounds if b == direction]
                 if mb:
-                    docstring += """
-%s Unbounded
+                    docstring += f"""
+{direction.title()} Unbounded
 ---------------
-%s
-""" % (
-                        direction.title(),
-                        ", ".join(set(k.name for k in mb)),
-                    )
+{", ".join(set(k.name for k in mb))}
+"""
             raise ValueError(err + boundstrs + "\n\n" + docstring)
 
     def sweep(self, sweeps, **solveargs):
@@ -175,6 +170,7 @@ class Model(CostedConstraintSet):
             sols.append(bst.sample_at(np.linspace(start, end, samplepoints)))
         return sols if len(sols) > 1 else sols[0]
 
+    # pylint: disable=import-outside-toplevel
     def debug(self, solver=None, verbosity=1, **solveargs):
         "Attempts to diagnose infeasible models."
         from .bounded import Bounded

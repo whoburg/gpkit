@@ -42,6 +42,7 @@ class TestNomialArray(unittest.TestCase):
         )
         self.assertEqual(x.outer(x), m)
 
+    # pylint: disable=no-member
     def test_elementwise_mult(self):
         m = Variable("m")
         x = VectorVariable(3, "x", label="dummy variable")
@@ -85,11 +86,12 @@ class TestNomialArray(unittest.TestCase):
         self.assertEqual(x.sub(c), [Monomial({}, e) for e in [1, 2, 3]])
         p = x**2
         self.assertEqual(
-            p.sub(c), [Monomial({}, e) for e in [1, 4, 9]]
-        )  # pylint: disable=no-member
+            p.sub(c), [Monomial({}, e) for e in [1, 4, 9]]  # pylint: disable=no-member
+        )
         d = p.sum()
         self.assertEqual(d.sub(c), Monomial({}, 14))  # pylint: disable=no-member
 
+    # pylint: disable=no-member
     def test_units(self):
         # inspired by gpkit issue #106
         c = VectorVariable(5, "c", "m", "Local Chord")
@@ -100,12 +102,8 @@ class TestNomialArray(unittest.TestCase):
             pywarnings.simplefilter("ignore")
             mismatch = NomialArray([1 * gpkit.units.m, 1 * gpkit.ureg.ft, 1.0])
         self.assertRaises(DimensionalityError, mismatch.sum)
-        self.assertEqual(
-            mismatch[:2].sum().c, 1.3048 * gpkit.ureg.m
-        )  # pylint:disable=no-member
-        self.assertEqual(
-            mismatch.prod().c, 1 * gpkit.ureg.m * gpkit.ureg.ft
-        )  # pylint:disable=no-member
+        self.assertEqual(mismatch[:2].sum().c, 1.3048 * gpkit.ureg.m)
+        self.assertEqual(mismatch.prod().c, 1 * gpkit.ureg.m * gpkit.ureg.ft)
 
     def test_sum(self):
         x = VectorVariable(5, "x")

@@ -53,8 +53,8 @@ Solution Diff
 
 ** no constraint differences **
 
-Relative Differences |above 1%|
--------------------------------
+Relative Differences |above 1.0%|
+---------------------------------
 The largest is +0%.
 
 SWEEP
@@ -87,8 +87,8 @@ Solution Diff
 
 ** no constraint differences **
 
-Relative Differences |above 1%|
--------------------------------
+Relative Differences |above 1.0%|
+---------------------------------
      Re : [  +46.4%    +97.1%     -1.1%    +29.2%  ] Reynold's number
     C_L : [  -40.6%    -60.2%     -7.2%    -37.9%  ] Lift coefficent of wing
       V : [  +18.0%    +44.2%    +18.0%    +44.2%  ] cruising speed

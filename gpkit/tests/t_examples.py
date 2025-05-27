@@ -7,7 +7,7 @@ import unittest
 
 import numpy as np
 
-from gpkit import Model, Variable, settings
+from gpkit import Model, Variable, settings, ureg
 from gpkit.constraints.loose import Loose
 from gpkit.exceptions import (
     DualInfeasible,
@@ -51,11 +51,6 @@ class TestExamples(unittest.TestCase):
               self.assertAlmostEqual(example.sol["cost"], 3.121)
     """
 
-    # TODO: allow enabling plotting examples, make plots in correct folder...
-    # def test_plot_sweep1d(self, _):
-    #     import matplotlib.pyplot as plt
-    #     plt.close("all")
-
     # skip test breakdowns -- failing due to pint errors in old pkl files
     # def test_breakdowns(self, example):
     #     pass
@@ -67,8 +62,6 @@ class TestExamples(unittest.TestCase):
         pass
 
     def test_autosweep(self, example):
-        from gpkit import ureg
-
         bst1, tol1 = example.bst1, example.tol1
         bst2, tol2 = example.bst2, example.tol2
 
@@ -83,15 +76,15 @@ class TestExamples(unittest.TestCase):
         ndig = -int(np.log10(tol2))
         self.assertAlmostEqual(bst2.cost_at("cost", 3), 1.0, ndig)
         # before corner
-        A_bc = np.linspace(1, 3, 50)
-        sol_bc = bst2.sample_at(A_bc)
-        assert_logtol(sol_bc("A"), (A_bc / 3) ** 0.5, tol2)
-        assert_logtol(sol_bc["cost"], A_bc / 3, tol2)
+        a_bc = np.linspace(1, 3, 50)
+        sol_bc = bst2.sample_at(a_bc)
+        assert_logtol(sol_bc("A"), (a_bc / 3) ** 0.5, tol2)
+        assert_logtol(sol_bc["cost"], a_bc / 3, tol2)
         # after corner
-        A_ac = np.linspace(3, 10, 50)
-        sol_ac = bst2.sample_at(A_ac)
-        assert_logtol(sol_ac("A"), (A_ac / 3) ** 2, tol2)
-        assert_logtol(sol_ac["cost"], (A_ac / 3) ** 4, tol2)
+        a_ac = np.linspace(3, 10, 50)
+        sol_ac = bst2.sample_at(a_ac)
+        assert_logtol(sol_ac("A"), (a_ac / 3) ** 2, tol2)
+        assert_logtol(sol_ac["cost"], (a_ac / 3) ** 4, tol2)
         os.remove("autosweep.pkl")
 
     def test_treemap(self, example):
@@ -196,7 +189,8 @@ class TestExamples(unittest.TestCase):
         sol.table()
         sol.save("solution.pkl")
         sol.table()
-        sol_loaded = pickle.load(open("solution.pkl", "rb"))
+        with open("solution.pkl", "rb") as fil:
+            sol_loaded = pickle.load(fil)
         sol_loaded.table()
         os.remove("solution.pkl")
 
@@ -204,14 +198,15 @@ class TestExamples(unittest.TestCase):
         sweepsol.table()
         sweepsol.save("sweepsolution.pkl")
         sweepsol.table()
-        sol_loaded = pickle.load(open("sweepsolution.pkl", "rb"))
+        with open("sweepsolution.pkl", "rb") as fil:
+            sol_loaded = pickle.load(fil)
         sol_loaded.table()
         os.remove("sweepsolution.pkl")
 
         # testing savejson
         sol.savejson("solution.json")
         json_dict = {}
-        with open("solution.json", "r") as rf:
+        with open("solution.json", "r", encoding="utf-8") as rf:
             json_dict = json.load(rf)
         os.remove("solution.json")
         for var in sol["variables"]:
@@ -322,11 +317,11 @@ class TestExamples(unittest.TestCase):
                 "W_0": 1.0107,
                 r"\rho": -0.2275,
             }
-            for key in freevarcheck:
-                sol_rat = mag(sol["variables"][key]) / freevarcheck[key]
+            for key, val in freevarcheck.items():
+                sol_rat = mag(sol["variables"][key]) / val
                 self.assertTrue(abs(1 - sol_rat) < 1e-2)
-            for key in senscheck:
-                sol_rat = sol["sensitivities"]["variables"][key] / senscheck[key]
+            for key, val in senscheck.items():
+                sol_rat = sol["sensitivities"]["variables"][key] / val
                 self.assertTrue(abs(1 - sol_rat) < 1e-2)
         os.remove("solution.pkl")
         os.remove("solution.pgz")

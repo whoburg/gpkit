@@ -156,8 +156,8 @@ class ArrayVariable(NomialArray):  # pylint: disable=too-many-locals
                     values = np.array(values)
                 if values.shape != shape:
                     raise ValueError(
-                        "value's shape %s is different from the"
-                        " vector's %s." % (values.shape, shape)
+                        f"value's shape {values.shape} is different from the"
+                        f" vector's {shape}."
                     )
 
         veckeydescr = descr.copy()

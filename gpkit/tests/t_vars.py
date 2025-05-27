@@ -62,7 +62,6 @@ class TestVarKey(unittest.TestCase):
         z = VectorVariable(3, "z")
         a = VectorVariable((3, 2), "a")
 
-        # print(w >= x)  # TODO: this always prints the vector on the left
         self.assertEqual(str(3 * (x + y) * z), "3·(x[:] + y[:])·z[:]")
         nni = 3
         ii = np.tile(np.arange(1, nni + 1), a.shape[1:] + (1,)).T
@@ -122,10 +121,10 @@ class TestVarKey(unittest.TestCase):
         self.assertTrue(vk1 != vk2)
         self.assertFalse(vk1 == vk2)
         self.assertEqual(vk1, vk1)
-        V = VarKey("V")
-        vel = VarKey("V")
-        self.assertTrue(V == vel)
-        self.assertFalse(V != vel)
+        v = VarKey("v")
+        vel = VarKey("v")
+        self.assertTrue(v == vel)
+        self.assertFalse(v != vel)
         self.assertEqual(vel, vel)
         x1 = Variable("x", 3, "m")
         x2 = Variable("x", 2, "ft")
@@ -201,11 +200,11 @@ class TestVariable(unittest.TestCase):
 
     def test_eq_ne(self):
         # test for #1138
-        W = Variable("W", 5, "lbf", "weight of 1 bag of sugar")
-        self.assertTrue(W != W.key)
-        self.assertTrue(W.key != W)
-        self.assertFalse(W == W.key)
-        self.assertFalse(W.key == W)
+        w = Variable("W", 5, "lbf", "weight of 1 bag of sugar")
+        self.assertTrue(w != w.key)
+        self.assertTrue(w.key != w)
+        self.assertFalse(w == w.key)
+        self.assertFalse(w.key == w)
 
 
 class TestVectorVariable(unittest.TestCase):
@@ -235,9 +234,9 @@ class TestVectorVariable(unittest.TestCase):
         self.assertEqual(x, x2)
 
         # test inspired by issue 137
-        N = 20
-        x_arr = np.arange(0, 5, 5 / N) + 1e-6
-        x = VectorVariable(N, "x", x_arr, "m", "Beam Location")
+        n = 20
+        x_arr = np.arange(0, 5, 5 / n) + 1e-6
+        x = VectorVariable(n, "x", x_arr, "m", "Beam Location")
 
         with self.assertRaises(ValueError):
             _ = VectorVariable(2, "x", [1, 2, 3])

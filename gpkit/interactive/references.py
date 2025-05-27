@@ -6,7 +6,7 @@ import webbrowser
 from collections import defaultdict
 
 
-# pylint:disable=too-many-locals
+# pylint:disable=too-many-locals,too-many-branches
 def referencesplot(model, *, openimmediately=True):
     """Makes a references plot.
 
@@ -22,7 +22,7 @@ def referencesplot(model, *, openimmediately=True):
             vlineage = varkey.lineagestr()
             clineage = constraint.lineagestr()
             if not vlineage:
-                vlineage = "%s [%s]" % (varkey, varkey.unitstr())
+                vlineage = f"{varkey} [{varkey.unitstr()}]"
             for lin in (clineage, vlineage):
                 if lin not in imports:
                     imports[lin] = set()
@@ -61,7 +61,8 @@ def referencesplot(model, *, openimmediately=True):
             if not limports:
                 continue
             limports = {vl: get_total_senss(clineage, vl) for vl in limports}
-            lines.append('  "%s": %s,' % (clineage, repr(limports).replace("'", '"')))
+            limportsstr = repr(limports).replace("'", '"')
+            lines.append(f'  "{clineage}": {limportsstr},')
         lines[-1] = lines[-1][:-1]
         lines.append("}")
         lines.append("normalizedsenss = {")
@@ -71,11 +72,12 @@ def referencesplot(model, *, openimmediately=True):
             limports = {
                 vl: get_total_senss(clineage, vl, normalize=True) for vl in limports
             }
-            lines.append('  "%s": %s,' % (clineage, repr(limports).replace("'", '"')))
+            limportsstr = repr(limports).replace("'", '"')
+            lines.append(f'  "{clineage}": {limportsstr},')
         lines[-1] = lines[-1][:-1]
         lines.append("}")
 
-    with open("referencesplot.json", "w") as f:
+    with open("referencesplot.json", "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
     htmlfile = "referencesplot.html"

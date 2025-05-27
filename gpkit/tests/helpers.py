@@ -35,7 +35,7 @@ def generate_example_tests(path, testclasses, solvers=None, newtest_fn=None):
                 setattr(testclass, name, old_test)  # move to a non-test fn
                 delattr(testclass, fn)  # delete the old old_test
                 for solver in solvers:
-                    new_name = "test_%s_%s" % (name, solver)
+                    new_name = f"test_{name}_{solver}"
                     new_fn = newtest_fn(name, solver, import_dict, path)
                     setattr(testclass, new_name, new_fn)
         tests.append(testclass)
@@ -51,7 +51,7 @@ def new_test(name, solver, import_dict, path, testfn=None):
         # pylint: disable=missing-docstring
         # No docstring because it'd be uselessly the same for each example
 
-        import gpkit
+        import gpkit  # pylint: disable=import-outside-toplevel
 
         with NewDefaultSolver(solver):
             testfn(name, import_dict, path)(self)
@@ -69,9 +69,8 @@ def new_test(name, solver, import_dict, path, testfn=None):
         ]:
             if global_thing:  # pragma: no cover
                 raise ValueError(
-                    "global attribute %s should have been"
-                    " falsy after the test, but was instead %s"
-                    % (globname, global_thing)
+                    f"global attribute {globname} should have been"
+                    f" falsy after the test, but was instead {global_thing}"
                 )
 
     return test
@@ -89,7 +88,7 @@ def logged_example_testcase(name, imported, path):
         # pylint: disable=missing-docstring
         # No docstring because it'd be uselessly the same for each example
         filepath = (
-            "".join([path, os.sep, "%s_output.txt" % name])
+            "".join([path, os.sep, f"{name}_output.txt"])
             if name not in imported
             else None
         )
@@ -120,7 +119,7 @@ def run_tests(tests, xmloutput=None, verbosity=2):
     for t in tests:
         suite.addTests(loader.loadTestsFromTestCase(t))
     if xmloutput:
-        import xmlrunner  # pylint: disable=import-error
+        import xmlrunner  # pylint: disable=import-error,import-outside-toplevel
 
         result = xmlrunner.XMLTestRunner(output=xmloutput).run(suite)
     else:  # pragma: no cover
@@ -148,14 +147,14 @@ class NewDefaultSolver:
 
     def __enter__(self):
         "Change default solver."
-        import gpkit
+        import gpkit  # pylint: disable=import-outside-toplevel
 
         self.prev_default_solver = gpkit.settings["default_solver"]
         gpkit.settings["default_solver"] = self.solver
 
     def __exit__(self, *args):
         "Reset default solver."
-        import gpkit
+        import gpkit  # pylint: disable=import-outside-toplevel
 
         gpkit.settings["default_solver"] = self.prev_default_solver
 
@@ -172,7 +171,9 @@ class StdoutCaptured:
         "Capture stdout"
         self.original_stdout = sys.stdout
         sys.stdout = (
-            open(self.logfilepath, mode="w") if self.logfilepath else NullFile()
+            open(self.logfilepath, mode="w", encoding="utf-8")
+            if self.logfilepath
+            else NullFile()
         )
 
     def __exit__(self, *args):

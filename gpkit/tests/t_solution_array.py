@@ -42,21 +42,21 @@ class TestSolutionArray(unittest.TestCase):
             self.assertAlmostEqual(solx[i], 2.5, places=4)
 
     def test_subinto(self):
-        Nsweep = 20
-        Pvals = np.linspace(13, 24, Nsweep)
-        H_max = Variable("H_max", 10, "m", "Length")
-        A_min = Variable("A_min", 10, "m^2", "Area")
-        P_max = Variable("P", Pvals, "m", "Perimeter")
-        H = Variable("H", "m", "Length")
-        W = Variable("W", "m", "Width")
-        m = Model(12 / (W * H**3), [H <= H_max, H * W >= A_min, P_max >= 2 * H + 2 * W])
+        n_sweep = 20
+        p_vals = np.linspace(13, 24, n_sweep)
+        h_max = Variable("h_max", 10, "m", "Length")
+        a_min = Variable("A_min", 10, "m^2", "Area")
+        p_max = Variable("P", p_vals, "m", "Perimeter")
+        h = Variable("h", "m", "Length")
+        w = Variable("w", "m", "width")
+        m = Model(12 / (w * h**3), [h <= h_max, h * w >= a_min, p_max >= 2 * h + 2 * w])
         sol = m.solve(verbosity=0)
-        Psol = sol.subinto(P_max)
-        self.assertEqual(len(Psol), Nsweep)
+        p_sol = sol.subinto(p_max)
+        self.assertEqual(len(p_sol), n_sweep)
         self.assertAlmostEqual(
-            0 * gpkit.ureg.m, np.max(np.abs(Pvals * gpkit.ureg.m - Psol))
+            0 * gpkit.ureg.m, np.max(np.abs(p_vals * gpkit.ureg.m - p_sol))
         )
-        self.assertAlmostEqual(0 * gpkit.ureg.m, np.max(np.abs(Psol - sol(P_max))))
+        self.assertAlmostEqual(0 * gpkit.ureg.m, np.max(np.abs(p_sol - sol(p_max))))
 
     def test_table(self):
         x = Variable("x")
@@ -67,13 +67,13 @@ class TestSolutionArray(unittest.TestCase):
 
     def test_units_sub(self):
         # issue 809
-        T = Variable("T", "N", "thrust")
-        Tmin = Variable("T_{min}", "N", "minimum thrust")
-        m = Model(T, [T >= Tmin])
+        t = Variable("t", "N", "thrust")
+        tmin = Variable("t_{min}", "N", "minimum thrust")
+        m = Model(t, [t >= tmin])
         tminsub = 1000 * gpkit.ureg.lbf
-        m.substitutions.update({Tmin: tminsub})
+        m.substitutions.update({tmin: tminsub})
         sol = m.solve(verbosity=0)
-        self.assertAlmostEqual(sol(Tmin), tminsub)
+        self.assertAlmostEqual(sol(tmin), tminsub)
         self.assertFalse(
             "1000N" in sol.table().replace(" ", "").replace("[", "").replace("]", "")
         )
@@ -114,7 +114,7 @@ class TestResultsTable(unittest.TestCase):
         m = Model(y, [sig])
         sol = m.localsolve(verbosity=0)
         self.assertTrue(
-            all([isinstance(gp.result.table(), Strings) for gp in m.program.gps])
+            all((isinstance(gp.result.table(), Strings) for gp in m.program.gps))
         )
         self.assertAlmostEqual(sol["cost"] / 4.0, 1.0, 5)
         self.assertAlmostEqual(sol("x") / 3.0, 1.0, 3)

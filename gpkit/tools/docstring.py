@@ -7,9 +7,10 @@ import re
 import numpy as np
 
 
+# pylint: disable=too-many-locals,too-many-nested-blocks
+# pylint: disable=too-many-branches,too-few-public-methods
 def expected_unbounded(instance, doc):
     "Gets expected-unbounded variables from a string"
-    # pylint: disable=too-many-locals,too-many-nested-blocks
     exp_unbounded = set()
     for direction in ["upper", "lower"]:
         flag = direction[0].upper() + direction[1:] + " Unbounded\n"
@@ -17,7 +18,7 @@ def expected_unbounded(instance, doc):
         if count == 0:
             continue
         if count > 1:
-            raise ValueError("multiple instances of %s" % flag)
+            raise ValueError(f"multiple instances of {flag}")
 
         idx = doc.index(flag) + len(flag)
         idx2 = doc[idx:].index("\n")
@@ -46,13 +47,12 @@ def expected_unbounded(instance, doc):
                     for subdot in var.split("."):
                         obj = getattr(obj, subdot)
                     variables = obj
-                except AttributeError:
+                except AttributeError as err:
                     raise AttributeError(
-                        "`%s` is noted in %s as "
+                        f"`{var}` is noted in {instance.__class__.__name__} as "
                         "unbounded, but is not "
                         "an attribute of that model."
-                        % (var, instance.__class__.__name__)
-                    )
+                    ) from err
                 if not hasattr(variables, "shape"):
                     variables = np.array([variables])
                 it = np.nditer(variables, flags=["multi_index", "refs_ok"])
@@ -128,6 +128,7 @@ parse_variables is no longer used directly with exec, but as a decorator:
         return out[function.__name__]
 
 
+# pylint: disable=no-member
 def parse_varstring(string):
     "Parses a string to determine what variables to create from it"
     consts = check_and_parse_flag(string, "Constants\n", constant_declare)
@@ -138,14 +139,14 @@ def parse_varstring(string):
     out[0] = "from gpkit import Variable, VectorVariable" + "  " + out[0]
     for lines, indexs in (consts, variables, vecvars):
         for line, index in zip(lines.split("\n"), indexs):
-            out[index] = line + "  # from '%s'" % out[index][1:].strip()
+            out[index] = f"{line}  # from '{out[index][1:].strip()}'"
     return "\n".join(out)
 
 
 def vv_declare(string, flag, idx2, countstr):
     "Turns Variable declarations into VectorVariable ones"
     length = string[len(flag) : idx2].strip()
-    return countstr.replace("Variable(", "VectorVariable(%s, " % length)
+    return countstr.replace("Variable(", f"VectorVariable({length}, ")
 
 
 # pylint: disable=unused-argument
@@ -175,12 +176,12 @@ def check_and_parse_flag(string, flag, declaration_func=None):
                 break
             try:
                 units = line[line.index("[") + 1 : line.index("]")]
-            except ValueError:
+            except ValueError as err:
                 raise ValueError(
                     "A unit declaration bracketed by [] was"
                     " not found on the line reading:\n"
-                    "    %s" % line
-                )
+                    f"    {line}"
+                ) from err
             nameval = line[: line.index("[")].split()
             labelstart = line.index("]") + 1
             if labelstart >= len(line):
@@ -211,14 +212,18 @@ def variable_declaration(nameval, units, label, line, errorcatch=True):
     "Turns parsed output into a Variable declaration"
     if len(nameval) > 2:
         raise ValueError(
-            "while parsing the line '%s', additional fields"
-            " (separated by whitespace) were found between Value"
-            " '%s' and the Units `%s`. %s" % (line, nameval[1], units, PARSETIP)
+            f"while parsing the line '{line}', additional fields"
+            f" (separated by whitespace) were found between Value"
+            f" '{nameval[1]}' and the Units `{units}`. {PARSETIP}"
         )
     if len(nameval) == 2:
-        out = "{0} = self.{0} = Variable('{0}', {1}, '{2}', '{3}')"
-        out = out.format(nameval[0], nameval[1], units, label)
+        out = (
+            f"{nameval[0]} = self.{nameval[0]} = "
+            f"Variable('{nameval[0]}', {nameval[1]}, '{units}', '{label}')"
+        )
     elif len(nameval) == 1:
-        out = "{0} = self.{0} = Variable('{0}', '{1}', '{2}')"
-        out = out.format(nameval[0], units, label)
-    return out + "\n"
+        out = (
+            f"{nameval[0]} = self.{nameval[0]} = "
+            f"Variable('{nameval[0]}', '{units}', '{label}')"
+        )
+    return out + "\n"  # pylint: disable= possibly-used-before-assignment

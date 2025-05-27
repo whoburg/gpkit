@@ -11,7 +11,7 @@ def load_settings(path=None, trybuild=True):
     if path is None:
         path = os.sep.join([os.path.dirname(__file__), "env", "settings"])
     try:  # if the settings file already exists, read it
-        with open(path) as settingsfile:
+        with open(path, encoding="utf-8") as settingsfile:
             lines = [
                 line[:-1].split(" : ")
                 for line in settingsfile
@@ -59,10 +59,10 @@ class SignomialsEnabledMeta(type):
     "Metaclass to implement falsiness for SignomialsEnabled"
 
     def __bool__(cls):
-        return cls._true  # pylint: disable=multiple-statements
+        return cls._true
 
 
-class SignomialsEnabled(metaclass=SignomialsEnabledMeta):  # pylint: disable=no-init
+class SignomialsEnabled(metaclass=SignomialsEnabledMeta):
     """Class to put up and tear down signomial support in an instance of GPkit.
 
     Example
@@ -77,7 +77,6 @@ class SignomialsEnabled(metaclass=SignomialsEnabledMeta):  # pylint: disable=no-
 
     _true = False  # default signomial permissions
 
-    # pylint: disable=multiple-statements
     def __enter__(self):
         SignomialsEnabled._true = True
 

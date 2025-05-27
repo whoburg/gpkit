@@ -1,3 +1,4 @@
+# pylint: disable=import-outside-toplevel
 """Script for running all gpkit unit tests"""
 
 from gpkit.tests.helpers import run_tests

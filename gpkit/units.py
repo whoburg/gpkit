@@ -2,7 +2,7 @@
 
 import pint
 
-ureg = pint.UnitRegistry()  # pylint: disable=invalid-name
+ureg = pint.UnitRegistry()
 ureg.define("USD = [money] = $")
 pint.set_application_registry(ureg)
 Quantity = ureg.Quantity
@@ -26,7 +26,7 @@ class GPkitUnits:
 
     def __call__(self, unity):
         "Returns a unit Monomial, caching the result for future retrievals"
-        from . import Monomial
+        from . import Monomial  # pylint: disable=import-outside-toplevel
 
         if unity not in self.monomial_cache:
             self.monomial_cache[unity] = Monomial(qty(unity))
@@ -48,8 +48,8 @@ class GPkitUnits:
                 conversion = numerator.units or 1 / denominator.units
             try:
                 self.division_cache[key] = float(conversion)
-            except DimensionalityError:
-                raise DimensionalityError(numerator, denominator)
+            except DimensionalityError as exc:
+                raise DimensionalityError(numerator, denominator) from exc
         return self.division_cache[key]
 
     def of_product(self, thing1, thing2):

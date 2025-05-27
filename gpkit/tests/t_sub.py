@@ -123,6 +123,7 @@ class TestModelSubs(unittest.TestCase):
         if gpkit.units:
             x = Variable("x", 1, "cm")
             y = Variable("y", 1)
+            # pylint: disable=no-member
             self.assertEqual(x.sub({x: 1 * gpkit.units.m}).c.magnitude, 100)
             # NOTE: uncomment the below if requiring Quantity substitutions
             # self.assertRaises(ValueError, x.sub, x, 1)

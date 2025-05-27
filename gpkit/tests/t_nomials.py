@@ -59,10 +59,10 @@ class TestMonomial(unittest.TestCase):
         # can create nameless Variables
         x1 = Variable()
         x2 = Variable()
-        V = Variable("V")
-        vel = Variable("V")
+        v = Variable("v")
+        vel = Variable("v")
         self.assertNotEqual(x1, x2)
-        self.assertEqual(V, vel)
+        self.assertEqual(v, vel)
 
         # test label kwarg
         x = Variable("x", label="dummy variable")
@@ -76,10 +76,10 @@ class TestMonomial(unittest.TestCase):
         x = Variable("x")
         y = Variable("y")
         m = 5 * x**2 / y
-        r = m.__repr__()
+        r = repr(m)
         self.assertEqual(type(r), str)
         if sys.platform[:3] != "win":
-            self.assertEqual(repr(m), "gpkit.Monomial(5·x²/y)")
+            self.assertEqual(r, "gpkit.Monomial(5·x²/y)")
 
     def test_latex(self):
         "Test latex string creation"
@@ -90,7 +90,7 @@ class TestMonomial(unittest.TestCase):
 
     def test_str_with_units(self):
         "Make sure __str__() works when units are involved"
-        S = Variable("S", units="m^2")
+        S = Variable("S", units="m^2")  # pylint: disable=invalid-name
         rho = Variable("rho", units="kg/m^3")
         x = rho * S
         xstr = x.str_without()

@@ -1,3 +1,4 @@
+# pylint: disable=consider-using-f-string
 """Models for assessing primal feasibility"""
 
 from .. import NamedVariables, SignomialsEnabled

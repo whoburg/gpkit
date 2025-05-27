@@ -1,3 +1,4 @@
+# pylint: skip-file
 "implements Sankey"
 
 import os

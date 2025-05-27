@@ -2,6 +2,7 @@
 
 import sys
 import unittest
+from io import StringIO
 
 import numpy as np
 
@@ -41,9 +42,9 @@ NDIGS = {"cvxopt": 5, "mosek_cli": 5, "mosek_conif": 3}
 # pylint: disable=unused-variable,undefined-variable,exec-used
 
 
-def get_ndig(solver):
+def get_ndig(solver_name):
     """Get the number of decimal places for a given solver"""
-    return NDIGS.get(solver, 5)  # default to 5 if solver not found
+    return NDIGS.get(solver_name, 5)  # default to 5 if solver not found
 
 
 class TestGP(unittest.TestCase):
@@ -442,8 +443,6 @@ class TestSP(unittest.TestCase):
         y = Variable("y", 1)
         z = Variable("z", 4)
 
-        from io import StringIO
-
         old_stdout = sys.stdout
         sys.stdout = stringout = StringIO()
 
@@ -465,11 +464,10 @@ class TestSP(unittest.TestCase):
         self.assertEqual(
             stringout.getvalue(),
             (
-                "Warning: SignomialConstraint %s became the tautological"
-                " constraint 0 <= 3 + x after substitution.\n"
-                "Warning: SignomialConstraint %s became the tautological"
-                " constraint 0 <= 3 + x after substitution.\n"
-                % (str(m1[0]), str(m1[0]))
+                f"Warning: SignomialConstraint {str(m1[0])} became the "
+                "tautological constraint 0 <= 3 + x after substitution.\n"
+                f"Warning: SignomialConstraint {str(m1[0])} became the "
+                "tautological constraint 0 <= 3 + x after substitution.\n"
             ),
         )
 
@@ -477,8 +475,6 @@ class TestSP(unittest.TestCase):
         x = Variable("x")
         y = Variable("y")
         z = Variable("z")
-
-        from io import StringIO
 
         old_stdout = sys.stdout
         sys.stdout = stringout = StringIO()
@@ -497,11 +493,10 @@ class TestSP(unittest.TestCase):
         self.assertEqual(
             stringout.getvalue(),
             (
-                "Warning: SignomialConstraint %s became the tautological"
-                " constraint 0 <= 1 + x after substitution.\n"
-                "Warning: SignomialConstraint %s became the tautological"
-                " constraint 0 <= 1 + x after substitution.\n"
-                % (str(m1[0]), str(m2[0]))
+                f"Warning: SignomialConstraint {str(m1[0])} became the "
+                "tautological constraint 0 <= 1 + x after substitution.\n"
+                f"Warning: SignomialConstraint {str(m2[0])} became the "
+                "tautological constraint 0 <= 1 + x after substitution.\n"
             ),
         )
 

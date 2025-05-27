@@ -101,7 +101,7 @@ def optimize_generator(path=None, **_):
             if e.returncode in [233, 240]:  # pragma: no cover
                 raise InvalidLicense() from e
             raise UnknownInfeasible() from e
-        with open(solution_filename) as f:
+        with open(solution_filename, encoding="utf-8") as f:
             _, probsta = f.readline()[:-1].split("PROBLEM STATUS      : ")
             if probsta == "PRIMAL_INFEASIBLE":
                 raise PrimalInfeasible()
@@ -125,12 +125,12 @@ def optimize_generator(path=None, **_):
         if tmpdir:
             shutil.rmtree(path, ignore_errors=False, onerror=remove_read_only)
 
-        return dict(
-            status=solsta[:-1],
-            objective=objective_val,
-            primal=primal_vals,
-            nu=dual_vals,
-        )
+        return {
+            "status": solsta[:-1],
+            "objective": objective_val,
+            "primal": primal_vals,
+            "nu": dual_vals,
+        }
 
     return optimize
 
@@ -141,16 +141,16 @@ def write_output_file(filename, c, A, p_idxs):
         numcon = p_idxs[-1]
         numter, numvar = map(int, A.shape)
         for n in [numcon, numvar, numter]:
-            f.write("%d\n" % n)
+            f.write(f"{n}\n")
 
         f.write("\n*c\n")
-        f.writelines(["%.20e\n" % x for x in c])
+        f.writelines([f"{x:.20e}\n" for x in c])
 
         f.write("\n*p_idxs\n")
-        f.writelines(["%d\n" % x for x in p_idxs])
+        f.writelines([f"{x}\n" for x in p_idxs])
 
         f.write("\n*t j A_tj\n")
-        f.writelines(["%d %d %.20e\n" % tuple(x) for x in zip(A.row, A.col, A.data)])
+        f.writelines([f"{i} {j} {v:.20e}\n" for i, j, v in zip(A.row, A.col, A.data)])
 
 
 def assert_equal(received, expected):

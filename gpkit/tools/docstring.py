@@ -7,9 +7,10 @@ import re
 import numpy as np
 
 
+# pylint: disable=too-many-locals,too-many-nested-blocks
+# pylint: disable=too-many-branches,too-few-public-methods
 def expected_unbounded(instance, doc):
     "Gets expected-unbounded variables from a string"
-    # pylint: disable=too-many-locals,too-many-nested-blocks
     exp_unbounded = set()
     for direction in ["upper", "lower"]:
         flag = direction[0].upper() + direction[1:] + " Unbounded\n"
@@ -46,12 +47,12 @@ def expected_unbounded(instance, doc):
                     for subdot in var.split("."):
                         obj = getattr(obj, subdot)
                     variables = obj
-                except AttributeError:
+                except AttributeError as err:
                     raise AttributeError(
                         f"`{var}` is noted in {instance.__class__.__name__} as "
                         "unbounded, but is not "
                         "an attribute of that model."
-                    )
+                    ) from err
                 if not hasattr(variables, "shape"):
                     variables = np.array([variables])
                 it = np.nditer(variables, flags=["multi_index", "refs_ok"])
@@ -127,6 +128,7 @@ parse_variables is no longer used directly with exec, but as a decorator:
         return out[function.__name__]
 
 
+# pylint: disable=no-member
 def parse_varstring(string):
     "Parses a string to determine what variables to create from it"
     consts = check_and_parse_flag(string, "Constants\n", constant_declare)
@@ -144,7 +146,7 @@ def parse_varstring(string):
 def vv_declare(string, flag, idx2, countstr):
     "Turns Variable declarations into VectorVariable ones"
     length = string[len(flag) : idx2].strip()
-    return countstr.replace("Variable(", "VectorVariable(%s, " % length)
+    return countstr.replace("Variable(", f"VectorVariable({length}, ")
 
 
 # pylint: disable=unused-argument
@@ -174,12 +176,12 @@ def check_and_parse_flag(string, flag, declaration_func=None):
                 break
             try:
                 units = line[line.index("[") + 1 : line.index("]")]
-            except ValueError:
+            except ValueError as err:
                 raise ValueError(
                     "A unit declaration bracketed by [] was"
                     " not found on the line reading:\n"
-                    "    %s" % line
-                )
+                    f"    {line}"
+                ) from err
             nameval = line[: line.index("[")].split()
             labelstart = line.index("]") + 1
             if labelstart >= len(line):
@@ -224,4 +226,4 @@ def variable_declaration(nameval, units, label, line, errorcatch=True):
             f"{nameval[0]} = self.{nameval[0]} = "
             f"Variable('{nameval[0]}', '{units}', '{label}')"
         )
-    return out + "\n"
+    return out + "\n"  # pylint: disable= possibly-used-before-assignment

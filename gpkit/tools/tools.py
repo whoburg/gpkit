@@ -42,7 +42,7 @@ def te_secant(var, nterm):
         Taylor expansion of secant(x), carried to nterm terms
     """
     # The first 12 Euler Numbers
-    E2n = np.asarray(
+    e2n = np.asarray(
         [
             1.0,
             5,
@@ -60,18 +60,18 @@ def te_secant(var, nterm):
     )
     if nterm > 12:
         n_extend = np.asarray(range(13, nterm + 1))
-        E2n_add = (
+        e2n_add = (
             8
             * np.sqrt(n_extend / np.pi)
             * (4 * n_extend / (np.pi * np.exp(1))) ** (2 * n_extend)
         )
-        E2n = np.append(E2n, E2n_add)
+        e2n = np.append(e2n, e2n_add)
 
     res = 1
     factorial_denom = 1
     for i in range(1, nterm + 1):
         factorial_denom *= (2 * i) * (2 * i - 1)
-        res = res + var ** (2 * i) * E2n[i - 1] / factorial_denom
+        res = res + var ** (2 * i) * e2n[i - 1] / factorial_denom
     return res
 
 
@@ -91,10 +91,10 @@ def te_tangent(var, nterm):
         Taylor expansion of tangent(x), carried to nterm terms
     """
     if nterm > 15:
-        raise NotImplementedError("Tangent expansion not implemented above" " 15 terms")
+        raise NotImplementedError("Tangent expansion not implemented above 15 terms")
 
     # The first 15 Bernoulli Numbers
-    B2n = np.asarray(
+    b2n = np.asarray(
         [
             1 / 6,
             -1 / 30,
@@ -122,7 +122,7 @@ def te_tangent(var, nterm):
             (-1) ** (i - 1)
             * 2 ** (2 * i)
             * (2 ** (2 * i) - 1)
-            * B2n[i - 1]
+            * b2n[i - 1]
             / factorial_denom
             * var ** (2 * i - 1)
         )

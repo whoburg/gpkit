@@ -208,7 +208,7 @@ class Signomial(Nomial):
         if rev:
             astorder = tuple(reversed(astorder))
         if isinstance(other, np.ndarray):
-            from .array import NomialArray  #pylint: disable=import-outside-toplevel
+            from .array import NomialArray  # pylint: disable=import-outside-toplevel
 
             s = NomialArray(self)
             s.ast = self.ast

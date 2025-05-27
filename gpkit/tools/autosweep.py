@@ -1,3 +1,4 @@
+# pylint: disable=possibly-used-before-assignment,import-outside-toplevel
 "Tools for optimal fits to GP sweeps"
 
 from time import time
@@ -167,7 +168,8 @@ class BinarySweepTree:  # pylint: disable=too-many-instance-attributes
         """
         import pickle
 
-        pickle.dump(self, open(filename, "wb"))
+        with open(filename, "wb") as fil:
+            pickle.dump(self, fil)
 
 
 class SolutionOracle:
@@ -255,15 +257,15 @@ def autosweep_1d(model, logtol, sweepvar, bounds, **solvekwargs):
         try:
             model.solve(**solvekwargs)
             firstsols.append(model.program.result)
-        except InvalidGPConstraint:
-            raise InvalidGPConstraint("only GPs can be autoswept.")
+        except InvalidGPConstraint as exc:
+            raise InvalidGPConstraint("only GPs can be autoswept.") from exc
         sols()
     bst = BinarySweepTree(bounds, firstsols, sweepvar, model.cost)
     tol = recurse_splits(model, bst, sweepvar, logtol, solvekwargs, sols)
     bst.nsols = sols()  # pylint: disable=attribute-defined-outside-init
     if solvekwargs["verbosity"] > -1:
-        print("Solved in %2i passes, cost logtol +/-%.3g" % (bst.nsols, tol))
-        print("Autosweeping took %.3g seconds." % (time() - start_time))
+        print(f"Solved in {bst.nsols} passes, cost logtol +/-{tol:.3g}")
+        print(f"Autosweeping took {(time() - start_time):.3g} seconds.")
     if original_val:
         model.substitutions[sweepvar] = original_val
     else:
@@ -271,6 +273,7 @@ def autosweep_1d(model, logtol, sweepvar, bounds, **solvekwargs):
     return bst
 
 
+# pylint: disable=too-many-arguments,too-many-positional-arguments
 def recurse_splits(model, bst, variable, logtol, solvekwargs, sols):
     "Recursively splits a BST until logtol is reached"
     x, lb, ub = get_tol(bst.costs, bst.bounds, bst.sols, variable)

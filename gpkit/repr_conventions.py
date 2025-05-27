@@ -185,6 +185,7 @@ class ReprMixin:
             aststr = f"{left}[{idx}]"
         else:
             raise ValueError(oper)
+        # pylint: disable=possibly-used-before-assignment
         self.cached_strs[excluded] = aststr
         return aststr
 

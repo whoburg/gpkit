@@ -1,4 +1,4 @@
-.PHONY: install-dev install-lint install-test clean check-clean test test-unittest test-pytest lint format
+.PHONY: install-dev install-lint install-test clean check-clean test test-unittest test-pytest lint pylint format
 
 # Development environment setup
 install-dev:
@@ -13,6 +13,9 @@ install-test:
 # Code quality
 lint:
 	flake8 --max-line-length=88 --ignore=E203,W503,F821 --per-file-ignores="__init__.py:F401" gpkit docs
+
+pylint:
+	pylint --rcfile=pylintrc gpkit
 
 # Code formatting
 format:
@@ -52,7 +55,8 @@ help:
 	@echo "  install-dev       Editable install for local development"
 	@echo "  install-lint      Install with linting tools for CI"
 	@echo "  install-test      Install with testing tools for CI"
-	@echo "  lint              Run pylint"
+	@echo "  lint              Run fast lint checks"
+	@echo "  pylint            Run pylint (slow)"
 	@echo "  format            Format code with isort and black"
 	@echo "  test              Run both unittest and pytest"
 	@echo "  test-unittest     Run tests using the original test runner"

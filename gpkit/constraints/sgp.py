@@ -57,7 +57,7 @@ class SequentialGeometricProgram:
     with NamedVariables("RelaxPCCP"):
         slack = Variable("C")
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments,too-many-locals
     def __init__(
         self, cost, model, substitutions, *, use_pccp=True, pccp_penalty=2e2, **kwargs
     ):
@@ -163,7 +163,7 @@ solutions and can be solved with 'Model.solve()'."""
         starttime = time()
         if verbosity > 0:
             print("Starting a sequence of GP solves")
-            print(f" for {len(self.sqpvks)} free variables")
+            print(f" for {len(self.sgpvks)} free variables")
             print(f"  in {len(self.sgpconstraints)} locally-GP constraints")
             print(f"  and for {len(self._gp.varlocs)} free variables")
             print(f"       in {len(self._gp.k)} posynomial inequalities.")

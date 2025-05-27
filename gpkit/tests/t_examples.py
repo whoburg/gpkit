@@ -189,7 +189,8 @@ class TestExamples(unittest.TestCase):
         sol.table()
         sol.save("solution.pkl")
         sol.table()
-        sol_loaded = pickle.load(open("solution.pkl", "rb"))
+        with open("solution.pkl", "rb") as fil:
+            sol_loaded = pickle.load(fil)
         sol_loaded.table()
         os.remove("solution.pkl")
 
@@ -316,11 +317,11 @@ class TestExamples(unittest.TestCase):
                 "W_0": 1.0107,
                 r"\rho": -0.2275,
             }
-            for key in freevarcheck:
-                sol_rat = mag(sol["variables"][key]) / freevarcheck[key]
+            for key, val in freevarcheck.items():
+                sol_rat = mag(sol["variables"][key]) / val
                 self.assertTrue(abs(1 - sol_rat) < 1e-2)
-            for key in senscheck:
-                sol_rat = sol["sensitivities"]["variables"][key] / senscheck[key]
+            for key, val in senscheck.items():
+                sol_rat = sol["sensitivities"]["variables"][key] / val
                 self.assertTrue(abs(1 - sol_rat) < 1e-2)
         os.remove("solution.pkl")
         os.remove("solution.pgz")

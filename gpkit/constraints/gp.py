@@ -95,8 +95,7 @@ class GeometricProgram:
                 self.substitutions[key] = sub
             if not isinstance(sub, (Numbers, np.ndarray)):
                 raise TypeError(
-                    "substitution {%s: %s} has invalid value type"
-                    " %s." % (key, sub, type(sub))
+                    f"substitution {{{key}: {sub}}} has invalid value type {type(sub)}."
                 )
         cost_hmap = cost.hmap.sub(self.substitutions, cost.vks)
         if any(c <= 0 for c in cost_hmap.values()):
@@ -133,8 +132,7 @@ class GeometricProgram:
         if missingbounds and err_on_missing_bounds:
             raise UnboundedGP(
                 "\n\n".join(
-                    "%s has no %s bound%s" % (v, b, x)
-                    for (v, b), x in missingbounds.items()
+                    f"{v} has no {b} bound{x}" for (v, b), x in missingbounds.items()
                 )
             )
         return missingbounds
@@ -208,9 +206,9 @@ class GeometricProgram:
         """
         solvername, solverfn = _get_solver(solver, kwargs)
         if verbosity > 0:
-            print("Using solver '%s'" % solvername)
-            print(" for %i free variables" % len(self.varlocs))
-            print("  in %i posynomial inequalities." % len(self.k))
+            print(f"Using solver '{solvername}'")
+            print(f" for {len(self.varlocs)} free variables")
+            print(f"  in {len(self.k)} posynomial inequalities.")
 
         solverargs = DEFAULT_SOLVER_KWARGS.get(solvername, {})
         solverargs.update(kwargs)
@@ -233,7 +231,7 @@ class GeometricProgram:
             infeasibility = e
         except InvalidLicense as e:
             raise InvalidLicense(
-                'license for solver "%s" is invalid.' % solvername
+                f'license for solver "{solvername}" is invalid.'
             ) from e
         except Exception as e:
             raise UnknownInfeasible("Something unexpected went wrong.") from e
@@ -245,7 +243,7 @@ class GeometricProgram:
         solver_out["solver"] = solvername
         solver_out["soltime"] = time() - starttime
         if verbosity > 0:
-            print("Solving took %.3g seconds." % solver_out["soltime"])
+            print(f"Solving took {solver_out['soltime']:.3g} seconds.")
 
         if infeasibility:
             if isinstance(infeasibility, PrimalInfeasible):

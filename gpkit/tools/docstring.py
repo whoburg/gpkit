@@ -215,7 +215,13 @@ def variable_declaration(nameval, units, label, line, errorcatch=True):
             f" '{nameval[1]}' and the Units `{units}`. {PARSETIP}"
         )
     if len(nameval) == 2:
-        out = f"{nameval[0]} = self.{nameval[0]} = Variable('{nameval[0]}', {nameval[1]}, '{units}', '{label}')"
+        out = (
+            f"{nameval[0]} = self.{nameval[0]} = "
+            f"Variable('{nameval[0]}', {nameval[1]}, '{units}', '{label}')"
+        )
     elif len(nameval) == 1:
-        out = f"{nameval[0]} = self.{nameval[0]} = Variable('{nameval[0]}', '{units}', '{label}')"
+        out = (
+            f"{nameval[0]} = self.{nameval[0]} = "
+            f"Variable('{nameval[0]}', '{units}', '{label}')"
+        )
     return out + "\n"

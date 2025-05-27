@@ -26,20 +26,13 @@ class Tight(ConstraintSet):
                 rightval = constraint.right.sub(variables).value
             rel_diff = mag(abs(1 - leftval / rightval))
             if rel_diff >= self.reltol:
-                msg = (  # pylint: disable=consider-using-f-string
-                    "Constraint [%.100s... %s %.100s...] is not tight:"
-                    " the left hand side evaluated to %s but"
-                    " the right hand side evaluated to %s"
-                    " (Allowable error: %s%%, Actual error: %.2g%%)"
-                    % (
-                        constraint.left,
-                        constraint.oper,
-                        constraint.right,
-                        leftval,
-                        rightval,
-                        self.reltol * 100,
-                        mag(rel_diff) * 100,
-                    )
+                msg = (
+                    f"Constraint [{str(constraint.left)[:100]}... "
+                    f"{constraint.oper} {str(constraint.right)[:100]}...] "
+                    f"is not tight: the left hand side evaluated to {leftval} "
+                    f"but the right hand side evaluated to {rightval} "
+                    f"(Allowable error: {self.reltol * 100}%%,"
+                    f" Actual error: {mag(rel_diff) * 100:.2g}%%)"
                 )
                 if hasattr(leftval, "magnitude"):
                     rightval = rightval.to(leftval.units).magnitude

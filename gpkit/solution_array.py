@@ -695,7 +695,7 @@ class SolutionArray(DictOfLists):
 
     def todataframe(self, showvars=None, excluded="vec"):
         "Returns primal solution as pandas dataframe"
-        import pandas as pd  # pylint:disable=import-outside-toplevel
+        import pandas as pd  # pylint:disable=import-outside-toplevel,import-error
 
         rows = []
         cols = ["Name", "Index", "Value", "Units", "Label", "Lineage", "Other"]

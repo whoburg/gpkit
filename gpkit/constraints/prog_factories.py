@@ -165,7 +165,7 @@ def solvify(genfunction):
 
 
 # pylint: disable=too-many-locals,too-many-arguments,too-many-branches
-# pylint: disable=too-many-statements
+# pylint: disable=too-many-statements,too-many-positional-arguments
 def run_sweep(
     genfunction,
     self,
@@ -208,6 +208,7 @@ def run_sweep(
         program.model = None  # so it doesn't try to debug
         self.program.append(program)  # NOTE: SIDE EFFECTS
         if i == 0 and verbosity > 0:  # wait for successful program gen
+            # pylint: disable=fixme
             # TODO: use full string when minimum lineage is set automatically
             sweepvarsstr = ", ".join(
                 [

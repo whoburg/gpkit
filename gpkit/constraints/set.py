@@ -12,6 +12,7 @@ from ..small_scripts import try_str_without
 from .single_equation import SingleEquationConstraint
 
 
+# pylint: disable=fixme
 def add_meq_bounds(bounded, meq_bounded):  # TODO: collapse with GP version?
     "Iterates through meq_bounds until convergence"
     still_alive = True
@@ -155,9 +156,10 @@ class ConstraintSet(list, ReprMixin):  # pylint: disable=too-many-instance-attri
             if not othervars:
                 return firstvar
             raise ValueError(
-                "multiple variables are called '%s'; show them"
-                " with `.variables_byname('%s')`" % (key, key)
+                f"multiple variables are called '{key}'; show them"
+                f" with `.variables_byname('{key}')`"
             )
+        # pylint: disable=import-outside-toplevel
         from ..nomials import NomialArray  # all one vector!
 
         arr = NomialArray(np.full(veckey.shape, np.nan, dtype="object"))
@@ -168,7 +170,7 @@ class ConstraintSet(list, ReprMixin):  # pylint: disable=too-many-instance-attri
 
     def variables_byname(self, key):
         "Get all variables with a given name"
-        from ..nomials import Variable
+        from ..nomials import Variable  # pylint: disable=import-outside-toplevel
 
         return sorted(
             [Variable(k) for k in self.varkeys[key]], key=_sort_by_name_and_idx

@@ -37,7 +37,7 @@ class Cube(Model):
     """
 
     @parse_variables(__doc__, globals())
-    def setup(self):
+    def setup(self):  # pylint: disable=no-member
 
         return [
             A >= 2 * (s[0] * s[1] + s[1] * s[2] + s[2] * s[0]),

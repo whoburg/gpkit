@@ -15,6 +15,7 @@ w = Variable("w", "m")
 m1 = Model(A**2, [A >= w**2 + units.m**2])
 tol1 = 1e-3
 bst1 = autosweep_1d(m1, tol1, w, [1, 10], verbosity=0)
+# pylint: disable=no-member
 print(f"Solved after {bst1.nsols} passes, cost logtol +/-{bst1.tol:.3g}")
 # autosweep solution accessing
 w_vals = np.linspace(1, 10, 10)
@@ -36,7 +37,8 @@ np.testing.assert_allclose(
 )
 # save autosweep to a file and retrieve it
 bst1.save("autosweep.pkl")
-bst1_loaded = pickle.load(open("autosweep.pkl", "rb"))
+with open("autosweep.pkl", "rb") as fil:
+    bst1_loaded = pickle.load(fil)
 
 # this problem is two intersecting lines in logspace
 m2 = Model(A**2, [A >= (w / 3) ** 2, A >= (w / 3) ** 0.5 * units.m**1.5])

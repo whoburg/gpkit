@@ -1,3 +1,4 @@
+# pylint: skip-file
 # -*- coding: utf-8 -*-
 #
 # gpkit documentation build configuration file, created by

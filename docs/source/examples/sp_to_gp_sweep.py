@@ -6,6 +6,7 @@ from gpkit import Model, SignomialsEnabled, Variable, units
 from gpkit.constraints.tight import Tight
 
 
+# pylint: disable=too-many-locals
 def SimPleAC():
     "Creates SimpleAC model"
     # Env. constants

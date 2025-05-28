@@ -15,8 +15,8 @@ lint:
 	flake8 --max-line-length=88 --ignore=E203,W503,F821 --per-file-ignores="__init__.py:F401" gpkit docs
 
 pylint:
-	pylint --rcfile=pylintrc gpkit
-	pylint --rcfile=pylintrc-docs docs
+	pylint --rcfile=.pylintrc gpkit/
+	pylint --rcfile=.pylintrc.docs docs/
 
 # Code formatting
 format:

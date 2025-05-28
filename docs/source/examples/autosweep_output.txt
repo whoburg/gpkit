@@ -16,7 +16,7 @@ cost upper bound:
  6.76433102e+02 1.36960161e+03 2.50199736e+03 4.22779092e+03
  6.73016521e+03 1.02009910e+04]
 
-Solved after  3 passes, cost logtol +/-0
+Solved after 3 passes, cost logtol +/-0
 Table of solutions used in the autosweep:
 
 Optimal Cost

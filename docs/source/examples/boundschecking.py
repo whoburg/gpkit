@@ -4,6 +4,7 @@ from gpkit import Model, parse_variables
 from gpkit.exceptions import UnboundedGP, UnknownInfeasible
 
 
+# pylint: disable=no-member
 class BoundsChecking(Model):
     """Implements a crazy set of unbounded variables.
 
@@ -49,9 +50,10 @@ m = BoundsChecking()
 print(m.str_without(["lineage"]))
 try:
     m.solve()
+    gp = m.gp()
 except UnboundedGP:
     gp = m.gp(checkbounds=False)
-    missingbounds = gp.check_bounds()
+missingbounds = gp.check_bounds()
 
 try:
     sol = gp.solve(verbosity=0)  # Errors on mosek_cli
@@ -59,10 +61,10 @@ except UnknownInfeasible:  # pragma: no cover
     pass
 
 bpl = ", but would gain it from any of these sets: "
-assert missingbounds[(m.D.key, "lower")] == bpl + "[(%s, 'lower')]" % m.Ap
-assert missingbounds[(m.nu.key, "lower")] == bpl + "[(%s, 'lower')]" % m.Ap
+assert missingbounds[(m.D.key, "lower")] == bpl + f"[({m.Ap}, 'lower')]"
+assert missingbounds[(m.nu.key, "lower")] == bpl + f"[({m.Ap}, 'lower')]"
 # ordering is arbitrary:
 assert missingbounds[(m.Ap.key, "lower")] in (
-    bpl + ("[(%s, 'lower')] or [(%s, 'lower')]" % (m.D, m.nu)),
-    bpl + ("[(%s, 'lower')] or [(%s, 'lower')]" % (m.nu, m.D)),
+    bpl + (f"[({m.D}, 'lower')] or [({m.nu}, 'lower')]"),
+    bpl + (f"[({m.nu}, 'lower')] or [({m.D}, 'lower')]"),
 )

@@ -12,12 +12,13 @@ with SignomialsEnabled():
 
 # create and solve the SP
 m = Model(x, constraints)
-print(m.localsolve(verbosity=0).summary())
-assert abs(m.solution(x) - 0.9) < 1e-6
+sol = m.localsolve(verbosity=0)
+print(sol.summary())
+assert abs(sol(x) - 0.9) < 1e-6
 
 # full interim solutions are available
 print("x values of each GP solve (note convergence)")
-print(", ".join("%.5f" % sol["freevariables"][x] for sol in m.program.results))
+print(", ".join(f"{sol['freevariables'][x]:.5f}" for sol in m.program.results))
 
 # use x0 to give the solution, reducing number of GPs needed
 m.localsolve(verbosity=0, x0={x: 0.9, y: 0.1})

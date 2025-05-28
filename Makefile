@@ -16,6 +16,7 @@ lint:
 
 pylint:
 	pylint --rcfile=pylintrc gpkit
+	pylint --rcfile=pylintrc-docs docs
 
 # Code formatting
 format:

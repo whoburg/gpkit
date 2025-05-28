@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Modular aircraft concept"""
 
 import numpy as np

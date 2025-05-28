@@ -1,8 +1,10 @@
 "Can be found in gpkit/docs/source/examples/external_constraint.py"
 
+# pylint: disable=import-error
 from external_function import external_code
 
 
+# pylint: disable=too-few-public-methods
 class ExternalConstraint:
     "Class for external calling"
 

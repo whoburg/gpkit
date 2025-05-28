@@ -11,13 +11,17 @@ from gpkit.breakdowns import Breakdowns
 
 dirpath = os.path.dirname(os.path.realpath(__file__)) + os.sep
 if version.parse(pint.__version__) >= version.parse("0.13"):
-    sol = pickle.load(open(dirpath + "solar_13.p", "rb"))
+    with open(dirpath + "solar_13.p", "rb") as fil:
+        sol = pickle.load(fil)
 elif version.parse(pint.__version__) >= version.parse("0.12"):
-    sol = pickle.load(open(dirpath + "solar_12.p", "rb"))
+    with open(dirpath + "solar_12.p", "rb") as fil:
+        sol = pickle.load(fil)
 elif version.parse(pint.__version__) >= version.parse("0.10"):
-    sol = pickle.load(open(dirpath + "solar_10.p", "rb"))
+    with open(dirpath + "solar_10.p", "rb") as fil:
+        sol = pickle.load(fil)
 elif version.parse(pint.__version__) == version.parse("0.9"):
-    sol = pickle.load(open(dirpath + "solar.p", "rb"))
+    with open(dirpath + "solar.p", "rb") as fil:
+        sol = pickle.load(fil)
 else:
     sol = None
 

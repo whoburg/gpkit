@@ -4,6 +4,7 @@ from gpkit import Model, parse_variables
 from gpkit.tools.docstring import parse_varstring
 
 
+# pylint: disable=no-member
 class Cube(Model):
     """Demonstration of nomenclature syntax
 

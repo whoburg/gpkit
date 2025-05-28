@@ -4,6 +4,7 @@ from gpkit import Model, parse_variables
 from gpkit.exceptions import UnboundedGP, UnknownInfeasible
 
 
+# pylint: disable=no-member
 class BoundsChecking(Model):
     """Implements a crazy set of unbounded variables.
 

@@ -1,6 +1,7 @@
 "Can be found in gpkit/docs/source/examples/external_sp.py"
 
 import numpy as np
+# pylint: disable=import-error
 from external_constraint import ExternalConstraint
 
 from gpkit import Model, Variable

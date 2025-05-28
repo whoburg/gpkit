@@ -19,4 +19,4 @@ sol = m.solve(verbosity=0)
 
 # print selected results
 print(f"Optimal cost:  {sol['cost']:.4g}")
-print(f"Optimal x val: {sol['variables'][x].4g}")
+print(f"Optimal x val: {sol['variables'][x]:.4g}")

@@ -1,6 +1,6 @@
 "GP and SP modeling package"
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .build import build
 from .constraints.gp import GeometricProgram

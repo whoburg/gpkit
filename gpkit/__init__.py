@@ -15,7 +15,6 @@ from .nomials import ArrayVariable, Monomial, NomialArray, Posynomial, Signomial
 from .nomials import VectorizableVariable as Variable
 from .nomials import VectorVariable
 from .solution_array import SolutionArray
-from .tests.run_tests import run as run_unit_tests
 from .tools.docstring import parse_variables
 from .units import DimensionalityError, units, ureg
 from .varkey import VarKey
@@ -24,7 +23,6 @@ GPCOLORS = ["#59ade4", "#FA3333"]
 GPBLU, GPRED = GPCOLORS
 
 if "just built!" in settings:  # pragma: no cover
-    run_unit_tests(verbosity=1)
     print(
         f"""
 GPkit is now installed with solver(s) {settings['installed_solvers']}

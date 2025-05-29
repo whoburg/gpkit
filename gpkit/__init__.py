@@ -30,18 +30,12 @@ if "just built!" in settings:  # pragma: no cover
 GPkit is now installed with solver(s) {settings['installed_solvers']}
 To incorporate new solvers at a later date, run `gpkit.build()`.
 
-If any tests didn't pass, please post the output above
-(starting from "Found no installed solvers, beginning a build.")
-to gpkit@mit.edu or https://github.com/convexengineering/gpkit/issues/new
-so we can prevent others from having these errors.
+If you encounter any bugs or issues using GPkit, please open a new issue at
+https://github.com/beautifulmachines/gpkit-core/issues/new.
 
-The same goes for any other bugs you encounter with GPkit:
-send 'em our way, along with any interesting models, speculative features,
-comments, discussions, or clarifications you feel like sharing.
-
-Finally, we hope you find our documentation (https://gpkit.readthedocs.io/)
-and engineering-design models (https://github.com/convexengineering/gplibrary/)
-to be useful resources for your own applications.
+Finally, we hope you find our documentation (https://gpkit.readthedocs.io/) and
+engineering-design models (https://github.com/beautifulmachines/gpkit-models/)
+useful for your own applications.
 
 Enjoy!
 """

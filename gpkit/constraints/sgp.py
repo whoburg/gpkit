@@ -195,7 +195,7 @@ solutions and can be solved with 'Model.solve()'."""
                 vartable = "\n" + vartable.replace("Free", "SGP", 1)
                 print(vartable)
             elif verbosity > 1:
-                print(f"Solved cost was {cost:.4g.}")
+                print(f"Solved cost was {cost:.4g}.")
             if prevcost is None:
                 continue
             rel_improvement = (prevcost - cost) / (prevcost + cost)

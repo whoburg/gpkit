@@ -9,7 +9,6 @@ from .constraints.set import ConstraintSet
 from .constraints.sgp import SequentialGeometricProgram
 from .constraints.sigeq import SignomialEquality
 from .globals import NamedVariables, SignomialsEnabled, Vectorize, settings
-
 from .nomials import ArrayVariable, Monomial, NomialArray, Posynomial, Signomial
 from .nomials import VectorizableVariable as Variable  # Variable the user sees
 from .nomials import VectorVariable

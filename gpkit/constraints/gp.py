@@ -470,7 +470,7 @@ class GeometricProgram:
         return SolutionArray(result)
 
     def check_solution(self, cost, primal, nu, la, tol, abstol=1e-20):
-        # pylint: disable=too-many-positional-arguments
+        # pylint: disable=too-many-arguments,too-many-positional-arguments
         """Run checks to mathematically confirm solution solves this GP
 
         Arguments

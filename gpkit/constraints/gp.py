@@ -354,17 +354,19 @@ class GeometricProgram:
 
     def _calculate_sensitivities(self, result, la, nu_by_posy):
         """Calculate sensitivities for variables and constraints.
-        
+
         Returns
         -------
         tuple
             (cost_senss, gpv_ss, absv_ss, m_senss)
         """
-        cost_senss = sum(nu_i * exp for (nu_i, exp) in zip(nu_by_posy[0], self.cost.hmap))
+        cost_senss = sum(
+            nu_i * exp for (nu_i, exp) in zip(nu_by_posy[0], self.cost.hmap)
+        )
         gpv_ss = cost_senss.copy()
         m_senss = defaultdict(float)
         absv_ss = {vk: abs(x) for vk, x in cost_senss.items()}
-        
+
         for las, nus, c in zip(la[1:], nu_by_posy[1:], self.hmaps[1:]):
             while getattr(c, "parent", None) is not None:
                 if not isinstance(c, NomialMap):
@@ -379,7 +381,7 @@ class GeometricProgram:
                 c = c.generated_by
             result["sensitivities"]["constraints"][c] = c_senss
             m_senss[lineagestr(c)] += abs(c_senss)
-            
+
         return cost_senss, gpv_ss, absv_ss, m_senss
 
     def _compile_result(self, solver_out):
@@ -392,10 +394,14 @@ class GeometricProgram:
         result["variables"] = KeyDict(result["freevariables"])
         result["variables"].update(result["constants"])
         result["soltime"] = solver_out["soltime"]
-        
+
         if self.integersolve:
             result["choicevariables"] = KeyDict(
-                {k: v for k, v in result["freevariables"].items() if k in self.choicevaridxs}
+                {
+                    k: v
+                    for k, v in result["freevariables"].items()
+                    if k in self.choicevaridxs
+                }
             )
             result["warnings"] = {
                 "No Dual Solution": [
@@ -411,7 +417,7 @@ class GeometricProgram:
                 ]
             }
             return SolutionArray(result)
-            
+
         if self.choicevaridxs:
             result["warnings"] = {
                 "Freed Choice Variables": [
@@ -427,8 +433,10 @@ class GeometricProgram:
 
         result["sensitivities"] = {"constraints": {}}
         la, self.nu_by_posy = self._generate_nula(solver_out)
-        cost_senss, gpv_ss, absv_ss, m_senss = self._calculate_sensitivities(result, la, self.nu_by_posy)
-        
+        cost_senss, gpv_ss, absv_ss, m_senss = self._calculate_sensitivities(
+            result, la, self.nu_by_posy
+        )
+
         # Handle linked sensitivities
         for v in list(v for v in gpv_ss if v.gradients):
             dlogcost_dlogv = gpv_ss.pop(v)
@@ -439,7 +447,9 @@ class GeometricProgram:
                     pywarnings.simplefilter("ignore")
                     dlogv_dlogc = dv_dc * result["constants"][c] / val
                     gpv_ss[c] = gpv_ss.get(c, 0) + dlogcost_dlogv * dlogv_dlogc
-                    absv_ss[c] = absv_ss.get(c, 0) + abs(dlogcost_dlogabsv * dlogv_dlogc)
+                    absv_ss[c] = absv_ss.get(c, 0) + abs(
+                        dlogcost_dlogabsv * dlogv_dlogc
+                    )
                 if v in cost_senss:
                     if c in self.cost.vks:  # TODO: seems unnecessary
                         dlogcost_dlogv = cost_senss.pop(v)
@@ -449,7 +459,7 @@ class GeometricProgram:
         # Add fixed variable sensitivities to models
         for vk, senss in gpv_ss.items():
             m_senss[lineagestr(vk)] += abs(senss)
-            
+
         result["sensitivities"]["cost"] = cost_senss
         result["sensitivities"]["variables"] = KeyDict(gpv_ss)
         result["sensitivities"]["variablerisk"] = KeyDict(absv_ss)

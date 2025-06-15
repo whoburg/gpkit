@@ -279,7 +279,7 @@ solutions and can be solved with 'Model.solve()'."""
 
     def _update_a_matrix(self, m_idx, hmap, a_idxs):
         """Update A matrix entries for a given monomial.
-        
+
         Arguments
         ---------
         m_idx : int

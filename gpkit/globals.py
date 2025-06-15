@@ -86,7 +86,7 @@ class SignomialsEnabled(metaclass=SignomialsEnabledMeta):
 
 class Vectorize:
     """Creates an environment in which all variables are
-    exended in an additional dimension.
+    extended in an additional dimension.
     """
 
     vectorization = ()  # the current vectorization shape

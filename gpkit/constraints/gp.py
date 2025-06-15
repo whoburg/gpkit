@@ -352,7 +352,38 @@ class GeometricProgram:
             raise RuntimeWarning("The dual solution was not returned.")
         return la, nu_by_posy
 
-    # pylint: disable=too-many-branches,too-many-arguments
+    def _calculate_sensitivities(self, result, la, nu_by_posy):
+        """Calculate sensitivities for variables and constraints.
+
+        Returns
+        -------
+        tuple
+            (cost_senss, gpv_ss, absv_ss, m_senss)
+        """
+        cost_senss = sum(
+            nu_i * exp for (nu_i, exp) in zip(nu_by_posy[0], self.cost.hmap)
+        )
+        gpv_ss = cost_senss.copy()
+        m_senss = defaultdict(float)
+        absv_ss = {vk: abs(x) for vk, x in cost_senss.items()}
+
+        for las, nus, c in zip(la[1:], nu_by_posy[1:], self.hmaps[1:]):
+            while getattr(c, "parent", None) is not None:
+                if not isinstance(c, NomialMap):
+                    c.parent.child = c
+                c = c.parent  # parents get their sens_from_dual used...
+            v_ss, c_senss = c.sens_from_dual(las, nus, result)
+            for vk, x in v_ss.items():
+                gpv_ss[vk] = x + gpv_ss.get(vk, 0)
+                absv_ss[vk] = abs(x) + absv_ss.get(vk, 0)
+            while getattr(c, "generated_by", None):
+                c.generated_by.generated = c
+                c = c.generated_by  # ...while generated_bys are just labels
+            result["sensitivities"]["constraints"][c] = c_senss
+            m_senss[lineagestr(c)] += abs(c_senss)
+
+        return cost_senss, gpv_ss, absv_ss, m_senss
+
     def _compile_result(self, solver_out):
         result = {"cost": float(solver_out["objective"]), "cost function": self.cost}
         primal = solver_out["primal"]
@@ -363,6 +394,7 @@ class GeometricProgram:
         result["variables"] = KeyDict(result["freevariables"])
         result["variables"].update(result["constants"])
         result["soltime"] = solver_out["soltime"]
+
         if self.integersolve:
             result["choicevariables"] = KeyDict(
                 {
@@ -385,6 +417,7 @@ class GeometricProgram:
                 ]
             }
             return SolutionArray(result)
+
         if self.choicevaridxs:
             result["warnings"] = {
                 "Freed Choice Variables": [
@@ -400,28 +433,11 @@ class GeometricProgram:
 
         result["sensitivities"] = {"constraints": {}}
         la, self.nu_by_posy = self._generate_nula(solver_out)
-        cost_senss = sum(
-            nu_i * exp for (nu_i, exp) in zip(self.nu_by_posy[0], self.cost.hmap)
+        cost_senss, gpv_ss, absv_ss, m_senss = self._calculate_sensitivities(
+            result, la, self.nu_by_posy
         )
-        gpv_ss = cost_senss.copy()
-        m_senss = defaultdict(float)
-        absv_ss = {vk: abs(x) for vk, x in cost_senss.items()}
-        for las, nus, c in zip(la[1:], self.nu_by_posy[1:], self.hmaps[1:]):
-            while getattr(c, "parent", None) is not None:
-                if not isinstance(c, NomialMap):
-                    c.parent.child = c
-                c = c.parent  # parents get their sens_from_dual used...
-            v_ss, c_senss = c.sens_from_dual(las, nus, result)
-            for vk, x in v_ss.items():
-                gpv_ss[vk] = x + gpv_ss.get(vk, 0)
-                absv_ss[vk] = abs(x) + absv_ss.get(vk, 0)
-            while getattr(c, "generated_by", None):
-                c.generated_by.generated = c
-                c = c.generated_by  # ...while generated_bys are just labels
-            result["sensitivities"]["constraints"][c] = c_senss
-            m_senss[lineagestr(c)] += abs(c_senss)
-        result["sensitivities"]["models"] = dict(m_senss)
-        # carry linked sensitivities over to their constants
+
+        # Handle linked sensitivities
         for v in list(v for v in gpv_ss if v.gradients):
             dlogcost_dlogv = gpv_ss.pop(v)
             dlogcost_dlogabsv = absv_ss.pop(v)
@@ -439,19 +455,22 @@ class GeometricProgram:
                         dlogcost_dlogv = cost_senss.pop(v)
                         before = cost_senss.get(c, 0)
                         cost_senss[c] = before + dlogcost_dlogv * dlogv_dlogc
-        # add fixed variables sensitivities to models
+
+        # Add fixed variable sensitivities to models
         for vk, senss in gpv_ss.items():
             m_senss[lineagestr(vk)] += abs(senss)
+
         result["sensitivities"]["cost"] = cost_senss
         result["sensitivities"]["variables"] = KeyDict(gpv_ss)
         result["sensitivities"]["variablerisk"] = KeyDict(absv_ss)
         result["sensitivities"]["constants"] = result["sensitivities"][
             "variables"
         ]  # NOTE: backwards compat.
+        result["sensitivities"]["models"] = dict(m_senss)
         return SolutionArray(result)
 
     def check_solution(self, cost, primal, nu, la, tol, abstol=1e-20):
-        # pylint: disable=too-many-positional-arguments
+        # pylint: disable=too-many-arguments,too-many-positional-arguments
         """Run checks to mathematically confirm solution solves this GP
 
         Arguments

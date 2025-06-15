@@ -371,14 +371,14 @@ class GeometricProgram:
             while getattr(c, "parent", None) is not None:
                 if not isinstance(c, NomialMap):
                     c.parent.child = c
-                c = c.parent
+                c = c.parent  # parents get their sens_from_dual used...
             v_ss, c_senss = c.sens_from_dual(las, nus, result)
             for vk, x in v_ss.items():
                 gpv_ss[vk] = x + gpv_ss.get(vk, 0)
                 absv_ss[vk] = abs(x) + absv_ss.get(vk, 0)
             while getattr(c, "generated_by", None):
                 c.generated_by.generated = c
-                c = c.generated_by
+                c = c.generated_by  # ...while generated_bys are just labels
             result["sensitivities"]["constraints"][c] = c_senss
             m_senss[lineagestr(c)] += abs(c_senss)
 
